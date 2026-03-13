@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-white text-foreground font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold;
+  }
+}
+
+@layer utilities {
+  /* Container padrão Mais Score */
+  .container-ms {
+    @apply w-full mx-auto px-6 md:px-16 xl:px-24 max-w-[1280px];
+  }
+
+  /* Conteúdo interno máximo */
+  .content-ms {
+    @apply max-w-container mx-auto;
+  }
+}

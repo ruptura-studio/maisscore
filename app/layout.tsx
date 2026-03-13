@@ -1,0 +1,53 @@
+import type { Metadata } from 'next'
+import { GeistSans } from 'geist/font/sans'
+import { GeistMono } from 'geist/font/mono'
+import './globals.css'
+import { Header } from '@/components/shared/Header'
+import { Footer } from '@/components/shared/Footer'
+
+export const metadata: Metadata = {
+  title: 'Mais Score — Regularize seu CPF em até 15 dias úteis',
+  description:
+    'Já recuperamos a liberdade financeira de 1.142 famílias endividadas. Remova restrições no Serasa e SPC via processo jurídico próprio. Taxa de sucesso de 97%.',
+  keywords: [
+    'limpa nome',
+    'regularizar CPF',
+    'score Serasa',
+    'sair do SPC',
+    'limpar nome',
+    'crédito',
+    'Mais Score',
+  ],
+  openGraph: {
+    title: 'Mais Score — Recupere sua liberdade financeira',
+    description:
+      'Regularize seu CPF em até 15 dias úteis com 97% de taxa de sucesso. Mais de 1.142 famílias atendidas.',
+    url: 'https://maisscore.com.br',
+    siteName: 'Mais Score',
+    locale: 'pt_BR',
+    type: 'website',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  alternates: {
+    canonical: 'https://maisscore.com.br',
+  },
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="pt-BR" className={`${GeistSans.variable} ${GeistMono.variable}`}>
+      <body>
+        <Header />
+        <main>{children}</main>
+        <Footer />
+      </body>
+    </html>
+  )
+}
