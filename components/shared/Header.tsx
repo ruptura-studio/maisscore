@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Menu, X, Phone } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import Image from 'next/image'
 
 const navLinks = [
   { label: 'Nossos clientes', href: '#depoimentos' },
@@ -19,10 +20,14 @@ export function Header() {
     <header className="fixed top-0 left-0 right-0 z-50 w-full bg-primary/90 backdrop-blur-sm">
       <div className="container-ms flex items-center justify-between h-16">
         {/* Logo */}
-        <a href="/" className="flex items-center gap-2 shrink-0">
-          <span className="text-white font-semibold text-lg tracking-tight">
-            Mais<span className="text-accent">Score</span>
-          </span>
+        <a href="/" className="flex items-center shrink-0">
+          <Image
+            src="/logos/logo-horizontal-dark.svg"
+            alt="Mais Score"
+            width={140}
+            height={40}
+            priority
+          />
         </a>
 
         {/* Desktop Nav */}
