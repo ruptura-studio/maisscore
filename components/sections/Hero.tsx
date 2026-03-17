@@ -1,6 +1,4 @@
-import { MessageCircle, ChevronRight } from 'lucide-react'
-
-const WHATSAPP_URL = 'https://wa.me/5515974058014?text=Ol%C3%A1%2C%20quero%20regularizar%20meu%20CPF'
+import { BookOpen } from 'lucide-react'
 
 export function Hero() {
   return (
@@ -8,11 +6,10 @@ export function Hero() {
       {/* Background image */}
       <div className="absolute inset-0 pointer-events-none">
         <img
-          src="https://www.figma.com/api/mcp/asset/249e8c4c-2fd6-4c40-bbb5-b2b0755aa176"
+          src="/img/hero-background.png"
           alt=""
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-black/50" />
       </div>
 
       {/* Content */}
@@ -37,36 +34,14 @@ export function Hero() {
           {/* CTAs */}
           <div className="flex flex-col gap-3 w-full max-w-[350px]">
             <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#como-funciona"
               className="flex items-center justify-center gap-2 bg-accent-dark text-white font-medium text-para-md px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors w-full"
             >
-              <MessageCircle size={16} />
-              Fale com um especialista
-            </a>
-
-            <a
-              href="#como-funciona"
-              className="flex items-center justify-center gap-2 bg-secondary text-primary font-medium text-para-md px-6 py-3 rounded-lg hover:bg-white transition-colors w-full"
-            >
-              <ChevronRight size={16} />
-              Como funciona
+              <BookOpen size={16} />
+              Você já conhece o Limpa Nome?
             </a>
           </div>
 
-          {/* Social proof badges */}
-          <div className="flex flex-wrap gap-3 mt-2">
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 py-1">
-              <span className="text-white text-para-xs font-semibold">⭐ 4.8 no Google</span>
-            </div>
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 py-1">
-              <span className="text-white text-para-xs font-semibold">✅ 97% de sucesso</span>
-            </div>
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-3 py-1">
-              <span className="text-white text-para-xs font-semibold">⚡ 15 dias úteis</span>
-            </div>
-          </div>
         </div>
       </div>
     </section>

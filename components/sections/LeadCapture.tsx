@@ -1,19 +1,95 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { ChevronDown } from 'lucide-react'
 
 const BIROS = ['Serasa', 'Boa Vista', 'SPC', 'Cartório de Protesto', 'Não tenho certeza'] as const
+
+function maskCpf(v: string) {
+  const d = v.replace(/\D/g, '').slice(0, 11)
+  if (d.length <= 3) return d
+  if (d.length <= 6) return `${d.slice(0, 3)}.${d.slice(3)}`
+  if (d.length <= 9) return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6)}`
+  return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9)}`
+}
+
+function maskPhone(v: string) {
+  const d = v.replace(/\D/g, '').slice(0, 11)
+  if (d.length <= 2) return d.length ? `(${d}` : ''
+  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`
+  // 11 dígitos = celular (9 dígitos após DDD): (xx) xxxxx-xxxx
+  // 10 dígitos = fixo (8 dígitos após DDD):   (xx) xxxx-xxxx
+  if (d.length === 11) return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`
+  return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`
+}
+
+function maskCnpj(v: string) {
+  const d = v.replace(/\D/g, '').slice(0, 14)
+  if (d.length <= 2) return d
+  if (d.length <= 5) return `${d.slice(0, 2)}.${d.slice(2)}`
+  if (d.length <= 8) return `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5)}`
+  if (d.length <= 12) return `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5, 8)}/${d.slice(8)}`
+  return `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5, 8)}/${d.slice(8, 12)}-${d.slice(12)}`
+}
 type Biro = (typeof BIROS)[number]
 
-const inputClass =
-  'w-full bg-white border border-border rounded-lg px-3 py-[7.5px] text-para-sm text-foreground placeholder:text-muted-foreground shadow-sm focus:outline-none focus:ring-2 focus:ring-accent-dark/30'
+// — Validações —
+function validateCpf(cpf: string) {
+  const d = cpf.replace(/\D/g, '')
+  if (d.length !== 11 || /^(\d)\1{10}$/.test(d)) return false
+  let sum = 0
+  for (let i = 0; i < 9; i++) sum += +d[i] * (10 - i)
+  let r = (sum * 10) % 11
+  if (r >= 10) r = 0
+  if (r !== +d[9]) return false
+  sum = 0
+  for (let i = 0; i < 10; i++) sum += +d[i] * (11 - i)
+  r = (sum * 10) % 11
+  if (r >= 10) r = 0
+  return r === +d[10]
+}
+
+function validateCnpj(cnpj: string) {
+  const d = cnpj.replace(/\D/g, '')
+  if (d.length !== 14 || /^(\d)\1{13}$/.test(d)) return false
+  const calc = (s: string, len: number) => {
+    let sum = 0, pos = len - 7
+    for (let i = len; i >= 1; i--) {
+      sum += +s[len - i] * pos--
+      if (pos < 2) pos = 9
+    }
+    const r = sum % 11
+    return r < 2 ? 0 : 11 - r
+  }
+  return calc(d, 12) === +d[12] && calc(d, 13) === +d[13]
+}
+
+const inputBase = 'w-full bg-white border rounded-lg px-3 py-[7.5px] text-para-sm text-foreground placeholder:text-muted-foreground shadow-sm focus:outline-none focus:ring-2'
+const inputClass = `${inputBase} border-border focus:ring-accent-dark/30`
+const inputErrorClass = `${inputBase} border-red-500 focus:ring-red-500/30`
+
+function useNumericField() {
+  const [hint, setHint] = useState(false)
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.ctrlKey || e.metaKey || e.altKey) return
+    if (!/^\d$/.test(e.key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Home', 'End'].includes(e.key)) {
+      e.preventDefault()
+      setHint(true)
+      if (timer.current) clearTimeout(timer.current)
+      timer.current = setTimeout(() => setHint(false), 2500)
+    }
+  }
+
+  return { onKeyDown, hint }
+}
 const labelClass = 'text-para-sm font-medium text-foreground'
 const fieldClass = 'flex flex-col gap-1'
 
 export function LeadCapture() {
   const [form, setForm] = useState({
-    documento: '',
+    documento: 'cpf',
     nome: '',
     cpf: '',
     whatsapp: '',
@@ -23,12 +99,57 @@ export function LeadCapture() {
     termos: false,
   })
 
+  const isCnpj = form.documento === 'cnpj'
+  const docField = useNumericField()
+  const phoneField = useNumericField()
+  const [errors, setErrors] = useState<Record<string, string>>({})
+
+  function validateField(name: string, value: string): string {
+    switch (name) {
+      case 'nome':
+        return value.trim().split(/\s+/).filter(Boolean).length < 2
+          ? 'Informe seu nome completo.'
+          : ''
+      case 'cpf':
+        if (isCnpj) return !validateCnpj(value) ? 'CNPJ inválido.' : ''
+        return !validateCpf(value) ? 'CPF inválido.' : ''
+      case 'whatsapp': {
+        const d = value.replace(/\D/g, '')
+        return d.length !== 10 && d.length !== 11 ? 'Número de telefone incompleto.' : ''
+      }
+      case 'email':
+        return !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value) ? 'E-mail inválido.' : ''
+      default:
+        return ''
+    }
+  }
+
+  function handleBlur(e: React.FocusEvent<HTMLInputElement>) {
+    const { name, value } = e.target
+    if (!value) return
+    const error = validateField(name, value)
+    setErrors((prev) => ({ ...prev, [name]: error }))
+  }
+
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     const { name, value, type } = e.target
+    const masked =
+      name === 'cpf'
+        ? (isCnpj ? maskCnpj(value) : maskCpf(value))
+        : name === 'whatsapp'
+        ? maskPhone(value)
+        : name === 'email'
+        ? value.toLowerCase()
+        : type === 'checkbox'
+        ? (e.target as HTMLInputElement).checked
+        : value
+
     setForm((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
+      [name]: masked,
+      ...(name === 'documento' ? { cpf: '' } : {}),
     }))
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }))
   }
 
   function toggleBiro(biro: Biro) {
@@ -40,8 +161,27 @@ export function LeadCapture() {
     }))
   }
 
+  const isFormValid =
+    form.nome.trim().split(/\s+/).filter(Boolean).length >= 2 &&
+    (isCnpj ? validateCnpj(form.cpf) : validateCpf(form.cpf)) &&
+    [10, 11].includes(form.whatsapp.replace(/\D/g, '').length) &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(form.email) &&
+    form.objetivo !== '' &&
+    form.biros.length > 0 &&
+    form.termos
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    const fields = ['nome', 'cpf', 'whatsapp', 'email'] as const
+    const newErrors: Record<string, string> = {}
+    fields.forEach((f) => {
+      const err = validateField(f, form[f])
+      if (err) newErrors[f] = err
+    })
+    if (Object.keys(newErrors).length) {
+      setErrors(newErrors)
+      return
+    }
     alert('Obrigado! Em breve você receberá o Super Guia +Score no seu e-mail.')
   }
 
@@ -98,7 +238,6 @@ export function LeadCapture() {
                   className={inputClass + ' appearance-none pr-8'}
                   required
                 >
-                  <option value="" disabled>Selecione uma resposta</option>
                   <option value="cpf">CPF</option>
                   <option value="cnpj">CNPJ</option>
                 </select>
@@ -114,21 +253,30 @@ export function LeadCapture() {
                   name="nome"
                   value={form.nome}
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   placeholder="Ex. Maria da Silva"
-                  className={inputClass}
+                  className={errors.nome ? inputErrorClass : inputClass}
                   required
                 />
+                {errors.nome && <span className="text-para-xs text-red-500">{errors.nome}</span>}
               </div>
               <div className={fieldClass}>
-                <label className={labelClass}>CPF *</label>
+                <label className={labelClass}>{isCnpj ? 'CNPJ' : 'CPF'} *</label>
                 <input
                   name="cpf"
                   value={form.cpf}
                   onChange={handleChange}
-                  placeholder="000.000.000-00"
-                  className={inputClass}
+                  onBlur={handleBlur}
+                  onKeyDown={docField.onKeyDown}
+                  inputMode="numeric"
+                  placeholder={isCnpj ? '00.000.000/0001-00' : '000.000.000-00'}
+                  className={errors.cpf ? inputErrorClass : inputClass}
                   required
                 />
+                {docField.hint && !errors.cpf && (
+                  <span className="text-para-xs text-amber-600">Digite apenas números.</span>
+                )}
+                {errors.cpf && <span className="text-para-xs text-red-500">{errors.cpf}</span>}
               </div>
             </div>
 
@@ -140,10 +288,17 @@ export function LeadCapture() {
                   name="whatsapp"
                   value={form.whatsapp}
                   onChange={handleChange}
+                  onBlur={handleBlur}
+                  onKeyDown={phoneField.onKeyDown}
+                  inputMode="numeric"
                   placeholder="(00) 00000-0000"
-                  className={inputClass}
+                  className={errors.whatsapp ? inputErrorClass : inputClass}
                   required
                 />
+                {phoneField.hint && !errors.whatsapp && (
+                  <span className="text-para-xs text-amber-600">Digite apenas números.</span>
+                )}
+                {errors.whatsapp && <span className="text-para-xs text-red-500">{errors.whatsapp}</span>}
               </div>
               <div className={fieldClass}>
                 <label className={labelClass}>E-Mail *</label>
@@ -152,10 +307,12 @@ export function LeadCapture() {
                   type="email"
                   value={form.email}
                   onChange={handleChange}
+                  onBlur={handleBlur}
                   placeholder="seu@email.com"
-                  className={inputClass}
+                  className={errors.email ? inputErrorClass : inputClass}
                   required
                 />
+                {errors.email && <span className="text-para-xs text-red-500">{errors.email}</span>}
               </div>
             </div>
 
@@ -223,7 +380,8 @@ export function LeadCapture() {
 
               <button
                 type="submit"
-                className="w-full bg-accent-dark text-white font-medium text-para-md py-3 px-8 rounded-lg hover:bg-blue-700 transition-colors"
+                disabled={!isFormValid}
+                className="w-full bg-accent-dark text-white font-medium text-para-md py-3 px-8 rounded-lg transition-colors hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-accent-dark"
               >
                 Receber meu Super Guia
               </button>

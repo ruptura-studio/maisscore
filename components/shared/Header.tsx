@@ -1,9 +1,12 @@
 'use client'
 
-import { useState } from 'react'
-import { Menu, X, Phone } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Menu, X } from 'lucide-react'
+import { FaWhatsapp } from 'react-icons/fa'
 import { cn } from '@/lib/utils'
 import Image from 'next/image'
+
+const WHATSAPP_URL = 'https://wa.me/5515974058014?text=Ol%C3%A1!%20Vim%20pelo%20site%20e%20gostaria%20de%20saber%20mais%20sobre%20a%20limpeza%20do%20meu%20nome.'
 
 const navLinks = [
   { label: 'Nossos clientes', href: '#depoimentos' },
@@ -15,9 +18,19 @@ const navLinks = [
 
 export function Header() {
   const [open, setOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 0)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 w-full bg-primary/90 backdrop-blur-sm">
+    <header className={cn(
+      'fixed top-0 left-0 right-0 z-50 w-full transition-colors duration-300',
+      scrolled ? 'bg-black/90 backdrop-blur-sm' : 'bg-transparent'
+    )}>
       <div className="container-ms flex items-center justify-between h-16">
         {/* Logo */}
         <a href="/" className="flex items-center shrink-0">
@@ -45,11 +58,13 @@ export function Header() {
 
         {/* CTA Button */}
         <a
-          href="#cta"
+          href={WHATSAPP_URL}
+          target="_blank"
+          rel="noopener noreferrer"
           className="hidden md:flex items-center gap-2 bg-secondary text-accent-dark font-medium text-para-sm px-4 py-2 rounded-lg hover:bg-white transition-colors"
         >
-          <Phone size={14} />
-          Consulte o seu nome
+          <FaWhatsapp size={16} />
+          Falar com um especialista
         </a>
 
         {/* Mobile Menu Toggle */}
@@ -64,7 +79,7 @@ export function Header() {
 
       {/* Mobile Nav */}
       <div className={cn(
-        'md:hidden bg-primary border-t border-white/10 overflow-hidden transition-all duration-300',
+        'md:hidden bg-black/90 border-t border-white/10 overflow-hidden transition-all duration-300',
         open ? 'max-h-96' : 'max-h-0'
       )}>
         <nav className="container-ms flex flex-col py-4 gap-1">
@@ -79,12 +94,14 @@ export function Header() {
             </a>
           ))}
           <a
-            href="#cta"
+            href={WHATSAPP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={() => setOpen(false)}
             className="mt-3 flex items-center justify-center gap-2 bg-secondary text-accent-dark font-medium text-para-sm px-4 py-3 rounded-lg"
           >
-            <Phone size={14} />
-            Consulte o seu nome
+            <FaWhatsapp size={16} />
+            Falar com um especialista
           </a>
         </nav>
       </div>
