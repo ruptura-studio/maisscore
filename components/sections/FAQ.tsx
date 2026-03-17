@@ -5,33 +5,57 @@ import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const perguntas = [
+  // — Descoberta —
   {
-    q: 'Como funciona o processo de limpeza de nome?',
-    a: 'Nosso processo é 100% jurídico. Analisamos suas dívidas, identificamos quais podem ser removidas por vias legais e abrimos o processo. Você acompanha tudo pelo WhatsApp em tempo real.',
+    q: 'Como faço para saber se estou com restrição no meu nome?',
+    a: 'Você pode procurar a empresa que fez a restrição, ou pode fazer uma consulta aqui com a Mais Score mesmo.',
+  },
+  {
+    q: 'Quando faz sentido eu solicitar o serviço de Limpa Nome?',
+    a: 'Sempre que você estiver com o nome restrito e precisando de empréstimo, financiamento ou cartão de crédito.',
+  },
+  {
+    q: 'Vocês atendem Pessoa Física e Empresas?',
+    a: 'Sim, fazemos o mesmo trabalho para CPF e CNPJ.',
+  },
+  {
+    q: 'Vocês atendem todo o Brasil?',
+    a: 'Sim. Nosso processo é 100% digital e atendemos clientes em todos os estados brasileiros. Todo o acompanhamento é feito pelo WhatsApp, sem necessidade de presença física.',
+  },
+  // — Como funciona —
+  {
+    q: 'Como funciona o Limpa Nome?',
+    a: 'Depois que você adquire o serviço, nossos advogados entram com uma liminar solicitando a remoção do seu nome de sistemas da Serasa, SPC, Boa Vista e de Cartórios de Protesto.',
   },
   {
     q: 'Quanto tempo leva para o nome ficar limpo?',
-    a: 'O prazo médio é de 15 dias úteis. Em muitos casos conseguimos resultados em 7 a 12 dias, dependendo do birô de crédito e da natureza da dívida.',
+    a: 'Esse processo leva 7 dias úteis para iniciar, e depois que inicia, em no máximo até 15 dias úteis, seu nome estará limpo e você acompanha todo o processo pelo WhatsApp.',
   },
   {
-    q: 'Quais birôs de crédito vocês atendem?',
-    a: 'Atuamos nos principais: Serasa, SPC/BOA VISTA, Quod e Cartórios de Protesto em todo o Brasil.',
+    q: 'Existe alguma garantia de que meu nome vai sair destes sites?',
+    a: 'Damos garantia absoluta e em contrato de que seu nome vai deixar de aparecer no Serasa, Boa Vista, SPC ou Cartórios de Protesto em até 15 dias úteis após a execução do processo. Temos 97% de taxa de sucesso e nos raros casos em que não conseguimos o resultado, oferecemos reembolso total. Trabalhamos com transparência e sem promessas impossíveis.',
+  },
+  // — Expectativas —
+  {
+    q: 'Depois que eu fizer o Limpa Nome, minhas dívidas deixam de existir?',
+    a: 'Não, você continuará devendo, porém, seu nome não será mais exposto por sistemas como Serasa, Boa Vista, SPC ou em Cartórios de Protesto.',
   },
   {
-    q: 'Preciso pagar as dívidas para limpar o nome?',
-    a: 'Não necessariamente. Analisamos cada caso individualmente. Em muitas situações é possível remover a restrição sem quitar a dívida integral, utilizando recursos jurídicos legítimos.',
+    q: 'Este processo pode prejudicar meu Score?',
+    a: 'Não. A remoção da restrição via processo jurídico não prejudica seu score — pelo contrário, tende a melhorá-lo progressivamente à medida que as negativações são retiradas.',
   },
   {
-    q: 'O processo é garantido?',
-    a: 'Temos 97% de taxa de sucesso. Nos casos em que não conseguimos o resultado, oferecemos reembolso total. Trabalhamos com transparência e sem promessas impossíveis.',
+    q: 'O Limpa Nome garante que vou conseguir Crédito ou Financiamento?',
+    a: 'Não. Mesmo estando com o nome limpo, o banco ou financeira podem negar o serviço financeiro por vários outros motivos.',
   },
   {
-    q: 'Como acompanho o andamento do processo?',
-    a: 'Você recebe atualizações automáticas pelo WhatsApp a cada etapa do processo. Sem precisar ligar ou enviar e-mail — você é notificado proativamente.',
+    q: 'Meu nome pode voltar a ficar com restrições depois do Limpa Nome?',
+    a: 'Sim e na maioria esmagadora dos casos são por dois motivos:\n1 - Se você fizer uma nova dívida e ficar inadimplente, seu nome volta a ter restrições.\n2 - Como se trata de um processo jurídico real, se a nossa liminar cair, seu nome também volta a aparecer nestes sistemas.\nMas nos dois casos, leva muito tempo para isso acontecer. É importante que você consiga alcançar seus objetivos como financiamento, empréstimo ou conseguir um cartão de crédito.',
   },
+  // — Fora do escopo —
   {
-    q: 'Qual o custo do serviço?',
-    a: 'O valor varia de acordo com o número e tipo de restrições. A consulta inicial é gratuita. Fale com um especialista pelo WhatsApp para receber uma proposta personalizada.',
+    q: 'Vocês fazem a renegociação da minha dívida?',
+    a: 'Não, para isso, você deve procurar empresas como o Serasa, Boa Vista, SPC ou o Cartório onde seu nome está restrito.',
   },
 ]
 
@@ -47,7 +71,7 @@ function Item({ pergunta, resposta }: { pergunta: string; resposta: string }) {
         <ChevronDown
           size={18}
           className={cn(
-            'text-muted shrink-0 transition-transform duration-200',
+            'text-foreground shrink-0 transition-transform duration-200',
             open && 'rotate-180'
           )}
         />
@@ -55,10 +79,10 @@ function Item({ pergunta, resposta }: { pergunta: string; resposta: string }) {
       <div
         className={cn(
           'overflow-hidden transition-all duration-300',
-          open ? 'max-h-48 pb-5' : 'max-h-0'
+          open ? 'max-h-96 pb-5' : 'max-h-0'
         )}
       >
-        <p className="text-para-sm text-muted leading-relaxed">{resposta}</p>
+        <p className="text-para-sm text-foreground leading-relaxed whitespace-pre-line">{resposta}</p>
       </div>
     </div>
   )
@@ -68,28 +92,17 @@ export function FAQ() {
   return (
     <section id="faq" className="w-full py-24 bg-white">
       <div className="container-ms">
-        <div className="flex flex-col lg:flex-row gap-12 items-start">
-          {/* Left */}
-          <div className="flex flex-col gap-4 lg:max-w-[320px] shrink-0">
-            <span className="text-caption text-muted uppercase tracking-[1.5px]">Dúvidas</span>
+        <div className="flex flex-col items-center gap-12 max-w-[800px] mx-auto">
+          {/* Title — centered */}
+          <div className="flex flex-col items-center text-center gap-3 w-full">
+            <span className="text-caption text-foreground uppercase tracking-[1.5px]">Dúvidas</span>
             <h2 className="text-[36px] font-semibold leading-tight tracking-[-1.5px] text-foreground">
               Perguntas mais frequentes
             </h2>
-            <p className="text-para-md text-muted leading-relaxed">
-              Ainda tem dúvidas? Fale com um especialista gratuitamente pelo WhatsApp.
-            </p>
-            <a
-              href="https://wa.me/5515974058014"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-accent-dark text-white font-medium text-para-sm px-5 py-3 rounded-lg hover:bg-blue-700 transition-colors w-fit mt-2"
-            >
-              Falar com especialista
-            </a>
           </div>
 
-          {/* Right - accordion */}
-          <div className="flex-1 w-full">
+          {/* Accordion — full width */}
+          <div className="w-full">
             {perguntas.map((p) => (
               <Item key={p.q} pergunta={p.q} resposta={p.a} />
             ))}
