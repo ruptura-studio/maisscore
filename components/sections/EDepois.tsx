@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 const cards = [
   {
     titulo: 'Financiar Imóveis',
@@ -21,10 +23,12 @@ export function EDepois() {
   return (
     <section className="w-full relative">
       {/* Background image */}
-      <img
+      <Image
         src="/img/background-facilitando-avida.png"
         alt="Pessoa feliz após limpar o nome"
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+        fill
+        className="object-cover pointer-events-none"
+        sizes="100vw"
       />
 
       {/* Content */}

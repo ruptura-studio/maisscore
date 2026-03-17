@@ -138,10 +138,6 @@
     @apply font-semibold text-foreground;
   }
 
-  p, span, label, li {
-    color: hsl(var(--foreground));
-  }
-
   ::placeholder {
     color: hsl(var(--muted-foreground));
     opacity: 1;

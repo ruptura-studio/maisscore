@@ -1,14 +1,18 @@
 import { BookOpen } from 'lucide-react'
+import Image from 'next/image'
 
 export function Hero() {
   return (
     <section className="relative w-full min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background image */}
       <div className="absolute inset-0 pointer-events-none">
-        <img
+        <Image
           src="/img/hero-background.png"
           alt=""
-          className="absolute inset-0 w-full h-full object-cover"
+          fill
+          priority
+          className="object-cover"
+          sizes="100vw"
         />
       </div>
 
@@ -35,7 +39,7 @@ export function Hero() {
           <div className="flex flex-col gap-3 w-full max-w-[350px]">
             <a
               href="#como-funciona"
-              className="flex items-center justify-center gap-2 bg-accent-dark text-white font-medium text-para-md px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors w-full"
+              className="flex items-center justify-center gap-2 bg-accent-dark text-white font-medium text-para-md px-6 py-3 rounded-lg hover:bg-accent-dark/85 transition-colors w-full"
             >
               <BookOpen size={16} />
               Você já conhece o Limpa Nome?

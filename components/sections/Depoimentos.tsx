@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Star, Home, CreditCard, Briefcase, Car, Clock } from 'lucide-react'
+import { Star, Home, CreditCard, Briefcase, Car, Clock, LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const depoimentos = [
@@ -70,7 +70,7 @@ function StarRating() {
   )
 }
 
-function Badge({ label, Icon, variant = 'accent' }: { label: string; Icon: any; variant?: 'accent' | 'dark' }) {
+function Badge({ label, Icon, variant = 'accent' }: { label: string; Icon: LucideIcon; variant?: 'accent' | 'dark' }) {
   return (
     <span
       className={`inline-flex w-fit items-center gap-1 px-1.5 py-px rounded-full text-[10px] font-medium text-white ${
@@ -85,14 +85,6 @@ function Badge({ label, Icon, variant = 'accent' }: { label: string; Icon: any; 
 
 export function Depoimentos() {
   const [activeIndex, setActiveIndex] = useState(0)
-
-  // Pré-carrega todas as fotos na montagem
-  useEffect(() => {
-    depoimentos.forEach((d) => {
-      const img = new window.Image()
-      img.src = d.foto
-    })
-  }, [])
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -125,6 +117,7 @@ export function Depoimentos() {
             </div>
             <div className="flex flex-col gap-3">
               <div className="flex items-center gap-3">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={featured.foto}
                   alt={featured.nome}
@@ -154,9 +147,11 @@ export function Depoimentos() {
                   onClick={() => setActiveIndex(depoimentos.indexOf(d))}
                   className="h-[140px] overflow-hidden bg-card border border-border rounded-lg px-4 py-6 flex gap-3 items-start text-left hover:border-accent-dark transition-colors"
                 >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={d.foto}
                     alt={d.nome}
+                    loading="lazy"
                     className="w-10 h-10 rounded-full object-cover shrink-0 mt-0.5"
                   />
                   <div className="flex flex-col justify-between min-w-0 flex-1 h-full">

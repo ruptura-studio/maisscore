@@ -1,4 +1,5 @@
 import { Eye, ShieldCheck, Zap, Search } from 'lucide-react'
+import { WHATSAPP_CONSULTA } from '@/lib/config'
 
 const diferenciais = [
   {
@@ -55,10 +56,10 @@ export function Diferenciais() {
             Faça uma consulta do seu CPF ou CNPJ clicando no botão abaixo.
           </p>
           <a
-            href="https://wa.me/5515974058014?text=Ol%C3%A1%2C%20vim%20por%20meio%20do%20site%20e%20quero%20fazer%20uma%20consulta%20no%20meu%20CPF%20ou%20CNPJ."
+            href={WHATSAPP_CONSULTA}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-accent-dark text-white font-semibold text-para-sm px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors uppercase tracking-[1px] mt-2"
+            className="inline-flex items-center gap-2 bg-accent-dark text-white font-semibold text-para-sm px-6 py-3 rounded-lg hover:bg-accent-dark/85 transition-colors uppercase tracking-[1px] mt-2"
           >
             <Search size={16} />
             Consultar CPF ou CNPJ

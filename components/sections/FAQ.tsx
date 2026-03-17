@@ -79,7 +79,7 @@ function Item({ pergunta, resposta }: { pergunta: string; resposta: string }) {
       <div
         className={cn(
           'overflow-hidden transition-all duration-300',
-          open ? 'max-h-96 pb-5' : 'max-h-0'
+          open ? 'max-h-[600px] pb-5' : 'max-h-0'
         )}
       >
         <p className="text-para-sm text-foreground leading-relaxed whitespace-pre-line">{resposta}</p>

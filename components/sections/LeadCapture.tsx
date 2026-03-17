@@ -246,7 +246,7 @@ export function LeadCapture() {
             </div>
 
             {/* Nome + CPF */}
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <div className={fieldClass}>
                 <label className={labelClass}>Nome Completo *</label>
                 <input
@@ -281,7 +281,7 @@ export function LeadCapture() {
             </div>
 
             {/* WhatsApp + E-Mail */}
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <div className={fieldClass}>
                 <label className={labelClass}>WhatsApp *</label>
                 <input

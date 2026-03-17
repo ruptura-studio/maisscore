@@ -2,8 +2,8 @@ import Image from 'next/image'
 import { ChevronRight, Mail, ShieldCheck, FileText, Receipt } from 'lucide-react'
 import { FaWhatsapp, FaInstagram } from 'react-icons/fa'
 
-const itemClass = 'flex items-center gap-2 text-para-sm text-[#fafafa] hover:text-white transition-colors whitespace-nowrap'
-const iconClass = 'shrink-0 text-[#fafafa]'
+const itemClass = 'flex items-center gap-2 text-para-sm text-neutral-50 hover:text-white transition-colors whitespace-nowrap'
+const iconClass = 'shrink-0 text-neutral-50'
 
 const navLinks = [
   { label: 'Nossos clientes', href: '#depoimentos' },
@@ -40,6 +40,8 @@ const legalLinks = [
 ]
 
 export function Footer() {
+  const year = new Date().getFullYear()
+
   return (
     <footer className="bg-grafite text-white">
       <div className="container-ms py-16">
@@ -55,7 +57,7 @@ export function Footer() {
                 height={32}
               />
             </a>
-            <p className="text-para-sm text-[#fafafa] leading-6">
+            <p className="text-para-sm text-neutral-50 leading-6">
               Especialistas em remoção de restrições de crédito. Devolvendo a liberdade financeira para brasileiros desde 2021.
             </p>
           </div>
@@ -72,7 +74,7 @@ export function Footer() {
 
           {/* Column 3 — Fale conosco */}
           <div className="flex flex-col gap-4 flex-1 p-6">
-            <p className="text-[18px] font-medium leading-[27px] text-[#fafafa]">
+            <p className="text-para-lg font-medium text-neutral-50">
               Fale conosco
             </p>
             {contactLinks.map((item) => (
@@ -90,7 +92,7 @@ export function Footer() {
 
           {/* Column 4 — Institucional */}
           <div className="flex flex-col gap-4 flex-1 p-6">
-            <p className="text-[18px] font-medium leading-[27px] text-[#fafafa]">
+            <p className="text-para-lg font-medium text-neutral-50">
               Institucional
             </p>
             {legalLinks.map((item) => (
@@ -107,8 +109,8 @@ export function Footer() {
       {/* Bottom bar */}
       <div className="border-t border-white/10 bg-[#171717]">
         <div className="container-ms pt-4 pb-8 flex items-center justify-center">
-          <p className="text-para-sm text-[#a3a3a3] text-center whitespace-nowrap">
-            © 2025 Mais Score — uma marca Ruptura Comércio Digital Ltda. | CNPJ: 64.945.712/0001-66
+          <p className="text-para-sm text-neutral-400 text-center">
+            © {year} Mais Score — uma marca Ruptura Comércio Digital Ltda. | CNPJ: 64.945.712/0001-66
           </p>
         </div>
       </div>

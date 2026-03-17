@@ -4,9 +4,8 @@ import { useState, useEffect } from 'react'
 import { Menu, X } from 'lucide-react'
 import { FaWhatsapp } from 'react-icons/fa'
 import { cn } from '@/lib/utils'
+import { WHATSAPP_GERAL } from '@/lib/config'
 import Image from 'next/image'
-
-const WHATSAPP_URL = 'https://wa.me/5515974058014?text=Ol%C3%A1!%20Vim%20pelo%20site%20e%20gostaria%20de%20saber%20mais%20sobre%20a%20limpeza%20do%20meu%20nome.'
 
 const navLinks = [
   { label: 'Nossos clientes', href: '#depoimentos' },
@@ -58,7 +57,7 @@ export function Header() {
 
         {/* CTA Button */}
         <a
-          href={WHATSAPP_URL}
+          href={WHATSAPP_GERAL}
           target="_blank"
           rel="noopener noreferrer"
           className="hidden md:flex items-center gap-2 bg-secondary text-accent-dark font-medium text-para-sm px-4 py-2 rounded-lg hover:bg-white transition-colors"
@@ -71,7 +70,8 @@ export function Header() {
         <button
           className="md:hidden text-white p-2"
           onClick={() => setOpen(!open)}
-          aria-label="Menu"
+          aria-label={open ? 'Fechar menu' : 'Abrir menu'}
+          aria-expanded={open}
         >
           {open ? <X size={22} /> : <Menu size={22} />}
         </button>
@@ -80,7 +80,7 @@ export function Header() {
       {/* Mobile Nav */}
       <div className={cn(
         'md:hidden bg-black/90 border-t border-white/10 overflow-hidden transition-all duration-300',
-        open ? 'max-h-96' : 'max-h-0'
+        open ? 'max-h-[400px]' : 'max-h-0'
       )}>
         <nav className="container-ms flex flex-col py-4 gap-1">
           {navLinks.map((link) => (
@@ -94,7 +94,7 @@ export function Header() {
             </a>
           ))}
           <a
-            href={WHATSAPP_URL}
+            href={WHATSAPP_GERAL}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setOpen(false)}

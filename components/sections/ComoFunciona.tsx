@@ -64,7 +64,7 @@ export function ComoFunciona() {
               {/* Step marker with trailing connector */}
               <div className="flex items-center h-8">
                 <div className="w-8 h-8 rounded-full border-2 border-border bg-white flex items-center justify-center shrink-0">
-                  <span className="text-para-xs font-semibold" style={{ color: 'rgb(30 78 216)' }}>{passo.numero}</span>
+                  <span className="text-para-xs font-semibold text-accent-dark">{passo.numero}</span>
                 </div>
                 <div className="flex-1 h-[2px] bg-border" />
               </div>

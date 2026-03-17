@@ -1,3 +1,5 @@
+import Image from 'next/image'
+
 const cards = [
   {
     title: 'Nascemos de uma crise, crescemos com propósito',
@@ -33,18 +35,20 @@ export function SobreNos() {
         <div className="grid grid-cols-1 lg:grid-cols-[450px_1fr] gap-8 items-stretch">
           {/* Photo with overlay text */}
           <div className="relative rounded-lg overflow-hidden w-full lg:max-w-[450px] min-h-[480px] lg:min-h-0 bg-gray-900">
-            <img
+            <Image
               src="/img/foto-escrit%C3%B3rio-alphaville.png"
               alt="Equipe Mais Score"
-              className="absolute inset-0 w-full h-full object-cover"
+              fill
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 450px"
             />
             {/* Gradiente garante legibilidade do texto sobre qualquer imagem */}
             <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-transparent" />
             <div className="absolute top-0 left-0 p-8 text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
-              <p className="text-[20px] font-semibold leading-tight mb-3 !text-white">
+              <p className="text-[20px] font-semibold leading-tight mb-3 text-white">
                 Muito mais que uma empresa, somos o seu recomeço
               </p>
-              <p className="text-para-sm !text-white leading-relaxed">
+              <p className="text-para-sm text-white leading-relaxed">
                 Limpar o nome é só o primeiro passo, por isso, cada cliente que passa pela Mais Score
                 recebe toda orientação possível sobre como manter o score saudável e evitar novas
                 negativações no mercado.
