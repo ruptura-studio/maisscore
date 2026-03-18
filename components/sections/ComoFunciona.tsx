@@ -1,29 +1,33 @@
-import { MessageCircle, Search, FileCheck, CheckCircle } from 'lucide-react'
+import { ShoppingCart, Search, Gavel, CheckCircle } from 'lucide-react'
 
 const passos = [
   {
-    numero: '01',
-    icon: MessageCircle,
-    titulo: 'Entre em contato',
-    desc: 'Fale com um especialista pelo WhatsApp. A consulta inicial é gratuita e sem compromisso.',
+    numero: 1,
+    icon: ShoppingCart,
+    titulo: 'Você adquire o serviço',
+    desc: 'Você compra o Limpa Nome em nosso site e preenche com seus dados para darmos início ao processo.',
+    badge: '5 minutos',
   },
   {
-    numero: '02',
+    numero: 2,
     icon: Search,
-    titulo: 'Análise do seu caso',
-    desc: 'Nossa equipe jurídica analisa suas dívidas e identifica quais podem ser removidas via processo legal.',
+    titulo: 'Analisamos seu caso',
+    desc: 'Nossos advogados analisam seu caso e fazem um mapeamento da melhor abordagem para iniciar o processo.',
+    badge: '24 horas',
   },
   {
-    numero: '03',
-    icon: FileCheck,
-    titulo: 'Processo em andamento',
-    desc: 'Abrimos o processo e você recebe atualizações em tempo real pelo WhatsApp a cada etapa.',
+    numero: 3,
+    icon: Gavel,
+    titulo: 'Entramos em ação',
+    desc: 'Nossa equipe jurídica realiza a abertura do processo para remoção de seu nome de sites de restrição de crédito.',
+    badge: 'Em até 7 dias úteis',
   },
   {
-    numero: '04',
+    numero: 4,
     icon: CheckCircle,
-    titulo: 'Nome limpo, vida nova',
-    desc: 'Em média 15 dias úteis seu nome já aparece limpo nos birôs de crédito. Garantia total.',
+    titulo: 'Nome limpo',
+    desc: 'Você recebe a confirmação com certificado pelo WhatsApp e pode retomar a busca por crédito sem preocupações.',
+    badge: 'Em até 15 dias',
   },
 ]
 
@@ -33,50 +37,39 @@ export function ComoFunciona() {
       <div className="container-ms flex flex-col gap-12">
         {/* Title */}
         <div className="flex flex-col items-center text-center gap-3">
-          <span className="text-caption text-muted uppercase tracking-[1.5px]">Processo</span>
+          <span className="text-caption text-foreground uppercase tracking-[1.5px]">Nosso processo</span>
           <h2 className="text-[36px] md:text-[48px] font-semibold leading-tight tracking-[-1.5px] text-foreground max-w-[700px]">
             Como funciona o processo de limpa nome da Mais Score
           </h2>
-          <p className="text-para-lg text-muted max-w-[560px]">
-            Um processo jurídico próprio, transparente e acessível. Sem promessas milagrosas.
-          </p>
         </div>
 
-        {/* Steps */}
+        {/* Step cards + markers */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {passos.map((passo, i) => (
-            <div key={passo.numero} className="flex flex-col gap-4 relative">
-              {/* Connector line (desktop) */}
-              {i < passos.length - 1 && (
-                <div className="hidden lg:block absolute top-5 left-[calc(50%+24px)] right-[-50%] h-px bg-border z-0" />
-              )}
-
-              <div className="relative z-10 w-10 h-10 bg-accent-dark rounded-lg flex items-center justify-center shrink-0">
-                <passo.icon size={20} className="text-white" />
+            <div key={passo.numero} className="flex flex-col gap-3">
+              {/* Card */}
+              <div className="bg-card border border-border rounded-lg p-6 flex flex-col gap-4 flex-1">
+                <div className="w-8 h-8 bg-secondary rounded-lg flex items-center justify-center shrink-0">
+                  <passo.icon size={16} className="text-foreground" />
+                </div>
+                <div className="flex flex-col gap-2 flex-1">
+                  <h3 className="text-heading-4 font-semibold text-foreground">{passo.titulo}</h3>
+                  <p className="text-para-sm text-foreground leading-relaxed">{passo.desc}</p>
+                </div>
+                <span className="inline-flex items-center self-start gap-1 bg-accent-dark text-white text-para-xs font-semibold px-3 py-1 rounded-full">
+                  {passo.badge}
+                </span>
               </div>
 
-              <div className="flex flex-col gap-2">
-                <span className="text-caption text-accent font-semibold tracking-[1.5px]">
-                  {passo.numero}
-                </span>
-                <h3 className="text-heading-4 font-semibold text-foreground">{passo.titulo}</h3>
-                <p className="text-para-sm text-muted leading-relaxed">{passo.desc}</p>
+              {/* Step marker with trailing connector */}
+              <div className="flex items-center h-8">
+                <div className="w-8 h-8 rounded-full border-2 border-border bg-white flex items-center justify-center shrink-0">
+                  <span className="text-para-xs font-semibold text-accent-dark">{passo.numero}</span>
+                </div>
+                <div className="flex-1 h-[2px] bg-border" />
               </div>
             </div>
           ))}
-        </div>
-
-        {/* CTA */}
-        <div className="flex justify-center mt-4">
-          <a
-            href="https://wa.me/5515974058014"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 bg-accent-dark text-white font-medium text-para-md px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            <MessageCircle size={16} />
-            Iniciar meu processo agora
-          </a>
         </div>
       </div>
     </section>
