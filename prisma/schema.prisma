@@ -6,31 +6,104 @@ datasource db {
   provider = "postgresql"
 }
 
-model Lead {
-  id        String   @id @default(cuid())
-  name      String?
-  email     String?
-  phone     String
-  cpf       String?
-  cnpj      String?
-  service   String
-  status    String   @default("new")
-  source    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Product {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug        String   @unique
+  name        String
+  description String?
+  price       Int
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  orders      Order[]
 
-  payments Payment[]
+  @@map("products")
+}
+
+model Lead {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  phone       String   @unique
+  email       String?
+  channel     String?
+  status      String   @default("novo")
+  utmSource   String?  @map("utm_source")
+  utmMedium   String?  @map("utm_medium")
+  utmCampaign String?  @map("utm_campaign")
+  notionId    String?  @map("notion_id")
+  crmId       String?  @map("crm_id")
+  notes       String?
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  orders      Order[]
+  nurtureLog  NurtureLog[]
+
+  @@map("leads")
+}
+
+model Order {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId       String   @map("lead_id") @db.Uuid
+  productId    String   @map("product_id") @db.Uuid
+  document     String?
+  documentType String?  @map("document_type")
+  status       String   @default("pendente")
+  pricePaid    Int      @map("price_paid")
+  discount     Int      @default(0)
+  notes        String?
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  lead         Lead     @relation(fields: [leadId], references: [id])
+  product      Product  @relation(fields: [productId], references: [id])
+  payment      Payment?
+  process      Process?
+
+  @@map("orders")
 }
 
 model Payment {
-  id        String    @id @default(cuid())
-  leadId    String
-  lead      Lead      @relation(fields: [leadId], references: [id])
-  gatewayId String?
-  amount    Float
-  status    String    @default("pending")
-  method    String?
-  paidAt    DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId         String    @unique @map("order_id") @db.Uuid
+  asaasId         String?   @unique @map("asaas_id")
+  method          String?
+  status          String    @default("pending")
+  amount          Int
+  pixKey          String?   @map("pix_key")
+  pixExpiresAt    DateTime? @map("pix_expires_at") @db.Timestamptz
+  boletoUrl       String?   @map("boleto_url")
+  boletoExpiresAt DateTime? @map("boleto_expires_at") @db.Timestamptz
+  confirmedAt     DateTime? @map("confirmed_at") @db.Timestamptz
+  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  order           Order     @relation(fields: [orderId], references: [id])
+
+  @@map("payments")
+}
+
+model Process {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId   String    @unique @map("order_id") @db.Uuid
+  status    String    @default("aguardando_inicio")
+  stage     String?
+  startedAt DateTime? @map("started_at") @db.Timestamptz
+  cleanedAt DateTime? @map("cleaned_at") @db.Timestamptz
+  proofUrl  String?   @map("proof_url")
+  notes     String?
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  order     Order     @relation(fields: [orderId], references: [id])
+
+  @@map("processes")
+}
+
+model NurtureLog {
+  id      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId  String   @map("lead_id") @db.Uuid
+  channel String
+  type    String
+  message String?
+  sentAt  DateTime @default(now()) @map("sent_at") @db.Timestamptz
+  status  String   @default("sent")
+  lead    Lead     @relation(fields: [leadId], references: [id])
+
+  @@map("nurture_log")
 }
