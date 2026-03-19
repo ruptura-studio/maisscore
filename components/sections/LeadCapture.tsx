@@ -103,6 +103,9 @@ export function LeadCapture() {
   const docField = useNumericField()
   const phoneField = useNumericField()
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [submitting, setSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState('')
 
   function validateField(name: string, value: string): string {
     switch (name) {
@@ -170,7 +173,7 @@ export function LeadCapture() {
     form.biros.length > 0 &&
     form.termos
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     const fields = ['nome', 'cpf', 'whatsapp', 'email'] as const
     const newErrors: Record<string, string> = {}
@@ -182,7 +185,31 @@ export function LeadCapture() {
       setErrors(newErrors)
       return
     }
-    alert('Obrigado! Em breve você receberá o Super Guia +Score no seu e-mail.')
+
+    setSubmitting(true)
+    setSubmitError('')
+    try {
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.nome,
+          phone: form.whatsapp.replace(/\D/g, ''),
+          email: form.email,
+          channel: 'site',
+        }),
+      })
+      const json = await res.json()
+      if (!res.ok || !json.success) {
+        setSubmitError(json.error ?? 'Erro ao enviar. Tente novamente.')
+      } else {
+        setSubmitted(true)
+      }
+    } catch {
+      setSubmitError('Sem conexão. Verifique sua internet e tente novamente.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -378,13 +405,24 @@ export function LeadCapture() {
                 </span>
               </label>
 
-              <button
-                type="submit"
-                disabled={!isFormValid}
-                className="w-full bg-accent-dark text-white font-medium text-para-md py-3 px-8 rounded-lg transition-colors hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-accent-dark"
-              >
-                Receber meu Super Guia
-              </button>
+              {submitError && (
+                <p className="text-para-xs text-red-500 text-center w-full">{submitError}</p>
+              )}
+
+              {submitted ? (
+                <div className="w-full rounded-lg bg-green-50 border border-green-200 px-6 py-4 text-center flex flex-col gap-1">
+                  <p className="text-para-sm font-semibold text-green-800">Guia enviado com sucesso!</p>
+                  <p className="text-para-xs text-green-700">Verifique seu e-mail em breve.</p>
+                </div>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={!isFormValid || submitting}
+                  className="w-full bg-accent-dark text-white font-medium text-para-md py-3 px-8 rounded-lg transition-colors hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-accent-dark"
+                >
+                  {submitting ? 'Enviando…' : 'Receber meu Super Guia'}
+                </button>
+              )}
             </div>
 
             <div className="w-full h-px bg-border" />
