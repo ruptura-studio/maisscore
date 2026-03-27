@@ -41,3 +41,7 @@ next-env.d.ts
 # claude code
 .claude/
 .mcp.json
+.planning/
+
+# dev tools (nunca enviar para produção)
+# /components/dev/
