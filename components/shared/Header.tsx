@@ -3,10 +3,11 @@
 import { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
-import { FaWhatsapp, FaInstagram } from 'react-icons/fa'
+import { FaWhatsapp } from 'react-icons/fa'
 import { cn } from '@/lib/utils'
 import { WHATSAPP_GERAL } from '@/lib/config'
 import Image from 'next/image'
+import { HeaderTopBar } from '@/components/shared/HeaderTopBar'
 
 const navLinks = [
   { label: 'Nossos Clientes', href: '#depoimentos' },
@@ -19,62 +20,17 @@ const navLinks = [
 export function Header() {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
-  const isStyleguide = pathname.startsWith('/styleguide')
+  const isDS = pathname.startsWith('/designsystem')
 
   return (
-    <header className={cn('w-full bg-white border-b border-brand-border sticky top-0 z-50', isStyleguide && 'm-0')}>
+    <header className={cn('w-full bg-white border-b border-brand-border sticky top-0 z-50', isDS && 'm-0')}>
       {/* Top bar */}
-      <div className={cn('hidden lg:block border-b border-brand-border', isStyleguide && '!hidden')}>
-        <div className="container-ms grid grid-cols-3 items-center py-2">
-          {/* Left: email */}
-          <div className="flex items-center">
-            <a
-              href="mailto:contato@maisscore.com.br"
-              className="flex items-center gap-2 text-[14px] text-brand-navy hover:text-brand-orange transition-colors"
-            >
-              <Image src="/icons/email-icon.svg" alt="" width={14} height={14} className="shrink-0" />
-              contato@maisscore.com.br
-            </a>
-          </div>
-
-          {/* Center: address */}
-          <div className="flex items-center justify-center">
-            <span className="flex items-center gap-2 text-[14px] text-brand-navy">
-              <Image src="/icons/location-icon.svg" alt="" width={14} height={14} className="shrink-0" />
-              Alameda Rio Negro, 503, Alphaville, Barueri-SP
-            </span>
-          </div>
-
-          {/* Right: social */}
-          <div className="flex items-center justify-end gap-[10px] text-[12px]">
-            <a
-              href="https://instagram.com/maisscore"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1 hover:text-brand-orange transition-colors"
-            >
-              <span className="text-brand-orange">/</span>
-              <FaInstagram size={14} className="text-brand-orange" />
-              <span className="text-brand-navy">Instagram</span>
-            </a>
-            <a
-              href={WHATSAPP_GERAL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1 hover:text-brand-orange transition-colors"
-            >
-              <span className="text-brand-orange">/</span>
-              <FaWhatsapp size={14} className="text-brand-orange" />
-              <span className="text-brand-navy">WhatsApp</span>
-            </a>
-          </div>
-        </div>
-      </div>
+      {!isDS && <HeaderTopBar />}
 
       {/* Main nav */}
-      <div className={cn('flex items-center justify-between', isStyleguide ? 'py-4 px-4' : 'container-ms py-4 lg:py-5')}>
+      <div className={cn('flex items-center justify-between', isDS ? 'py-4 px-4' : 'container-ms py-4 lg:py-5')}>
         {/* Logo */}
-        <a href={isStyleguide ? '/styleguide' : '/'} className="flex items-center shrink-0">
+        <a href={isDS ? '/designsystem' : '/'} className="flex items-center shrink-0">
           <Image
             src="/img/logo-mais-score-black.svg"
             alt="Mais Score"
@@ -85,7 +41,7 @@ export function Header() {
         </a>
 
         {/* Desktop Nav */}
-        <nav className={cn('hidden lg:flex items-center gap-1', isStyleguide && '!hidden')}>
+        <nav className={cn('hidden lg:flex items-center gap-1', isDS && '!hidden')}>
           {navLinks.map((link) => (
             <a
               key={link.href}
@@ -103,14 +59,14 @@ export function Header() {
         {/* Phone CTA */}
         <a
           href="tel:+5515974058014"
-          className={cn('hidden lg:flex items-center gap-2 text-brand-navy font-medium text-[16px] hover:text-brand-orange transition-colors', isStyleguide && '!hidden')}
+          className={cn('hidden lg:flex items-center gap-2 text-brand-navy font-medium text-[16px] hover:text-brand-orange transition-colors', isDS && '!hidden')}
         >
           <Image src="/icons/whatsapp-icon.svg" alt="" width={28} height={28} className="shrink-0" />
           15 97405-8014
         </a>
 
         {/* Mobile Menu Toggle */}
-        {!isStyleguide && (
+        {!isDS && (
           <button
             className="lg:hidden text-brand-navy p-2"
             onClick={() => setOpen(!open)}

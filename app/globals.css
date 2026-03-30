@@ -3,7 +3,19 @@
 @tailwind utilities;
 
 @layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+  }
+
   :root {
+    /* === LAYOUT === */
+    --header-height: 122px;
+
+    /* === TEXT COLORS (Figma: TEXT_*) === */
+    --text-default: 0 0% 28%; /* #484848 — corpo de texto padrão */
+
     /* === BASE === */
     --background: 0 0% 100%;
     --foreground: 0 0% 9%;
@@ -53,13 +65,13 @@
 
     /* === SIDEBAR === */
     --sidebar: 0 0% 98%;
-    --sidebar-foreground: 0 0% 9%;
-    --sidebar-primary: 222 68% 14%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 96%;
-    --sidebar-accent-foreground: 0 0% 9%;
-    --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 222 68% 14%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
 
     /* === SEMANTIC COLORS === */
     --success: 142 76% 36%;
@@ -68,6 +80,7 @@
     --warning-foreground: 0 0% 9%;
     --info: 199 89% 48%;
     --info-foreground: 0 0% 100%;
+    --sidebar-background: 0 0% 98%;
   }
 
   .dark {
@@ -106,13 +119,13 @@
     --chart-5: 0 84% 60%;
 
     --sidebar: 222 68% 5%;
-    --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 210 100% 63%;
-    --sidebar-primary-foreground: 0 0% 9%;
-    --sidebar-accent: 222 68% 12%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 222 68% 16%;
-    --sidebar-ring: 210 100% 63%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
 
     --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
@@ -120,6 +133,7 @@
     --warning-foreground: 0 0% 9%;
     --info: 199 89% 48%;
     --info-foreground: 0 0% 100%;
+    --sidebar-background: 240 5.9% 10%;
   }
 
   * {
@@ -131,11 +145,12 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background font-sans antialiased;
+    color: hsl(var(--text-default));
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-semibold text-foreground;
+    @apply font-semibold text-brand-navy;
   }
 
   ::placeholder {
@@ -149,17 +164,70 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ── Hero card animations ── */
+@keyframes hero-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-14px); }
+}
+
+@keyframes hero-card-in {
+  from { opacity: 0; transform: translateY(28px) scale(0.94); }
+  to   { opacity: 1; transform: translateY(0px)  scale(1);    }
+}
+
 @layer utilities {
+  /* Semantic text colors — Figma TEXT_* tokens */
+  .text-default  { color: hsl(var(--text-default)); }   /* #484848 — corpo de texto */
+
   .animate-fade-in {
     animation: fade-in 0.3s ease both;
   }
   /* Container padrão Mais Score */
   .container-ms {
-    @apply w-full mx-auto px-6 md:px-16 xl:px-24 max-w-[1280px];
+    @apply w-full mx-auto px-6 md:px-16 xl:px-24 max-w-[1440px];
   }
 
   /* Conteúdo interno máximo */
   .content-ms {
     @apply max-w-container mx-auto;
+  }
+
+  /* Styleguide: bloco de texto com largura legível */
+  .sg-prose {
+    max-width: 720px;
+  }
+
+  /* Styleguide: preview e code blocks com largura máxima de 1280px */
+  .preview-full {
+    max-width: 1280px;
+    width: 100%;
+  }
+}
+
+@layer components {
+  /* ── Botões ── */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 bg-brand-orange text-white font-normal whitespace-nowrap transition-colors hover:bg-[#e63a00];
+    font-family: var(--font-dm-sans), sans-serif;
+    height: auto;
+    border-radius: 24px;
+    padding: 12px 24px;
+    font-size: 16px;
+    line-height: 16px;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 bg-brand-navy text-white font-normal whitespace-nowrap transition-colors hover:bg-[#1a2c45];
+    font-family: var(--font-dm-sans), sans-serif;
+    height: auto;
+    border-radius: 24px;
+    padding: 12px 24px;
+    font-size: 16px;
+    line-height: 16px;
+  }
+
+  /* ── Nav link ── */
+  .nav-link {
+    @apply text-brand-navy hover:text-brand-orange transition-colors;
   }
 }

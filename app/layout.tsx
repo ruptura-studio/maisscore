@@ -1,9 +1,17 @@
 import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
+import { DM_Sans } from 'next/font/google'
 import './globals.css'
+
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '700'],
+  variable: '--font-dm-sans',
+})
 import { Header } from '@/components/shared/Header'
 import { Footer } from '@/components/shared/Footer'
+import { GridOverlay } from '@/components/dev/GridOverlay'
 
 export const metadata: Metadata = {
   title: 'Mais Score — Regularize seu CPF em até 15 dias úteis',
@@ -42,11 +50,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="pt-BR" className={`${GeistSans.variable} ${GeistMono.variable}`}>
+    <html lang="pt-BR" className={`${GeistSans.variable} ${GeistMono.variable} ${dmSans.variable}`}>
       <body>
         <Header />
         <main>{children}</main>
         <Footer />
+        {process.env.NODE_ENV === 'development' && <GridOverlay />}
       </body>
     </html>
   )

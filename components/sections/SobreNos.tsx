@@ -1,72 +1,86 @@
 import Image from 'next/image'
 
-const cards = [
+const INFOBOXES = [
   {
-    title: 'Nascemos de uma crise, crescemos com propósito',
-    desc: 'Em 2021, no auge da pandemia, vimos famílias inteiras sendo excluídas do sistema financeiro por dívidas que a vida — e não o descuido — havia criado. Foi dessa dor que surgiu a Mais Score: com a missão de devolver dignidade e oportunidades a quem mais precisava.',
+    overline: '2021',
+    heading: 'Nascemos de uma crise, crescemos com propósito',
+    body: 'No auge da pandemia, vimos famílias inteiras sendo excluídas do sistema financeiro por dívidas que a vida havia criado. Foi dessa dor que surgiu a Mais Score.',
   },
   {
-    title: 'Construímos o caminho que não existia',
-    desc: 'Não havia um método simples, acessível e juridicamente seguro para limpar o nome no Brasil. Então criamos o nosso. Um processo próprio, eficaz e transparente, que hoje remove restrições nas principais plataformas de dívida ativa — com 97% de taxa de sucesso.',
+    overline: 'O MÉTODO',
+    heading: 'Construímos o caminho que não existia para ninguém',
+    body: 'Não havia um processo simples, acessível e juridicamente seguro para limpar o nome no Brasil. Então criamos o nosso, com 97% de taxa de sucesso.',
   },
   {
-    title: 'Ir além é parte do nosso processo',
-    desc: 'Limpar o nome abre portas, mas manter elas abertas exige orientação. Por isso, cada cliente da Mais Score recebe acompanhamento sobre como preservar o score saudável, evitar novas negativações e construir um histórico de crédito que sustente os sonhos que agora voltaram a ser possíveis.',
+    overline: 'A GARANTIA',
+    heading: 'Ir além é a parte fundamental de todo o nosso processo',
+    body: 'Se não conseguirmos regularizar o seu CPF em 30 dias, devolvemos o seu investimento. Nossa taxa de 97% de sucesso não é marketing, é resultado validado.',
   },
   {
-    title: 'Nossas pessoas cuidando de pessoas',
-    desc: 'Não somos um software nem um serviço automatizado. Somos um time que acredita que cada CPF tem uma história — e que essa história merece atenção real. Cada caso é tratado com seriedade, empatia e o compromisso de que o nosso trabalho só termina quando você conquista o que precisa.',
+    overline: 'AS PESSOAS',
+    heading: 'Equipe formada por pessoas cuidando de outras pessoas',
+    body: 'Não somos um software nem um serviço automatizado. Somos um time que acredita que cada CPF tem uma história e que essa história merece atenção real.',
   },
 ]
 
 export function SobreNos() {
   return (
-    <section id="sobre" className="w-full py-24 bg-secondary">
-      <div className="container-ms flex flex-col gap-16">
-        {/* Title */}
-        <div className="flex flex-col items-center text-center gap-3">
-          <span className="text-caption text-foreground uppercase tracking-[1.5px]">Sobre nós</span>
-          <h2 className="text-[36px] md:text-[48px] font-semibold leading-tight tracking-[-1.5px] text-foreground max-w-[760px]">
-            Existimos para provar que dívida do passado não define seu futuro
-          </h2>
-        </div>
+    <>
+      {/* Seção 1 — Hero com imagem de fundo */}
+      <section
+        className="relative w-full overflow-hidden bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/img/background-cpf-negativado.png')" }}
+      >
+        <div className="container-ms flex flex-col-reverse items-center gap-10 pt-16 lg:flex-row lg:items-end lg:gap-10 lg:pt-[145px]">
+          {/* Imagem da garota */}
+          <Image
+            src="/img/garota-mostrando-score.png"
+            alt="Garota mostrando score no celular"
+            width={637}
+            height={710}
+            className="w-full max-w-[420px] self-end object-contain lg:max-w-[637px]"
+          />
 
-        {/* Office photo + cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-[450px_1fr] gap-8 items-stretch">
-          {/* Photo with overlay text */}
-          <div className="relative rounded-lg overflow-hidden w-full lg:max-w-[450px] min-h-[480px] lg:min-h-0 bg-gray-900">
-            <Image
-              src="/img/foto-escrit%C3%B3rio-alphaville.png"
-              alt="Equipe Mais Score"
-              fill
-              className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 450px"
-            />
-            {/* Gradiente garante legibilidade do texto sobre qualquer imagem */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-transparent" />
-            <div className="absolute top-0 left-0 p-8 text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
-              <p className="text-[20px] font-semibold leading-tight mb-3 text-white">
-                Muito mais que uma empresa, somos o seu recomeço
-              </p>
-              <p className="text-para-sm text-white leading-relaxed">
-                Limpar o nome é só o primeiro passo, por isso, cada cliente que passa pela Mais Score
-                recebe toda orientação possível sobre como manter o score saudável e evitar novas
-                negativações no mercado.
-              </p>
-            </div>
+          {/* Bloco de texto */}
+          <div className="flex flex-col gap-10 pb-10 lg:max-w-[530px] lg:pb-20">
+            <p className="font-dm text-[24px] font-bold tracking-[-0.48px] text-brand-orange">
+              SOBRE NÓS
+            </p>
+            {/* TODO: text-[60px] — sem token de 60px no design system; heading-1 é 48px e display é 80px */}
+            <h2 className="font-dm text-[40px] font-normal leading-[1.05] tracking-[-1px] text-brand-navy lg:text-[60px]">
+              Por trás de cada CPF desbloqueado, existe uma história que recomeçou
+            </h2>
+            <p className="font-dm text-[18px] leading-[1.5] text-brand-navy lg:text-[24px]">
+              Por trás de cada CPF negativado existe uma pessoa que quer voltar a crescer. A Mais Score existe para isso... devolver o acesso ao crédito de forma legal, rápida e garantida.
+            </p>
           </div>
+        </div>
+      </section>
 
-          {/* Cards 2x2 — sem ícones */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 content-start">
-            {cards.map((card) => (
-              <div key={card.title} className="border border-border rounded-lg p-6 flex flex-col gap-3">
-                <h3 className="text-heading-4 font-semibold text-foreground">{card.title}</h3>
-                <p className="text-para-sm text-foreground leading-relaxed">{card.desc}</p>
+      {/* Seção 2 — Nossa História (4 cards) */}
+      <section className="w-full border-b border-brand-navy/10 bg-white pb-[110px] pt-[60px]">
+        <div className="container-ms">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
+            {INFOBOXES.map((item, i) => (
+              // TODO: bg-[#f2f2f2] — sem token equivalente no design system
+              <div
+                key={i}
+                className="flex flex-col gap-[10px] rounded-xl bg-[#f2f2f2] px-[45px] pb-[60px] pt-[69px]"
+              >
+                <p className="font-dm text-[16px] font-bold tracking-[-0.48px] text-brand-orange">
+                  {item.overline}
+                </p>
+                <h3 className="font-dm text-[24px] font-bold leading-[1.05] tracking-[-0.48px] text-brand-navy">
+                  {item.heading}
+                </h3>
+                <p className="font-dm text-[18px] leading-[1.3] tracking-[-0.28px] text-foreground-alt">
+                  {item.body}
+                </p>
               </div>
             ))}
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   )
 }

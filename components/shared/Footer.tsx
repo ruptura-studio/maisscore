@@ -1,6 +1,9 @@
+'use client'
+
 import Image from 'next/image'
 import { ChevronRight, Mail, ShieldCheck, FileText, Receipt } from 'lucide-react'
 import { FaWhatsapp, FaInstagram } from 'react-icons/fa'
+import { usePathname } from 'next/navigation'
 
 const itemClass = 'flex items-center gap-2 text-para-sm text-neutral-50 hover:text-white transition-colors whitespace-nowrap'
 const iconClass = 'shrink-0 text-neutral-50'
@@ -41,10 +44,12 @@ const legalLinks = [
 
 export function Footer() {
   const year = new Date().getFullYear()
+  const pathname = usePathname()
+  const isDS = pathname.startsWith('/designsystem')
 
   return (
     <footer className="bg-grafite text-white">
-      <div className="container-ms py-16">
+      {!isDS && <div className="container-ms py-16">
         <div className="flex flex-col lg:flex-row gap-8 items-start">
 
           {/* Column 1 — Logo + tagline */}
@@ -104,13 +109,13 @@ export function Footer() {
           </div>
 
         </div>
-      </div>
+      </div>}
 
       {/* Bottom bar */}
       <div className="border-t border-white/10 bg-[#171717]">
         <div className="container-ms pt-4 pb-8 flex items-center justify-center">
           <p className="text-para-sm text-neutral-400 text-center">
-            © {year} Mais Score — uma marca Ruptura Comércio Digital Ltda. | CNPJ: 64.945.712/0001-66
+            © {year} Mais Score, uma marca Ruptura Comércio Digital Ltda. | CNPJ: 64.945.712/0001-66
           </p>
         </div>
       </div>

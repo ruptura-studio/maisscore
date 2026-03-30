@@ -115,21 +115,19 @@ export function Hero() {
           <div className="relative z-10 flex flex-col justify-center gap-10 py-[8%]">
             <div className="flex flex-col gap-[40px]">
               <h1
-                className="font-dm font-normal text-brand-navy"
-                style={{ fontSize: '5rem', lineHeight: '0.925', maxWidth: '34.375rem' }}
+                className="font-dm font-normal text-brand-navy text-display"
+                style={{ maxWidth: '34.375rem' }}
               >
                 Limpe seu nome em até 30 dias
               </h1>
               <div className="flex flex-col gap-[16px]" style={{ maxWidth: '550px' }}>
                 <p
-                  className="font-dm font-medium text-brand-navy"
-                  style={{ fontSize: '22px', lineHeight: '27.2px' }}
+                  className="font-dm font-normal text-brand-navy text-heading-5"
                 >
                   Mesmo sem quitar as suas dívidas
                 </p>
                 <div
-                  className="font-dm font-light text-brand-navy"
-                  style={{ fontSize: '16px', lineHeight: '25.6px' }}
+                  className="font-sans font-normal text-default text-para-md"
                 >
                   <p>Via processo jurídico, com base no Art. 42 do CDC.</p>
                   <p>97% de sucesso. Resultado garantido ou seu dinheiro de volta.</p>
@@ -176,14 +174,12 @@ export function Hero() {
               </div>
               <div className="flex flex-col items-start ml-8">
                 <span
-                  className="font-dm font-normal text-brand-navy whitespace-nowrap"
-                  style={{ fontSize: '36px', lineHeight: '46.8px', letterSpacing: '-1px' }}
+                  className="font-dm font-normal text-brand-navy whitespace-nowrap text-stat"
                 >
                   3.142+
                 </span>
                 <span
-                  className="font-dm font-light text-brand-navy whitespace-nowrap"
-                  style={{ fontSize: '16px', lineHeight: '25.6px' }}
+                  className="font-sans font-normal text-default whitespace-nowrap text-para-md"
                 >
                   famílias com o nome limpo
                 </span>
@@ -208,7 +204,7 @@ export function Hero() {
             {/* Card 97% — entry 0.1s · float 4s · parallax depth -22/-16 */}
             <div
               ref={card97Ref}
-              className="absolute bg-white rounded-[16px] shadow-[0_8px_40px_rgba(0,0,0,0.10)] flex flex-col items-center justify-center gap-[4px] px-[16px]"
+              className="absolute bg-white rounded-[16px] shadow-card flex flex-col items-center justify-center gap-[4px] px-[16px]"
               style={{
                 top: '8.7%', right: '12%', width: '138px', height: '180px',
                 transform: 'scale(0.95)',
@@ -220,19 +216,17 @@ export function Hero() {
                 <Image src="/img/hero-card-grafico.png" alt="" fill className="object-contain" />
               </div>
               <span
-                className="font-dm font-normal text-brand-navy text-center"
-                style={{ fontSize: '26px', lineHeight: '32px', letterSpacing: '-0.5px' }}
+                className="font-dm font-normal text-default text-center text-card-stat"
               >97%</span>
               <span
-                className="font-dm font-light text-brand-navy text-center"
-                style={{ fontSize: '13px', lineHeight: '18px' }}
+                className="font-dm font-normal text-default text-center text-label-xs"
               >taxa de sucesso</span>
             </div>
 
             {/* Card 7 dias — entry 0.35s · float 3.5s · parallax depth -15/-12 */}
             <div
               ref={card7Ref}
-              className="absolute bg-white rounded-[16px] shadow-[0_8px_40px_rgba(0,0,0,0.10)] flex items-center gap-[12px] px-[16px]"
+              className="absolute bg-white rounded-[16px] shadow-card flex items-center gap-[12px] px-[16px]"
               style={{
                 top: 'calc(32% - 50px)', left: 'calc(4% - 30px)', width: '196px', height: '106px',
                 transform: 'scale(0.95)',
@@ -245,12 +239,10 @@ export function Hero() {
               </div>
               <div className="flex flex-col gap-[2px]">
                 <span
-                  className="font-dm font-normal text-brand-navy whitespace-nowrap"
-                  style={{ fontSize: '26px', lineHeight: '32px', letterSpacing: '-0.5px' }}
+                  className="font-dm font-normal text-default whitespace-nowrap text-card-stat"
                 >7 dias</span>
                 <span
-                  className="font-dm font-light text-neutral-400 whitespace-nowrap"
-                  style={{ fontSize: '12px', lineHeight: '18px' }}
+                  className="font-dm font-normal text-default whitespace-nowrap text-label-xs"
                 >Processo iniciado</span>
               </div>
             </div>
@@ -268,12 +260,12 @@ export function Hero() {
             >
               <div className="flex flex-col gap-[2px]">
                 <div className="flex items-start text-white font-dm font-normal">
-                  <span style={{ fontSize: '10px', lineHeight: '10px', marginTop: '6px' }}>R$</span>
-                  <span style={{ fontSize: '26px', lineHeight: '32px', letterSpacing: '-0.5px' }}>595</span>
+                  <span className="text-label-xs" style={{ marginTop: '4px' }}>R$</span>
+                  <span className="text-card-stat">595</span>
                 </div>
                 <span
-                  className="text-white font-dm font-light"
-                  style={{ fontSize: '13px', lineHeight: '18px', width: '90px' }}
+                  className="text-white font-dm font-normal text-label-xs"
+                  style={{ width: '90px' }}
                 >para CPF à vista</span>
               </div>
               <div className="relative flex-none" style={{ width: '50px', height: '50px' }}>
