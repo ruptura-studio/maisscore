@@ -1,0 +1,60 @@
+import Image from 'next/image'
+import { WHATSAPP_GERAL } from '@/lib/config'
+
+export function CtaWhatsapp() {
+  return (
+    <section className="relative w-full overflow-hidden bg-brand-navy" style={{ minHeight: '560px' }}>
+      {/* Imagem da mulher — lado esquerdo */}
+      <div className="absolute bottom-0 left-0 h-full w-1/2 hidden lg:block">
+        <Image
+          src="/img/cta-whatsapp.png"
+          alt="Mulher segurando tablet"
+          fill
+          className="object-cover object-right-bottom"
+          sizes="50vw"
+        />
+        {/* Fade para a direita para blend com o fundo */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(to right, rgba(16,28,46,0) 50%, rgba(16,28,46,1) 100%)',
+          }}
+        />
+      </div>
+
+      {/* Conteúdo — lado direito */}
+      <div
+        className="container-ms relative z-10 flex items-center justify-end py-20"
+        style={{ minHeight: '560px' }}
+      >
+        <div className="flex w-full flex-col gap-6 lg:max-w-[520px]">
+          <h2 className="font-dm text-[40px] font-normal leading-[1.05] tracking-[-1px] text-white lg:text-[52px]">
+            Fale com a gente agora pelo WhatsApp
+          </h2>
+          <p className="font-dm text-[16px] leading-[1.6] text-white/70 lg:text-[18px]">
+            Nossa equipe está pronta para tirar suas dúvidas, avaliar o seu caso e
+            iniciar o processo de regularização do seu CPF ainda hoje.
+          </p>
+          <div>
+            <a
+              href={WHATSAPP_GERAL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary"
+            >
+              Falar no WhatsApp
+              <Image
+                src="/icons/arrow-up-icon.svg"
+                alt=""
+                width={10}
+                height={10}
+                className="shrink-0"
+              />
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
