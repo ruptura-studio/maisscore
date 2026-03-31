@@ -113,22 +113,19 @@ export function Hero() {
 
           {/* ── LEFT COLUMN ── */}
           <div className="relative z-10 flex flex-col justify-center gap-10 py-[8%]">
-            <div className="flex flex-col gap-[40px]">
+            {/* TODO: gap-[40px] sem token DS — usando gap-8 (32px) */}
+            <div className="flex flex-col gap-8">
               <h1
                 className="font-dm font-normal text-brand-navy text-display"
                 style={{ maxWidth: '34.375rem' }}
               >
                 Limpe seu nome em até 30 dias
               </h1>
-              <div className="flex flex-col gap-[16px]" style={{ maxWidth: '550px' }}>
-                <p
-                  className="font-dm font-normal text-brand-navy text-heading-5"
-                >
+              <div className="flex flex-col gap-4" style={{ maxWidth: '550px' }}>
+                <p className="font-dm font-normal text-brand-navy text-h5">
                   Mesmo sem quitar as suas dívidas
                 </p>
-                <div
-                  className="font-sans font-normal text-default text-para-md"
-                >
+                <div className="font-sans font-normal text-grafite text-p">
                   <p>Via processo jurídico, com base no Art. 42 do CDC.</p>
                   <p>97% de sucesso. Resultado garantido ou seu dinheiro de volta.</p>
                 </div>
@@ -173,14 +170,10 @@ export function Hero() {
                 ))}
               </div>
               <div className="flex flex-col items-start ml-8">
-                <span
-                  className="font-dm font-normal text-brand-navy whitespace-nowrap text-stat"
-                >
+                <span className="font-dm font-normal text-brand-navy whitespace-nowrap text-h2">
                   3.142+
                 </span>
-                <span
-                  className="font-sans font-normal text-default whitespace-nowrap text-para-md"
-                >
+                <span className="font-sans font-normal text-grafite whitespace-nowrap text-p">
                   famílias com o nome limpo
                 </span>
               </div>
@@ -216,10 +209,10 @@ export function Hero() {
                 <Image src="/img/hero-card-grafico.png" alt="" fill className="object-contain" />
               </div>
               <span
-                className="font-dm font-normal text-default text-center text-card-stat"
+                className="font-dm font-normal text-brand-navy text-center text-h4"
               >97%</span>
               <span
-                className="font-dm font-normal text-default text-center text-label-xs"
+                className="font-dm font-normal text-brand-navy text-center text-lable"
               >taxa de sucesso</span>
             </div>
 
@@ -239,10 +232,10 @@ export function Hero() {
               </div>
               <div className="flex flex-col gap-[2px]">
                 <span
-                  className="font-dm font-normal text-default whitespace-nowrap text-card-stat"
+                  className="font-dm font-normal text-brand-navy whitespace-nowrap text-h4"
                 >7 dias</span>
                 <span
-                  className="font-dm font-normal text-default whitespace-nowrap text-label-xs"
+                  className="font-dm font-normal text-brand-navy whitespace-nowrap text-lable"
                 >Processo iniciado</span>
               </div>
             </div>
@@ -260,11 +253,11 @@ export function Hero() {
             >
               <div className="flex flex-col gap-[2px]">
                 <div className="flex items-start text-white font-dm font-normal">
-                  <span className="text-label-xs" style={{ marginTop: '4px' }}>R$</span>
-                  <span className="text-card-stat">595</span>
+                  <span className="text-lable" style={{ marginTop: '4px' }}>R$</span>
+                  <span className="text-h4">595</span>
                 </div>
                 <span
-                  className="text-white font-dm font-normal text-label-xs"
+                  className="text-white font-dm font-normal text-lable"
                   style={{ width: '90px' }}
                 >para CPF à vista</span>
               </div>
