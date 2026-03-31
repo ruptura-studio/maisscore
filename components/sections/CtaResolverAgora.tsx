@@ -27,11 +27,11 @@ export function CtaResolverAgora() {
       {/* Content — right-aligned */}
       <div className="container-ms relative z-10 flex items-center justify-end py-20" style={{ minHeight: '650px' }}>
         <div className="flex flex-col gap-8 max-w-[680px]">
-          <blockquote className="font-dm font-normal text-white text-heading-1">
+          <blockquote className="font-dm font-normal text-white text-h1">
             "Enquanto você espera, seu CPF continua bloqueando crédito, emprego e oportunidades."
           </blockquote>
 
-          <p className="font-sans text-white/75 text-para-md">
+          <p className="font-sans text-white/75 text-p">
             Cada dia com o nome sujo é um dia pagando mais caro: em juros, em oportunidades
             perdidas, em dependência. O problema não se resolve sozinho.
           </p>

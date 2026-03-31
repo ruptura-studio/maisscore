@@ -78,10 +78,10 @@ export function Pesquisa() {
           <div className="rounded-sm border border-border-light bg-neutral-50 p-6">
             {/* Card header */}
             <div className="flex items-center justify-between mb-4">
-              <span className="font-dm font-normal text-brand-navy text-para-sm">
+              <span className="font-dm font-normal text-brand-navy text-subtitle">
                 Inadimplência no Brasil
               </span>
-              <span className="font-sans text-brand-orange text-para-xs">
+              <span className="font-sans text-brand-orange text-lable">
                 Fonte: Serasa Experian
               </span>
             </div>
@@ -164,10 +164,10 @@ export function Pesquisa() {
 
           {/* Text content */}
           <div className="flex flex-col gap-6">
-            <h2 className="font-dm font-normal text-brand-navy text-heading-1">
+            <h2 className="font-dm font-normal text-brand-navy text-h1">
               76 milhões de Brasileiros travados pelo nome sujo
             </h2>
-            <div className="flex flex-col gap-4 text-para-md text-default">
+            <div className="flex flex-col gap-4 text-p text-grafite">
               <p>
                 O nome sujo não para no banco. Ele aparece na hora de alugar um imóvel, contratar
                 um plano de celular, conseguir um emprego. Cada dia negativado é mais uma porta
@@ -192,10 +192,10 @@ export function Pesquisa() {
               <div className="relative w-8 h-8">
                 <Image src={stat.icon} alt="" fill className="object-contain" />
               </div>
-              <span className="font-dm font-normal text-brand-navy text-heading-4">
+              <span className="font-dm font-normal text-brand-navy text-subtitle">
                 {stat.title}
               </span>
-              <p className="font-sans text-default text-para-sm">
+              <p className="font-sans text-grafite text-p-sm">
                 {stat.description}
               </p>
             </div>

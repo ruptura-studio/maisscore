@@ -53,14 +53,15 @@ export function Precos() {
       <div className="container-ms relative z-10 pt-[100px]">
         {/* Bloco de texto — max 550px */}
         <div className="mb-5 flex max-w-[550px] flex-col gap-4">
-          {/* TODO: text-[60px] — sem token exato; display é 80px e heading-1 é 48px */}
+          {/* TODO: text-[60px] sem token — text-h1 mobile (48px); text-display desktop (64px) */}
           <h2
-            className="font-dm text-[40px] font-normal leading-[1.0] tracking-[-1px] text-brand-navy lg:text-[60px]"
+            className="font-dm text-h1 font-normal text-brand-navy lg:text-display"
             style={{ textShadow: '0 2px 10px rgba(255,255,255,0.7)' }}
           >
             Quanto vale voltar a ter acesso ao crédito?
           </h2>
-          <p className="font-dm text-[18px] leading-[1.3] text-grafite lg:text-[24px]">
+          {/* text-[18px] → text-h6 font-normal (18px/DM); lg:text-[24px] → lg:text-h5 (24px/400/DM) */}
+          <p className="font-dm text-h6 font-normal text-grafite lg:text-h5">
             Enquanto seu nome estiver sujo, você paga mais em juros, perde financiamentos e depende
             de outras pessoas. Resolver agora custa menos do que continuar travado.
           </p>
@@ -90,23 +91,26 @@ export function Precos() {
                 >
                   {/* Identificação do plano */}
                   <div className="flex flex-col gap-1">
-                    <span className="font-dm text-[13px] font-bold uppercase tracking-[2px] text-brand-orange">
+                    {/* TODO: text-[13px] → text-cap (14px/DM/uppercase); tracking-[2px] override necessário pois token baked é 6px */}
+                    <span className="font-dm text-cap uppercase tracking-[2px] font-bold text-brand-orange">
                       {plano.tipo}
                     </span>
-                    <p className="font-dm text-para-sm text-foreground-alt">{plano.descricao}</p>
+                    <p className="font-dm text-p text-foreground-alt">{plano.descricao}</p>
                   </div>
 
                   {/* Preço */}
                   <div className="flex flex-col gap-1">
                     <div className="flex items-baseline gap-0.5">
-                      <span className="font-dm text-[44px] font-bold leading-none tracking-[-2px] text-brand-navy xl:text-[52px]">
+                      {/* TODO: text-[44px]/xl:text-[52px] sem tokens — usando text-h1 (48px) como aproximação */}
+                      <span className="font-dm text-h1 font-bold leading-none text-brand-navy">
                         {plano.preco}
                       </span>
-                      <span className="font-dm text-[22px] font-bold text-brand-navy">
+                      {/* text-[22px] font-bold → text-h4 (24px/600/DM, mais próximo) */}
+                      <span className="font-dm text-h4 text-brand-navy">
                         {plano.centavos}
                       </span>
                     </div>
-                    <p className="font-dm text-para-xs text-foreground-alt">{plano.pagamento}</p>
+                    <p className="font-dm text-lable text-foreground-alt">{plano.pagamento}</p>
                   </div>
 
                   {/* Features */}
@@ -120,7 +124,7 @@ export function Precos() {
                           height={20}
                           className="shrink-0"
                         />
-                        <span className="font-dm text-para-sm text-brand-navy">{feature}</span>
+                        <span className="font-dm text-p text-brand-navy">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -146,7 +150,7 @@ export function Precos() {
             </div>
 
             {/* Texto de garantia */}
-            <p className="max-w-[477px] font-dm text-para-sm leading-[1.3] text-brand-navy">
+            <p className="max-w-[477px] font-dm text-p-sm leading-[1.3] text-brand-navy">
               <strong className="font-semibold">Garantia total de resultado</strong>
               <br />
               Se seu nome não ficar limpo em até 30 dias úteis, você recebe o dinheiro de volta. Sem

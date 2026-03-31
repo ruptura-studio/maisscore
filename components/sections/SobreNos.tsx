@@ -43,14 +43,16 @@ export function SobreNos() {
 
           {/* Bloco de texto */}
           <div className="flex flex-col gap-10 pb-10 lg:max-w-[530px] lg:pb-20">
-            <p className="font-dm text-[24px] font-bold tracking-[-0.48px] text-brand-orange">
+            {/* text-[24px] font-bold → text-h4 (24px/600/DM, exato) */}
+            <p className="font-dm text-h4 text-brand-orange">
               SOBRE NÓS
             </p>
-            {/* TODO: text-[60px] — sem token de 60px no design system; heading-1 é 48px e display é 80px */}
-            <h2 className="font-dm text-[40px] font-normal leading-[1.05] tracking-[-1px] text-brand-navy lg:text-[60px]">
+            {/* TODO: text-[60px] sem token — text-h1 mobile (48px); text-display desktop (64px, mais próximo) */}
+            <h2 className="font-dm text-h1 font-normal text-brand-navy lg:text-display">
               Por trás de cada CPF desbloqueado, existe uma história que recomeçou
             </h2>
-            <p className="font-dm text-[18px] leading-[1.5] text-brand-navy lg:text-[24px]">
+            {/* text-[18px] → text-h6 font-normal (18px/DM, override 600→normal); lg:text-[24px] → lg:text-h5 (24px/400/DM) */}
+            <p className="font-dm text-h6 font-normal text-brand-navy lg:text-h5">
               Por trás de cada CPF negativado existe uma pessoa que quer voltar a crescer. A Mais Score existe para isso... devolver o acesso ao crédito de forma legal, rápida e garantida.
             </p>
           </div>
@@ -65,15 +67,19 @@ export function SobreNos() {
               // TODO: bg-[#f2f2f2] — sem token equivalente no design system
               <div
                 key={i}
-                className="flex flex-col gap-[10px] rounded-xl bg-[#f2f2f2] px-[45px] pb-[60px] pt-[69px]"
+                {/* TODO: gap-[10px] → gap-3 (12px); rounded-xl → rounded-lg; px/pb/pt sem tokens DS */}
+              className="flex flex-col gap-3 rounded-lg bg-[#f2f2f2] px-[45px] pb-[60px] pt-[69px]"
               >
-                <p className="font-dm text-[16px] font-bold tracking-[-0.48px] text-brand-orange">
+                {/* text-[16px] font-bold → text-subtitle (16px/600/DM, exato) */}
+                <p className="font-dm text-subtitle text-brand-orange">
                   {item.overline}
                 </p>
-                <h3 className="font-dm text-[24px] font-bold leading-[1.05] tracking-[-0.48px] text-brand-navy">
+                {/* text-[24px] font-bold → text-h4 (24px/600/DM, exato) */}
+                <h3 className="font-dm text-h4 text-brand-navy">
                   {item.heading}
                 </h3>
-                <p className="font-dm text-[18px] leading-[1.3] tracking-[-0.28px] text-foreground-alt">
+                {/* text-[18px] → text-h6 font-normal (18px/DM, override 600→normal) */}
+                <p className="font-dm text-h6 font-normal text-foreground-alt">
                   {item.body}
                 </p>
               </div>

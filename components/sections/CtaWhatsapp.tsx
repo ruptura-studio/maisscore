@@ -29,10 +29,12 @@ export function CtaWhatsapp() {
         style={{ minHeight: '560px' }}
       >
         <div className="flex w-full flex-col gap-6 lg:max-w-[520px]">
-          <h2 className="font-dm text-[40px] font-normal leading-[1.05] tracking-[-1px] text-white lg:text-[52px]">
+          {/* TODO: text-[52px] sem token — usando text-h1 (48px, mais próximo) */}
+          <h2 className="font-dm text-h1 font-normal text-white">
             Fale com a gente agora pelo WhatsApp
           </h2>
-          <p className="font-dm text-[16px] leading-[1.6] text-white/70 lg:text-[18px]">
+          {/* text-[16px] → text-p-lg (16px/Geist); lg:text-[18px] → lg:text-h6 font-normal (18px/DM) */}
+          <p className="font-sans text-p-lg text-white/70 lg:text-h6 lg:font-normal">
             Nossa equipe está pronta para tirar suas dúvidas, avaliar o seu caso e
             iniciar o processo de regularização do seu CPF ainda hoje.
           </p>

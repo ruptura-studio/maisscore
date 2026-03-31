@@ -41,7 +41,7 @@ function TestimonialCard({ quote, name, avatar }: TestimonialProps) {
       />
 
       {/* Quote text */}
-      <p className="font-dm text-[18px] font-light italic leading-[31.5px] text-brand-navy text-center">
+      <p className="font-dm text-h6 font-light italic text-brand-navy text-center">
         {quote}
       </p>
 
@@ -54,7 +54,7 @@ function TestimonialCard({ quote, name, avatar }: TestimonialProps) {
           height={80}
           className="h-20 w-20 rounded-full object-cover"
         />
-        <p className="mt-[10px] font-dm text-[18px] font-light text-brand-navy text-center">
+        <p className="mt-[10px] font-dm text-h6 font-light text-brand-navy text-center">
           {name}
         </p>
         <div className="flex items-center gap-1">
@@ -71,21 +71,25 @@ export function Depoimentos() {
   const [active, setActive] = useState(0)
 
   return (
-    <section className="w-full bg-[#f2f2f2] py-[120px]">
+    {/* TODO: py-[120px] sem token — usando py-24 (96px) */}
+    <section className="w-full bg-[#f2f2f2] py-24">
       <div className="container-ms flex flex-col items-center gap-8">
 
         {/* Header */}
-        <div className="flex flex-col items-center gap-5 pb-4">
-          <p className="font-dm text-[10px] font-light uppercase tracking-[6px] text-brand-navy">
+        <div className="flex flex-col items-center gap-4 pb-4">
+          {/* TODO: text-[10px] sem token — usando text-lable (12px); tracking-[6px] = cap behavior manual */}
+          <p className="font-dm text-lable font-light uppercase tracking-[6px] text-brand-navy">
             Depoimentos
           </p>
-          <h2 className="font-dm text-[40px] font-normal leading-[1] tracking-[-1px] text-brand-navy text-center lg:text-[60px] lg:leading-[60px]">
+          {/* TODO: text-[60px] sem token — usando text-h1 (48px) mobile e text-display (64px) desktop */}
+          <h2 className="font-dm text-h1 font-normal text-brand-navy text-center lg:text-display">
             O que nossos clientes dizem
           </h2>
         </div>
 
         {/* Desktop: 3 columns */}
-        <div className="hidden w-full grid-cols-3 gap-[30px] lg:grid">
+        {/* TODO: gap-[30px] sem token — usando gap-8 (32px) */}
+        <div className="hidden w-full grid-cols-3 gap-8 lg:grid">
           {TESTIMONIALS.map((t, i) => (
             <TestimonialCard key={i} {...t} />
           ))}
