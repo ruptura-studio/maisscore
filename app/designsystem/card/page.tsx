@@ -21,10 +21,10 @@ export default function CardPage() {
   return (
     <div>
       <div className="sg-prose">
-        <h1 className="text-heading-2 font-dm font-normal text-brand-navy mb-2">
+        <h1 className="text-h2 font-dm font-normal text-brand-navy mb-2">
           Card
         </h1>
-        <p className="text-para-md text-neutral-400 mb-8">
+        <p className="text-p-lg text-neutral-400 mb-8">
           Container com bordas arredondadas e sombra para agrupar conteúdo relacionado.
           Composto por sub-componentes:{' '}
           <code className="font-mono text-brand-navy bg-neutral-50 px-1 rounded">CardHeader</code>,{' '}
@@ -42,10 +42,10 @@ export default function CardPage() {
 
       {/* Card simples */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Card Simples
         </h2>
-        <p className="text-para-sm text-neutral-400 mb-4">
+        <p className="text-p-sm text-neutral-400 mb-4">
           Estrutura básica com cabeçalho, descrição e conteúdo.
         </p>
       </div>
@@ -76,10 +76,10 @@ export default function CardPage() {
 
       {/* Card com footer */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Card com Footer
         </h2>
-        <p className="text-para-sm text-neutral-400 mb-4">
+        <p className="text-p-sm text-neutral-400 mb-4">
           Adicione ações ou informações adicionais no rodapé do card.
         </p>
       </div>
@@ -116,10 +116,10 @@ export default function CardPage() {
 
       {/* Card com badge */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Card com Badge
         </h2>
-        <p className="text-para-sm text-neutral-400 mb-4">
+        <p className="text-p-sm text-neutral-400 mb-4">
           Combina Card com Badge para exibir status ou categorias.
         </p>
       </div>
@@ -154,12 +154,12 @@ export default function CardPage() {
 
       {/* Specs */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Sub-componentes
         </h2>
       </div>
       <div className="border border-brand-border rounded-lg overflow-hidden">
-        <table className="w-full text-para-sm">
+        <table className="w-full text-p-sm">
           <thead className="bg-neutral-50 border-b border-brand-border">
             <tr>
               <th className="text-left px-4 py-3 text-brand-navy font-medium">Componente</th>

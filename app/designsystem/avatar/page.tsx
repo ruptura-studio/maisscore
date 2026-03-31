@@ -12,10 +12,10 @@ export default function AvatarPage() {
   return (
     <div>
       <div className="sg-prose">
-        <h1 className="text-heading-2 font-dm font-normal text-brand-navy mb-2">
+        <h1 className="text-h2 font-dm font-normal text-brand-navy mb-2">
           Avatar
         </h1>
-        <p className="text-para-md text-neutral-400 mb-8">
+        <p className="text-p-lg text-neutral-400 mb-8">
           Imagem de perfil circular com fallback automático para iniciais ou ícone.
           Usa Radix UI internamente para gerenciar o carregamento da imagem. Definido em{' '}
           <code className="font-mono text-brand-navy bg-neutral-50 px-1 rounded">
@@ -27,10 +27,10 @@ export default function AvatarPage() {
 
       {/* Com imagem */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Com imagem
         </h2>
-        <p className="text-para-sm text-neutral-400 mb-4">
+        <p className="text-p-sm text-neutral-400 mb-4">
           Passe a URL no <code className="font-mono bg-neutral-50 px-1 rounded">AvatarImage</code>.
           O <code className="font-mono bg-neutral-50 px-1 rounded">AvatarFallback</code> é exibido
           enquanto a imagem carrega ou se falhar.
@@ -69,10 +69,10 @@ export default function AvatarPage() {
 
       {/* Fallback */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Fallback (sem imagem)
         </h2>
-        <p className="text-para-sm text-neutral-400 mb-4">
+        <p className="text-p-sm text-neutral-400 mb-4">
           Quando não há imagem disponível, exibe as iniciais ou um ícone no lugar.
           Personalize cor de fundo com classes Tailwind no{' '}
           <code className="font-mono bg-neutral-50 px-1 rounded">AvatarFallback</code>.
@@ -110,10 +110,10 @@ export default function AvatarPage() {
 
       {/* Tamanhos */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Tamanhos
         </h2>
-        <p className="text-para-sm text-neutral-400 mb-4">
+        <p className="text-p-sm text-neutral-400 mb-4">
           O tamanho padrão é <code className="font-mono bg-neutral-50 px-1 rounded">h-10 w-10</code> (40px).
           Sobrescreva com classes Tailwind no componente raiz.
         </p>
@@ -150,12 +150,12 @@ export default function AvatarPage() {
 
       {/* Specs */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Sub-componentes
         </h2>
       </div>
       <div className="border border-brand-border rounded-lg overflow-hidden">
-        <table className="w-full text-para-sm">
+        <table className="w-full text-p-sm">
           <thead className="bg-neutral-50 border-b border-brand-border">
             <tr>
               <th className="text-left px-4 py-3 text-brand-navy font-medium">Componente</th>

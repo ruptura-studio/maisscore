@@ -70,14 +70,14 @@ export default function StyleguidePage() {
     <div>
       {/* Hero */}
       <div className="mb-10 pb-8 border-b border-brand-border">
-        <h1 className="text-heading-2 font-dm font-normal text-brand-navy mb-2">
+        <h1 className="text-h2 font-dm font-normal text-brand-navy mb-2">
           Design System
 </h1>
-        <p className="text-para-md text-neutral-400 max-w-xl mb-4">
+        <p className="text-p-lg text-neutral-400 max-w-xl mb-4">
           Sistema de design da Mais Score. Referência central de tokens, componentes
           e padrões de interface usados em toda a aplicação.
         </p>
-        <div className="flex items-center gap-4 text-para-sm text-neutral-400">
+        <div className="flex items-center gap-4 text-p-sm text-neutral-400">
           <span><strong className="text-brand-navy">{totalComponents}</strong> seções documentadas</span>
           <span>·</span>
           <span>shadcn/ui + componentes customizados</span>
@@ -98,7 +98,7 @@ export default function StyleguidePage() {
                 className="group flex flex-col gap-1.5 border border-brand-border rounded-lg p-5 hover:border-brand-orange/40 hover:shadow-sm transition-all bg-white"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-para-md font-medium text-brand-navy group-hover:text-brand-orange transition-colors">
+                  <span className="text-p-lg font-medium text-brand-navy group-hover:text-brand-orange transition-colors">
                     {item.title}
                   </span>
                   <ArrowRight
@@ -106,7 +106,7 @@ export default function StyleguidePage() {
                     className="text-neutral-300 group-hover:text-brand-orange group-hover:translate-x-0.5 transition-all"
                   />
                 </div>
-                <p className="text-para-sm text-neutral-400 leading-relaxed">
+                <p className="text-p-sm text-neutral-400 leading-relaxed">
                   {item.description}
                 </p>
               </Link>

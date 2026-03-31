@@ -2,7 +2,8 @@ import Image from 'next/image'
 
 function MockupCredito() {
   return (
-    <div className="flex flex-col gap-[0.55rem]">
+    // TODO: gap-[0.55rem] (8.8px) sem token — usando gap-2 (8px) como aproximação
+    <div className="flex flex-col gap-2">
       <Image src="/img/card-line-emergencia.svg" alt="" width={263} height={34} className="h-auto w-full" />
       <Image src="/img/card-line-saude.svg" alt="" width={263} height={34} className="h-auto w-full" />
       <Image src="/img/card-line-oportunidades.svg" alt="" width={263} height={34} className="h-auto w-full" />
@@ -55,7 +56,7 @@ function MockupEmpresa() {
         alt=""
         width={263}
         height={104}
-        className="mt-[3px] h-auto w-full max-h-[82px] object-contain"
+        className="mt-1 h-auto w-full max-h-[82px] object-contain"
       />
     </div>
   )
@@ -94,31 +95,38 @@ const CARDS = [
 
 export function AgoraVocePode() {
   return (
-    <section className="w-full bg-brand-navy/10 py-[110px]">
-      <div className="container-ms flex flex-col gap-5">
+    // TODO: py-[110px] sem token — usando py-24 (96px) como aproximação
+    <section className="w-full bg-brand-navy/10 py-24">
+      {/* TODO: gap-5 (20px) fora da escala DS — usando gap-4 (16px) */}
+      <div className="container-ms flex flex-col gap-4">
 
         {/* Heading */}
-        <div className="flex flex-col items-center gap-5 pb-8">
-          <p className="font-dm text-[10px] font-light uppercase tracking-[6px] text-brand-navy">
+        <div className="flex flex-col items-center gap-4 pb-8">
+          {/* TODO: text-[10px] sem token — usando text-lable (12px); tracking-[6px] sem token de letter-spacing no DS */}
+          <p className="font-dm text-lable font-light uppercase tracking-[6px] text-brand-navy">
             Limpar o nome é apenas o começo
           </p>
-          <h2 className="text-center font-dm text-[40px] font-normal leading-[1] tracking-[-1px] text-brand-navy lg:text-[60px] lg:leading-[60px]">
+          {/* TODO: text-[40px]/lg:text-[60px] sem tokens exatos — usando text-h1 (48px); leading/tracking removidos (baked no token) */}
+          <h2 className="text-center font-dm text-h1 font-normal text-brand-navy">
             Agora você pode ter
           </h2>
         </div>
 
         {/* Cards */}
+        {/* TODO: rounded-xl não existe no DS — usando rounded-lg (var(--radius)) como aproximação */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-5">
           {CARDS.map((card, i) => (
             <div
               key={i}
-              className={`flex flex-col gap-3 overflow-hidden rounded-xl bg-white/60 ${'noPb' in card && card.noPb ? 'px-4 pb-0 pt-4' : 'p-4'}`}
+              className={`flex flex-col gap-3 overflow-hidden rounded-lg bg-white/60 ${'noPb' in card && card.noPb ? 'px-4 pb-0 pt-4' : 'p-4'}`}
             >
               <div className="flex flex-col gap-2">
-                <h3 className="font-dm text-heading-4 text-brand-navy">
+                <h3 className="font-dm text-subtitle text-brand-navy">
                   {card.title}
                 </h3>
-                <p className="font-dm text-[12px] font-normal leading-[16px] tracking-[-0.24px] text-neutral-700">
+                {/* text-[12px] leading-[16px] → text-lable (12px/16px, exato); TODO: tracking-[-0.24px] sem token no DS */}
+                {/* text-neutral-700 sem token no DS — usando text-foreground-alt (#404040, mais próximo) */}
+                <p className="font-dm text-lable font-normal text-foreground-alt">
                   {card.description}
                 </p>
               </div>

@@ -49,17 +49,17 @@ export default function EspacamentoPage() {
   return (
     <div>
       <div className="sg-prose">
-        <h1 className="text-heading-2 font-dm font-normal text-brand-navy mb-2">
+        <h1 className="text-h2 font-dm font-normal text-brand-navy mb-2">
           Espaçamento & Sombras
         </h1>
-        <p className="text-para-md text-neutral-400 mb-8">
+        <p className="text-p-lg text-neutral-400 mb-8">
           Escala de espaçamento, elevações e raios de borda do sistema de design.
         </p>
       </div>
 
       {/* Spacing */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Espaçamento
         </h2>
       </div>
@@ -67,8 +67,8 @@ export default function EspacamentoPage() {
         {spacingScale.map((item) => (
           <div key={item.token} className="flex items-center gap-4">
             <div className="w-28 shrink-0">
-              <p className="text-para-xs font-mono text-brand-orange">{item.tailwind}</p>
-              <p className="text-para-xs text-neutral-400">{item.value}</p>
+              <p className="text-lable font-mono text-brand-orange">{item.tailwind}</p>
+              <p className="text-lable text-neutral-400">{item.value}</p>
             </div>
             <div
               className="h-6 rounded bg-brand-orange/20 border border-brand-orange/40"
@@ -80,7 +80,7 @@ export default function EspacamentoPage() {
 
       {/* Shadows */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Sombras
         </h2>
       </div>
@@ -91,7 +91,7 @@ export default function EspacamentoPage() {
               className={`w-full h-20 bg-white rounded-lg ${shadow.tailwind} border border-brand-border/40`}
             />
             <div className="text-center">
-              <p className="text-para-xs font-mono text-brand-orange">{shadow.token}</p>
+              <p className="text-lable font-mono text-brand-orange">{shadow.token}</p>
             </div>
           </div>
         ))}
@@ -99,7 +99,7 @@ export default function EspacamentoPage() {
 
       {/* Border Radius */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Border Radius
         </h2>
       </div>
@@ -111,8 +111,8 @@ export default function EspacamentoPage() {
               style={{ borderRadius: item.style }}
             />
             <div className="text-center">
-              <p className="text-para-xs font-mono text-brand-orange">{item.token}</p>
-              <p className="text-para-xs text-neutral-400">{item.label}</p>
+              <p className="text-lable font-mono text-brand-orange">{item.token}</p>
+              <p className="text-lable text-neutral-400">{item.label}</p>
             </div>
           </div>
         ))}

@@ -27,27 +27,27 @@ export default function GridPage() {
   return (
     <div>
       <div className="sg-prose">
-        <h1 className="text-heading-2 font-dm font-normal text-brand-navy mb-2">
+        <h1 className="text-h2 font-dm font-normal text-brand-navy mb-2">
           Grid & Container
         </h1>
-        <p className="text-para-md text-neutral-400 mb-8">
+        <p className="text-p-lg text-neutral-400 mb-8">
           Classes de container e grade de 12 colunas do sistema de layout.
         </p>
       </div>
 
       {/* container-ms */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           .container-ms
         </h2>
-        <p className="text-para-sm text-neutral-400 mb-4">
+        <p className="text-p-sm text-neutral-400 mb-4">
           Container padrão com padding horizontal responsivo e largura máxima de 1440px.
         </p>
       </div>
       <div className="preview-full border border-brand-border rounded-lg overflow-hidden mb-4">
         <div className="bg-brand-navy/5 p-1">
           <div className="container-ms bg-brand-orange/10 border border-brand-orange/30 rounded py-4 text-center">
-            <span className="text-para-xs font-mono text-brand-orange font-medium">
+            <span className="text-lable font-mono text-brand-orange font-medium">
               .container-ms — max-w-[1440px], px-6 md:px-16 xl:px-24
             </span>
           </div>
@@ -61,10 +61,10 @@ export default function GridPage() {
 
       {/* content-ms */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           .content-ms
         </h2>
-        <p className="text-para-sm text-neutral-400 mb-4">
+        <p className="text-p-sm text-neutral-400 mb-4">
           Conteúdo interno centralizado com max-width do container (1440px).
           Usado dentro do{' '}
           <code className="font-mono bg-neutral-50 px-1 rounded">.container-ms</code>{' '}
@@ -75,7 +75,7 @@ export default function GridPage() {
         <div className="bg-brand-navy/5 p-1">
           <div className="bg-white border border-dashed border-brand-border py-2 px-2">
             <div className="content-ms bg-brand-navy/10 border border-brand-navy/20 rounded py-4 text-center">
-              <span className="text-para-xs font-mono text-brand-navy font-medium">
+              <span className="text-lable font-mono text-brand-navy font-medium">
                 .content-ms — max-w-container mx-auto
               </span>
             </div>
@@ -91,10 +91,10 @@ export default function GridPage() {
 
       {/* 12-column grid */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Grade de 12 Colunas
         </h2>
-        <p className="text-para-sm text-neutral-400 mb-4">
+        <p className="text-p-sm text-neutral-400 mb-4">
           Use{' '}
           <code className="font-mono bg-neutral-50 px-1 rounded">grid grid-cols-12</code>{' '}
           com{' '}
@@ -117,29 +117,29 @@ export default function GridPage() {
         </div>
         <div className="grid grid-cols-12 gap-1 mt-2">
           <div className="col-span-6 bg-brand-navy/10 border border-brand-navy/20 rounded py-2 flex items-center justify-center">
-            <span className="text-para-xs font-mono text-brand-navy">col-span-6</span>
+            <span className="text-lable font-mono text-brand-navy">col-span-6</span>
           </div>
           <div className="col-span-6 bg-brand-navy/10 border border-brand-navy/20 rounded py-2 flex items-center justify-center">
-            <span className="text-para-xs font-mono text-brand-navy">col-span-6</span>
+            <span className="text-lable font-mono text-brand-navy">col-span-6</span>
           </div>
         </div>
         <div className="grid grid-cols-12 gap-1 mt-2">
           <div className="col-span-4 bg-brand-orange/15 border border-brand-orange/30 rounded py-2 flex items-center justify-center">
-            <span className="text-para-xs font-mono text-brand-orange">col-span-4</span>
+            <span className="text-lable font-mono text-brand-orange">col-span-4</span>
           </div>
           <div className="col-span-4 bg-brand-orange/15 border border-brand-orange/30 rounded py-2 flex items-center justify-center">
-            <span className="text-para-xs font-mono text-brand-orange">col-span-4</span>
+            <span className="text-lable font-mono text-brand-orange">col-span-4</span>
           </div>
           <div className="col-span-4 bg-brand-orange/15 border border-brand-orange/30 rounded py-2 flex items-center justify-center">
-            <span className="text-para-xs font-mono text-brand-orange">col-span-4</span>
+            <span className="text-lable font-mono text-brand-orange">col-span-4</span>
           </div>
         </div>
         <div className="grid grid-cols-12 gap-1 mt-2">
           <div className="col-span-3 bg-brand-navy/10 border border-brand-navy/20 rounded py-2 flex items-center justify-center">
-            <span className="text-para-xs font-mono text-brand-navy">3</span>
+            <span className="text-lable font-mono text-brand-navy">3</span>
           </div>
           <div className="col-span-9 bg-brand-navy/10 border border-brand-navy/20 rounded py-2 flex items-center justify-center">
-            <span className="text-para-xs font-mono text-brand-navy">col-span-9</span>
+            <span className="text-lable font-mono text-brand-navy">col-span-9</span>
           </div>
         </div>
       </div>
@@ -159,12 +159,12 @@ export default function GridPage() {
 
       {/* Spacing reference */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Resumo do Sistema de Espaçamento
         </h2>
       </div>
       <div className="border border-brand-border rounded-lg overflow-hidden">
-        <table className="w-full text-para-sm">
+        <table className="w-full text-p-sm">
           <thead className="bg-neutral-50 border-b border-brand-border">
             <tr>
               <th className="text-left px-4 py-3 text-brand-navy font-medium">Classe</th>

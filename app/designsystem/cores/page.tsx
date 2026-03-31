@@ -88,8 +88,8 @@ function ColorSwatch({ token, hex, textClass }: Swatch) {
     <div className="rounded-lg overflow-hidden border border-brand-border">
       <div className="h-20 w-full" style={{ backgroundColor: hex }} />
       <div className="p-3 bg-white">
-        <p className="text-para-sm font-medium text-brand-navy font-mono">{token}</p>
-        <p className="text-para-xs text-neutral-400 font-mono">{hex}</p>
+        <p className="text-p-sm font-medium text-brand-navy font-mono">{token}</p>
+        <p className="text-lable text-neutral-400 font-mono">{hex}</p>
       </div>
     </div>
   )
@@ -99,17 +99,17 @@ export default function CoresPage() {
   return (
     <div>
       <div className="sg-prose">
-        <h1 className="text-heading-2 font-dm font-normal text-brand-navy mb-2">
+        <h1 className="text-h2 font-dm font-normal text-brand-navy mb-2">
           Cores
         </h1>
-        <p className="text-para-md text-neutral-400 mb-8">
+        <p className="text-p-lg text-neutral-400 mb-8">
           Paleta de marca, tokens neutros e variáveis CSS do shadcn/ui.
         </p>
       </div>
 
       {/* Neutros */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Neutros
         </h2>
       </div>
@@ -121,16 +121,16 @@ export default function CoresPage() {
 
       {/* Figma Design Tokens */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-1 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-1 mt-10 pb-2 border-b border-brand-border">
           Tokens Figma
         </h2>
-        <p className="text-para-sm text-neutral-400 mb-6">
+        <p className="text-p-sm text-neutral-400 mb-6">
           Paleta oficial do Figma — nomes exatos dos tokens de design.
         </p>
       </div>
       {figmaColorGroups.map((group) => (
         <div key={group.title}>
-          <h3 className="text-para-sm font-medium uppercase tracking-wider text-neutral-400 mb-3 mt-6">
+          <h3 className="text-p-sm font-medium uppercase tracking-wider text-neutral-400 mb-3 mt-6">
             {group.title}
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -143,16 +143,16 @@ export default function CoresPage() {
 
       {/* shadcn/ui Tokens */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Tokens shadcn/ui
         </h2>
-        <p className="text-para-sm text-neutral-400 mb-4">
+        <p className="text-p-sm text-neutral-400 mb-4">
           Variáveis CSS usadas pelos componentes shadcn/ui. Os valores são definidos
           em <code className="font-mono text-brand-navy bg-neutral-50 px-1 rounded">globals.css</code>.
         </p>
       </div>
       <div className="border border-brand-border rounded-lg overflow-hidden">
-        <table className="w-full text-para-sm">
+        <table className="w-full text-p-sm">
           <thead className="bg-neutral-50 border-b border-brand-border">
             <tr>
               <th className="text-left px-4 py-3 text-brand-navy font-medium">Variável CSS</th>

@@ -13,10 +13,10 @@ export default function ButtonGroupPage() {
   return (
     <div>
       <div className="sg-prose">
-        <h1 className="text-heading-2 font-dm font-normal text-brand-navy mb-2">
+        <h1 className="text-h2 font-dm font-normal text-brand-navy mb-2">
           Button Group
         </h1>
-        <p className="text-para-md text-neutral-400 mb-8">
+        <p className="text-p-lg text-neutral-400 mb-8">
           Agrupa botões horizontal ou verticalmente com espaçamento ou borda compartilhada.
           Componente customizado definido em{' '}
           <code className="font-mono text-brand-navy bg-neutral-50 px-1 rounded">
@@ -28,10 +28,10 @@ export default function ButtonGroupPage() {
 
       {/* Spaced horizontal */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Spaced — Horizontal (padrão)
         </h2>
-        <p className="text-para-sm text-neutral-400 mb-4">
+        <p className="text-p-sm text-neutral-400 mb-4">
           Botões com espaçamento entre eles. Ideal para CTAs principais lado a lado.
         </p>
       </div>
@@ -48,10 +48,10 @@ export default function ButtonGroupPage() {
 
       {/* Spaced vertical */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Spaced — Vertical
         </h2>
-        <p className="text-para-sm text-neutral-400 mb-4">
+        <p className="text-p-sm text-neutral-400 mb-4">
           Orientação vertical, útil em layouts mobile ou em banners estreitos.
         </p>
       </div>
@@ -68,10 +68,10 @@ export default function ButtonGroupPage() {
 
       {/* Connected horizontal */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Connected — Horizontal
         </h2>
-        <p className="text-para-sm text-neutral-400 mb-4">
+        <p className="text-p-sm text-neutral-400 mb-4">
           Botões unidos sem gap, compartilhando a borda. Ideal para seletores de opções ou filtros.
           Use com a variante <code className="font-mono bg-neutral-50 px-1 rounded">Button</code> do shadcn.
         </p>
@@ -91,10 +91,10 @@ export default function ButtonGroupPage() {
 
       {/* Connected vertical */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Connected — Vertical
         </h2>
-        <p className="text-para-sm text-neutral-400 mb-4">
+        <p className="text-p-sm text-neutral-400 mb-4">
           Versão vertical do grupo conectado. Útil para menus de ação ou listas de opções.
         </p>
       </div>
@@ -113,12 +113,12 @@ export default function ButtonGroupPage() {
 
       {/* Specs */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Especificações
         </h2>
       </div>
       <div className="border border-brand-border rounded-lg overflow-hidden">
-        <table className="w-full text-para-sm">
+        <table className="w-full text-p-sm">
           <thead className="bg-neutral-50 border-b border-brand-border">
             <tr>
               <th className="text-left px-4 py-3 text-brand-navy font-medium">Prop</th>

@@ -10,8 +10,8 @@ export default function SidebarPage() {
   return (
     <div>
       <div className="sg-prose">
-        <h1 className="text-heading-2 font-dm font-normal text-brand-navy mb-2">Sidebar</h1>
-        <p className="text-para-md text-neutral-400 mb-8">
+        <h1 className="text-h2 font-dm font-normal text-brand-navy mb-2">Sidebar</h1>
+        <p className="text-p-lg text-neutral-400 mb-8">
           Componente de sidebar completo com suporte a collapso, grupos, tooltips e mobile.
           Definido em{' '}
           <code className="font-mono text-brand-navy bg-neutral-50 px-1 rounded">components/ui/sidebar.tsx</code>.
@@ -20,15 +20,15 @@ export default function SidebarPage() {
       </div>
 
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Nota de uso</h2>
-        <p className="text-para-sm text-neutral-400 mb-4">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Nota de uso</h2>
+        <p className="text-p-sm text-neutral-400 mb-4">
           O Sidebar shadcn é um componente de layout — requer estrutura de página dedicada para funcionar corretamente.
           O preview interativo está disponível na <a href="https://ui.shadcn.com/docs/components/sidebar" target="_blank" rel="noopener noreferrer" className="text-brand-navy underline">documentação oficial</a>.
         </p>
       </div>
 
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Setup Básico</h2>
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Setup Básico</h2>
       </div>
       <CodeBlock code={`// app/dashboard/layout.tsx
 import {
@@ -84,10 +84,10 @@ export default function DashboardLayout({ children }) {
 }`} />
 
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Sub-componentes principais</h2>
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Sub-componentes principais</h2>
       </div>
       <div className="border border-brand-border rounded-lg overflow-hidden">
-        <table className="w-full text-para-sm">
+        <table className="w-full text-p-sm">
           <thead className="bg-neutral-50 border-b border-brand-border">
             <tr>
               <th className="text-left px-4 py-3 text-brand-navy font-medium">Componente</th>

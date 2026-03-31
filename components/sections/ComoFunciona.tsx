@@ -37,21 +37,25 @@ const STEPS = [
 
 export function ComoFunciona() {
   return (
-    <section className="w-full bg-neutral-100 py-[120px]">
-      <div className="container-ms flex flex-col items-center gap-10">
+    // TODO: bg-neutral-100 sem token no DS — usando bg-neutral-50; py-[120px] sem token — usando py-24 (96px) como aproximação
+    <section className="w-full bg-neutral-50 py-24">
+      {/* TODO: gap-10 (40px) fora da escala do DS — usando gap-8 (32px) */}
+      <div className="container-ms flex flex-col items-center gap-8">
 
         {/* Title */}
         <div className="flex flex-col items-center gap-6">
-          <p className="font-dm text-[10px] font-light uppercase tracking-[6px] text-brand-navy">
+          {/* TODO: text-[10px] sem token — usando text-lable (12px); tracking-[6px] sem token de letter-spacing no DS */}
+          <p className="font-dm text-lable font-light uppercase tracking-[6px] text-brand-navy">
             Nosso método reativa crédito
           </p>
-          <h2 className="font-dm text-[40px] font-normal leading-[1] tracking-[-1px] text-brand-navy text-center lg:text-[60px] lg:leading-[60px]">
+          {/* TODO: text-[40px]/lg:text-[60px] sem tokens exatos — usando text-h1 (48px) para ambos; 60px não tem token entre heading-1 e display */}
+          <h2 className="font-dm text-h1 font-normal text-brand-navy text-center">
             Como a Mais Score limpa seu nome
           </h2>
         </div>
 
         {/* Steps */}
-        <div className="flex w-full flex-col gap-10">
+        <div className="flex w-full flex-col gap-8">
           {STEPS.map((step, i) => (
             <div
               key={i}
@@ -61,10 +65,11 @@ export function ComoFunciona() {
             >
               {/* Text */}
               <div className="flex flex-col gap-4 lg:max-w-[550px]">
-                <h3 className="font-dm text-[28px] font-bold leading-[1] tracking-[-1px] text-brand-navy lg:text-[36px] lg:tracking-[-2px]">
+                {/* text-[28px] → text-h4 (24px, mais próximo); lg:text-[36px] → lg:text-h2 (36px, exato) */}
+                <h3 className="font-dm text-h4 font-bold text-brand-navy lg:text-h2">
                   {step.title}
                 </h3>
-                <p className="font-dm text-para-md text-grafite">
+                <p className="font-dm text-p text-grafite">
                   {step.body}
                 </p>
                 <span className="inline-flex w-fit items-center gap-1 rounded-full bg-brand-orange px-3 py-1">
@@ -75,7 +80,8 @@ export function ComoFunciona() {
                     height={8}
                     className="shrink-0"
                   />
-                  <span className="font-dm text-[10px] font-normal text-white">
+                  {/* text-[10px] → text-lable (12px, mais próximo disponível no DS) */}
+                  <span className="font-dm text-lable font-normal text-white">
                     {step.badge}
                   </span>
                 </span>

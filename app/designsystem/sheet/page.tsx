@@ -23,16 +23,16 @@ export default function SheetPage() {
   return (
     <div>
       <div className="sg-prose">
-        <h1 className="text-heading-2 font-dm font-normal text-brand-navy mb-2">Sheet</h1>
-        <p className="text-para-md text-neutral-400 mb-8">
+        <h1 className="text-h2 font-dm font-normal text-brand-navy mb-2">Sheet</h1>
+        <p className="text-p-lg text-neutral-400 mb-8">
           Painel deslizante lateral (drawer). Variante do Dialog que entra pela borda da tela. Definido em{' '}
           <code className="font-mono text-brand-navy bg-neutral-50 px-1 rounded">components/ui/sheet.tsx</code>.
         </p>
       </div>
 
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Posições</h2>
-        <p className="text-para-sm text-neutral-400 mb-4">Sheet pode abrir por qualquer lado da tela.</p>
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Posições</h2>
+        <p className="text-p-sm text-neutral-400 mb-4">Sheet pode abrir por qualquer lado da tela.</p>
       </div>
       <div className="preview-full border border-brand-border rounded-lg p-8 flex flex-wrap items-center justify-center gap-4 bg-neutral-50 mb-4">
         {(['right', 'left', 'top', 'bottom'] as const).map((side) => (
@@ -78,10 +78,10 @@ export default function SheetPage() {
 </Sheet>`} />
 
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Sub-componentes</h2>
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Sub-componentes</h2>
       </div>
       <div className="border border-brand-border rounded-lg overflow-hidden">
-        <table className="w-full text-para-sm">
+        <table className="w-full text-p-sm">
           <thead className="bg-neutral-50 border-b border-brand-border">
             <tr>
               <th className="text-left px-4 py-3 text-brand-navy font-medium">Componente</th>

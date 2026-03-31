@@ -17,12 +17,12 @@ export default function HomePage() {
       <Pesquisa />
       <ComoFunciona />
       <AgoraVocePode />
-      <BeneficiosBar />
       <Depoimentos />
       <SobreNos />
       <Precos />
       <FAQ />
       <CtaWhatsapp />
+      <BeneficiosBar />
     </>
   )
 }

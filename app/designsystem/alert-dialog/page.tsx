@@ -25,10 +25,10 @@ export default function AlertDialogPage() {
   return (
     <div>
       <div className="sg-prose">
-        <h1 className="text-heading-2 font-dm font-normal text-brand-navy mb-2">
+        <h1 className="text-h2 font-dm font-normal text-brand-navy mb-2">
           Alert Dialog
         </h1>
-        <p className="text-para-md text-neutral-400 mb-8">
+        <p className="text-p-lg text-neutral-400 mb-8">
           Modal de confirmação que bloqueia a interação até o usuário responder.
           Diferente do <code className="font-mono text-brand-navy bg-neutral-50 px-1 rounded">Alert</code>,
           exige uma ação explícita — confirmar ou cancelar. Definido em{' '}
@@ -41,10 +41,10 @@ export default function AlertDialogPage() {
 
       {/* Uso básico */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Uso básico
         </h2>
-        <p className="text-para-sm text-neutral-400 mb-4">
+        <p className="text-p-sm text-neutral-400 mb-4">
           Clique no botão para abrir o dialog. O fundo é bloqueado até a escolha do usuário.
         </p>
       </div>
@@ -104,10 +104,10 @@ import { Button } from '@/components/ui/button'
 
       {/* Ação destrutiva */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Ação destrutiva
         </h2>
-        <p className="text-para-sm text-neutral-400 mb-4">
+        <p className="text-p-sm text-neutral-400 mb-4">
           Para ações irreversíveis, estilize o{' '}
           <code className="font-mono bg-neutral-50 px-1 rounded">AlertDialogAction</code>{' '}
           com variante destrutiva para reforçar o risco.
@@ -159,12 +159,12 @@ import { Button } from '@/components/ui/button'
 
       {/* Specs */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Sub-componentes
         </h2>
       </div>
       <div className="border border-brand-border rounded-lg overflow-hidden">
-        <table className="w-full text-para-sm">
+        <table className="w-full text-p-sm">
           <thead className="bg-neutral-50 border-b border-brand-border">
             <tr>
               <th className="text-left px-4 py-3 text-brand-navy font-medium">Componente</th>

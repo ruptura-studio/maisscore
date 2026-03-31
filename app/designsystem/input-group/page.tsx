@@ -14,16 +14,16 @@ export default function InputGroupPage() {
   return (
     <div>
       <div className="sg-prose">
-        <h1 className="text-heading-2 font-dm font-normal text-brand-navy mb-2">Input Group</h1>
-        <p className="text-para-md text-neutral-400 mb-8">
+        <h1 className="text-h2 font-dm font-normal text-brand-navy mb-2">Input Group</h1>
+        <p className="text-p-lg text-neutral-400 mb-8">
           Wrapper que adiciona prefixo e/ou sufixo a um campo Input. Componente customizado em{' '}
           <code className="font-mono text-brand-navy bg-neutral-50 px-1 rounded">components/ui/input-group.tsx</code>.
         </p>
       </div>
 
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Com Prefixo (ícone)</h2>
-        <p className="text-para-sm text-neutral-400 mb-4">Ícone antes do campo.</p>
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Com Prefixo (ícone)</h2>
+        <p className="text-p-sm text-neutral-400 mb-4">Ícone antes do campo.</p>
       </div>
       <div className="preview-full border border-brand-border rounded-lg p-8 flex flex-col gap-4 bg-neutral-50 mb-4">
         <InputGroup prefix={<Search className="h-4 w-4" />} className="max-w-sm">
@@ -41,8 +41,8 @@ export default function InputGroupPage() {
 </InputGroup>`} />
 
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Com Sufixo e Prefixo</h2>
-        <p className="text-para-sm text-neutral-400 mb-4">Texto ou ícone em ambos os lados.</p>
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Com Sufixo e Prefixo</h2>
+        <p className="text-p-sm text-neutral-400 mb-4">Texto ou ícone em ambos os lados.</p>
       </div>
       <div className="preview-full border border-brand-border rounded-lg p-8 flex flex-col gap-4 bg-neutral-50 mb-4">
         <InputGroup prefix={<span className="text-sm">R$</span>} suffix={<span className="text-xs">/mês</span>} className="max-w-sm">
@@ -60,10 +60,10 @@ export default function InputGroupPage() {
 </InputGroup>`} />
 
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Especificações</h2>
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Especificações</h2>
       </div>
       <div className="border border-brand-border rounded-lg overflow-hidden">
-        <table className="w-full text-para-sm">
+        <table className="w-full text-p-sm">
           <thead className="bg-neutral-50 border-b border-brand-border">
             <tr>
               <th className="text-left px-4 py-3 text-brand-navy font-medium">Prop</th>

@@ -37,22 +37,22 @@ export default function BreakpointsPage() {
   return (
     <div>
       <div className="sg-prose">
-        <h1 className="text-heading-2 font-dm font-normal text-brand-navy mb-2">
+        <h1 className="text-h2 font-dm font-normal text-brand-navy mb-2">
           Breakpoints
         </h1>
-        <p className="text-para-md text-neutral-400 mb-8">
+        <p className="text-p-lg text-neutral-400 mb-8">
           Pontos de quebra responsivos definidos no Tailwind config.
         </p>
       </div>
 
       {/* Table */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Tabela de Breakpoints
         </h2>
       </div>
       <div className="border border-brand-border rounded-lg overflow-hidden mb-10">
-        <table className="w-full text-para-sm">
+        <table className="w-full text-p-sm">
           <thead className="bg-neutral-50 border-b border-brand-border">
             <tr>
               <th className="text-left px-4 py-3 text-brand-navy font-medium">Token</th>
@@ -83,10 +83,10 @@ export default function BreakpointsPage() {
 
       {/* Visual scale */}
       <div className="sg-prose">
-        <h2 className="text-heading-4 font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Escala Visual
         </h2>
-        <p className="text-para-sm text-neutral-400 mb-6">
+        <p className="text-p-sm text-neutral-400 mb-6">
           Representação proporcional dos breakpoints em relação ao maior ponto (1920px).
         </p>
       </div>
@@ -137,7 +137,7 @@ export default function BreakpointsPage() {
                 className="absolute flex flex-col items-center"
                 style={{ left: `${percent}%`, transform: 'translateX(-50%)' }}
               >
-                <span className="text-para-xs font-mono font-medium text-brand-orange">
+                <span className="text-lable font-mono font-medium text-brand-orange">
                   {bp.token}
                 </span>
                 <span className="text-[10px] font-mono text-neutral-400">
@@ -152,7 +152,7 @@ export default function BreakpointsPage() {
       {/* Usage note */}
       <div className="sg-prose mt-8">
         <div className="p-4 bg-brand-orange/5 border border-brand-orange/20 rounded-lg">
-          <p className="text-para-sm text-grafite">
+          <p className="text-p-sm text-grafite">
             <strong className="text-brand-orange">Dica:</strong> Use prefixo{' '}
             <code className="font-mono bg-white px-1 rounded">md:</code> para estilos
             que se aplicam a partir de 768px. Ex:{' '}

@@ -10,10 +10,12 @@ const config: Config = {
   ],
   safelist: [
     'text-display',
-    'text-heading-1', 'text-heading-2', 'text-heading-3', 'text-heading-4', 'text-heading-5',
-    'text-para-lg', 'text-para-md', 'text-para-sm', 'text-para-xs',
-    'text-caption',
-    'text-stat', 'text-card-stat', 'text-label-sm', 'text-label-xs',
+    'text-h1', 'text-h2', 'text-h3', 'text-h4', 'text-h5', 'text-h6',
+    'text-subtitle',
+    'text-cap',
+    'text-p-lg', 'text-p', 'text-p-sm',
+    'text-lable',
+    'text-txt-sm', 'text-txt-xs',
   ],
   theme: {
   	screens: {
@@ -115,108 +117,21 @@ const config: Config = {
   			]
   		},
   		fontSize: {
-  			display: [
-  				'80px',
-  				{
-  					lineHeight: '70px',
-  					letterSpacing: '-3px'
-  				}
-  			],
-  			'heading-1': [
-  				'48px',
-  				{
-  					lineHeight: '48px',
-  					letterSpacing: '-1.5px',
-  					fontWeight: '600'
-  				}
-  			],
-  			'heading-2': [
-  				'36px',
-  				{
-  					lineHeight: '40px',
-  					letterSpacing: '-1px',
-  					fontWeight: '600'
-  				}
-  			],
-  			'heading-3': [
-  				'24px',
-  				{
-  					lineHeight: '28.8px',
-  					letterSpacing: '-1px',
-  					fontWeight: '600'
-  				}
-  			],
-  			'heading-4': [
-  				'16px',
-  				{
-  					lineHeight: '16px',
-  					letterSpacing: '0',
-  					fontWeight: '500'
-  				}
-  			],
-  			'heading-5': [
-  				'22px',
-  				{
-  					lineHeight: '27.2px'
-  				}
-  			],
-  			'para-lg': [
-  				'18px',
-  				{
-  					lineHeight: '27px'
-  				}
-  			],
-  			'para-md': [
-  				'16px',
-  				{
-  					lineHeight: '24px'
-  				}
-  			],
-  			'para-sm': [
-  				'14px',
-  				{
-  					lineHeight: '20px'
-  				}
-  			],
-  			'para-xs': [
-  				'12px',
-  				{
-  					lineHeight: '16px'
-  				}
-  			],
-  			caption: [
-  				'14px',
-  				{
-  					lineHeight: '21px',
-  					letterSpacing: '1.5px'
-  				}
-  			],
-  			stat: [
-  				'36px',
-  				{
-  					lineHeight: '46.8px',
-  					letterSpacing: '-1px'
-  				}
-  			],
-  			'card-stat': [
-  				'26px',
-  				{
-  					lineHeight: '32px',
-  					letterSpacing: '-0.5px'
-  				}
-  			],
-  			'label-sm': [
-  				'13px',
-  				{
-  					lineHeight: '18px'
-  				}
-  			],
-  			'label-xs': [
-  				'12px',
-  				{
-  					lineHeight: '18px'
-  				}
-  			]
+  			'display': ['64px', { lineHeight: '74px', fontWeight: '400' }],
+  			'h1': ['48px', { lineHeight: '52px', fontWeight: '600' }],
+  			'h2': ['36px', { lineHeight: '40px', fontWeight: '600' }],
+  			'h3': ['36px', { lineHeight: '40px', fontWeight: '400' }],
+  			'h4': ['24px', { lineHeight: '28px', fontWeight: '600' }],
+  			'h5': ['24px', { lineHeight: '28px', fontWeight: '400' }],
+  			'h6': ['18px', { lineHeight: '22px', fontWeight: '600' }],
+  			'subtitle': ['16px', { lineHeight: '20px', fontWeight: '600' }],
+  			'cap': ['14px', { lineHeight: '18px', fontWeight: '400', letterSpacing: '6px' }],
+  			'p-sm': ['14px', { lineHeight: '16px', fontWeight: '400', letterSpacing: '-2px' }],
+  			'p': ['14px', { lineHeight: '18px', fontWeight: '400', letterSpacing: '-2px' }],
+  			'p-lg': ['16px', { lineHeight: '20px', fontWeight: '400' }],
+  			'lable': ['12px', { lineHeight: '14px', fontWeight: '400' }],
+  			'txt-sm': ['12px', { lineHeight: '14px', fontWeight: '400', letterSpacing: '-2px' }],
+  			'txt-xs': ['10px', { lineHeight: '12px', fontWeight: '400', letterSpacing: '-2px' }],
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
