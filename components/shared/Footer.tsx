@@ -21,8 +21,9 @@ const linkClass =
 export function Footer() {
   const pathname = usePathname()
   const isDS = pathname.startsWith('/designsystem')
+  const isCheckout = pathname.startsWith('/checkout')
 
-  if (isDS) return null
+  if (isDS || isCheckout) return null
 
   return (
     <footer>

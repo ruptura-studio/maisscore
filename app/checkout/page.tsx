@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
+import { Item } from '@/components/ui/item'
 import { totalWithInstallmentFee, installmentValueCents } from '@/lib/installment-fees'
 
 type Product = 'cpf' | 'cnpj'
@@ -11,7 +12,7 @@ type PaymentMethod = 'PIX' | 'CREDIT_CARD'
 const PRODUCTS = {
   cpf: {
     slug: 'limpa-nome-cpf' as const,
-    label: 'Limpa Nome CPF',
+    label: 'Limpar CPF',
     description: 'Pessoa física',
     price: 'R$ 595,00',
     priceInCents: 59500,
@@ -23,7 +24,7 @@ const PRODUCTS = {
   },
   cnpj: {
     slug: 'limpa-nome-cnpj' as const,
-    label: 'Limpa Nome CNPJ',
+    label: 'Limpar CNPJ',
     description: 'Pessoa jurídica',
     price: 'R$ 795,00',
     priceInCents: 79500,
@@ -90,6 +91,11 @@ function formatPhone(value: string) {
   return digits.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3').replace(/-$/, '')
 }
 
+function formatCardNumber(value: string) {
+  const digits = value.replace(/\D/g, '').slice(0, 16)
+  return digits.replace(/(\d{4})(?=\d)/g, '$1 ')
+}
+
 function CheckoutContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -106,6 +112,13 @@ function CheckoutContent() {
     email: '',
     phone: '',
     document: '',
+  })
+
+  const [card, setCard] = useState({
+    number: '',
+    month: '',
+    year: '',
+    cvv: '',
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
@@ -224,14 +237,6 @@ function CheckoutContent() {
   return (
     <div className="min-h-screen bg-neutral-100 py-12">
       <div className="container-ms">
-        {/* Header da página */}
-        <div className="mb-8 flex flex-col gap-1">
-          <h1 className="font-dm text-h2 text-brand-navy">Finalizar contratação</h1>
-          <p className="text-sm text-foreground-alt">
-            Preencha seus dados abaixo para começar o processo de regularização.
-          </p>
-        </div>
-
         <form onSubmit={handleSubmit} noValidate>
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
             {/* ── Coluna esquerda: formulário ── */}
@@ -239,7 +244,7 @@ function CheckoutContent() {
 
               {/* Card 1: Selecionar produto */}
               <div className="rounded-lg bg-white p-6 shadow-sm">
-                <h2 className="mb-4 text-subtitle text-brand-navy">Qual serviço você precisa?</h2>
+                <h2 className="mb-4 text-subtitle text-brand-navy">Selecione</h2>
                 <div className="flex flex-col gap-3 sm:flex-row">
                   {(Object.entries(PRODUCTS) as [Product, typeof PRODUCTS.cpf][]).map(
                     ([key, p]) => (
@@ -260,11 +265,7 @@ function CheckoutContent() {
                         >
                           {p.label}
                         </span>
-                        <span className="text-label text-foreground-alt">{p.description}</span>
                         <span className="font-dm text-h3 text-brand-navy">{p.price}</span>
-                        <span className="text-txt-xs text-foreground-alt">
-                          PIX à vista ou até 3× no cartão
-                        </span>
                       </button>
                     )
                   )}
@@ -366,12 +367,12 @@ function CheckoutContent() {
               {/* Card 3: Método de pagamento */}
               <div className="rounded-lg bg-white p-6 shadow-sm">
                 <h2 className="mb-4 text-subtitle text-brand-navy">Como você quer pagar?</h2>
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-row gap-3 w-full">
                   {/* PIX */}
                   <button
                     type="button"
                     onClick={() => setPaymentMethod('PIX')}
-                    className={`flex items-center gap-4 rounded-lg border-2 p-4 text-left transition-colors ${
+                    className={`flex flex-1 items-center gap-4 rounded-lg border-2 p-4 text-left transition-colors ${
                       paymentMethod === 'PIX'
                         ? 'border-brand-orange bg-[#fff4f0]'
                         : 'border-brand-border hover:border-neutral-400'
@@ -428,7 +429,7 @@ function CheckoutContent() {
                   <button
                     type="button"
                     onClick={() => setPaymentMethod('CREDIT_CARD')}
-                    className={`flex items-center gap-4 rounded-lg border-2 p-4 text-left transition-colors ${
+                    className={`flex flex-1 items-center gap-4 rounded-lg border-2 p-4 text-left transition-colors ${
                       paymentMethod === 'CREDIT_CARD'
                         ? 'border-brand-orange bg-[#fff4f0]'
                         : 'border-brand-border hover:border-neutral-400'
@@ -469,7 +470,7 @@ function CheckoutContent() {
                     <div>
                       <p className="text-sm font-medium text-brand-navy">Cartão de crédito</p>
                       <p className="text-txt-xs text-foreground-alt">
-                        Até 3× · encargos do processador
+                        Até 3× · taxas da operadora
                       </p>
                     </div>
                     <div className="ml-auto">
@@ -483,24 +484,111 @@ function CheckoutContent() {
                     </div>
                   </button>
 
-                  {/* Seletor de parcelas — aparece quando cartão está selecionado */}
-                  {paymentMethod === 'CREDIT_CARD' && (
-                    <div className="flex flex-col gap-1">
-                      <label htmlFor="installments" className="text-label text-brand-navy">
-                        Número de parcelas
-                      </label>
-                      <select
-                        id="installments"
-                        value={installments}
-                        onChange={(e) => setInstallments(Number(e.target.value))}
-                        className="h-11 rounded-md border border-brand-border bg-white px-3 text-sm text-brand-navy outline-none transition-colors focus:border-brand-navy"
-                      >
-                        {installmentOptions.map((opt) => (
-                          <option key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
+                </div>
+
+                {/* Detalhe do método selecionado */}
+                <div className="mt-3">
+                  {paymentMethod === 'PIX' ? (
+                    <Item
+                      className="rounded-lg border border-brand-border bg-neutral-50 px-4 py-3"
+                      title={`Pagamento em PIX — ${product.price}`}
+                    >
+                      <p className="text-xs text-muted-foreground">Liberação imediata</p>
+                      <p className="text-xs text-muted-foreground">Finalize o pagamento na próxima etapa com</p>
+                      <p className="text-xs text-muted-foreground">QR-Code ou Pix Copia e Cola</p>
+                    </Item>
+                  ) : (
+                    <div className="flex flex-col gap-3">
+                      {/* Número do cartão */}
+                      <div className="flex flex-col gap-1">
+                        <label htmlFor="cardNumber" className="text-label text-brand-navy">
+                          Número do cartão
+                        </label>
+                        <input
+                          id="cardNumber"
+                          type="text"
+                          inputMode="numeric"
+                          value={card.number}
+                          onChange={(e) => setCard((c) => ({ ...c, number: formatCardNumber(e.target.value) }))}
+                          placeholder="0000 0000 0000 0000"
+                          maxLength={19}
+                          className="h-11 rounded-md border border-brand-border px-3 text-sm text-brand-navy placeholder:text-neutral-400 outline-none transition-colors focus:border-brand-navy"
+                        />
+                      </div>
+
+                      {/* Mês / Ano / CVV */}
+                      <div className="flex gap-3">
+                        <div className="flex flex-1 flex-col gap-1">
+                          <label htmlFor="cardMonth" className="text-label text-brand-navy">
+                            Mês
+                          </label>
+                          <select
+                            id="cardMonth"
+                            value={card.month}
+                            onChange={(e) => setCard((c) => ({ ...c, month: e.target.value }))}
+                            className="h-11 rounded-md border border-brand-border bg-white px-3 text-sm text-brand-navy outline-none transition-colors focus:border-brand-navy"
+                          >
+                            <option value="">MM</option>
+                            {Array.from({ length: 12 }, (_, i) => {
+                              const m = String(i + 1).padStart(2, '0')
+                              return <option key={m} value={m}>{m}</option>
+                            })}
+                          </select>
+                        </div>
+
+                        <div className="flex flex-1 flex-col gap-1">
+                          <label htmlFor="cardYear" className="text-label text-brand-navy">
+                            Ano
+                          </label>
+                          <select
+                            id="cardYear"
+                            value={card.year}
+                            onChange={(e) => setCard((c) => ({ ...c, year: e.target.value }))}
+                            className="h-11 rounded-md border border-brand-border bg-white px-3 text-sm text-brand-navy outline-none transition-colors focus:border-brand-navy"
+                          >
+                            <option value="">AAAA</option>
+                            {Array.from({ length: 35 }, (_, i) => {
+                              const y = String(2026 + i)
+                              return <option key={y} value={y}>{y}</option>
+                            })}
+                          </select>
+                        </div>
+
+                        <div className="flex flex-1 flex-col gap-1">
+                          <label htmlFor="cardCvv" className="text-label text-brand-navy">
+                            Código de segurança
+                          </label>
+                          <input
+                            id="cardCvv"
+                            type="text"
+                            inputMode="numeric"
+                            value={card.cvv}
+                            onChange={(e) => setCard((c) => ({ ...c, cvv: e.target.value.replace(/\D/g, '').slice(0, 3) }))}
+                            placeholder="CVV"
+                            maxLength={3}
+                            className="h-11 rounded-md border border-brand-border px-3 text-sm text-brand-navy placeholder:text-neutral-400 outline-none transition-colors focus:border-brand-navy"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Número de parcelas */}
+                      <div className="flex flex-col gap-1">
+                        <label htmlFor="installments" className="text-label text-brand-navy">
+                          Número de parcelas
+                        </label>
+                        <select
+                          id="installments"
+                          value={installments}
+                          onChange={(e) => setInstallments(Number(e.target.value))}
+                          className="h-11 rounded-md border border-brand-border bg-white px-3 text-sm text-brand-navy outline-none transition-colors focus:border-brand-navy"
+                        >
+                          {installmentOptions.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -519,11 +607,7 @@ function CheckoutContent() {
                 disabled={loading}
                 className="btn-primary w-full lg:hidden"
               >
-                {loading
-                  ? 'Processando...'
-                  : paymentMethod === 'PIX'
-                  ? 'Gerar QR Code PIX'
-                  : 'Pagar com cartão'}
+                {loading ? 'Processando...' : 'PAGAR AGORA'}
               </button>
             </div>
 
@@ -537,6 +621,15 @@ function CheckoutContent() {
                   <div className="flex items-start justify-between gap-2">
                     <span className="text-sm text-foreground-alt">{product.label}</span>
                     <span className="font-dm text-subtitle text-brand-navy">{product.price}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-foreground-alt">Taxas e impostos</span>
+                    <span className="text-sm text-foreground-alt">
+                      {paymentMethod === 'CREDIT_CARD' && installments > 1
+                        ? `R$ ${formatCurrency(totalWithInstallmentFee(product.priceInCents, installments) - product.priceInCents)}`
+                        : 'R$ 0,00'}
+                    </span>
                   </div>
 
                   <div className="border-t border-brand-border pt-3">
@@ -558,57 +651,16 @@ function CheckoutContent() {
                   </div>
                 </div>
 
-                {/* Features */}
-                <ul className="mt-4 flex flex-col gap-2 border-t border-brand-border pt-4">
-                  {FEATURES.map((f, i) => (
-                    <li key={i} className="flex items-start gap-2">
-                      <Image src="/icons/icon-ast.svg" alt="" width={8} height={8} className="mt-1 shrink-0" />
-                      <span className="text-txt-xs text-brand-navy">{f}</span>
-                    </li>
-                  ))}
-                </ul>
-
                 {/* Botão submit — desktop */}
                 <button
                   type="submit"
                   disabled={loading}
                   className="btn-primary mt-6 hidden w-full lg:flex"
                 >
-                  {loading
-                    ? 'Processando...'
-                    : paymentMethod === 'PIX'
-                    ? 'Gerar QR Code PIX'
-                    : 'Pagar com cartão'}
+                  {loading ? 'Processando...' : 'PAGAR AGORA'}
                 </button>
               </div>
 
-              {/* Garantia */}
-              <div className="rounded-lg border border-brand-border bg-white p-4">
-                <p className="text-txt-xs text-brand-navy">
-                  <strong className="font-semibold">Garantia total de resultado</strong>
-                  <br />
-                  Nome limpo em até 30 dias úteis ou seu dinheiro de volta. Base legal: Art. 42 do
-                  Código de Defesa do Consumidor.
-                </p>
-              </div>
-
-              {/* Trust badges */}
-              <div className="flex items-center justify-center gap-6 px-2">
-                <div className="flex flex-col items-center gap-1">
-                  <span className="font-dm text-h3 text-brand-orange">97%</span>
-                  <span className="text-center text-txt-xs text-foreground-alt">taxa de sucesso</span>
-                </div>
-                <div className="h-8 w-px bg-brand-border" />
-                <div className="flex flex-col items-center gap-1">
-                  <span className="font-dm text-h3 text-brand-navy">1.142+</span>
-                  <span className="text-center text-txt-xs text-foreground-alt">famílias atendidas</span>
-                </div>
-                <div className="h-8 w-px bg-brand-border" />
-                <div className="flex flex-col items-center gap-1">
-                  <span className="font-dm text-h3 text-brand-navy">30d</span>
-                  <span className="text-center text-txt-xs text-foreground-alt">prazo máximo</span>
-                </div>
-              </div>
             </div>
           </div>
         </form>
