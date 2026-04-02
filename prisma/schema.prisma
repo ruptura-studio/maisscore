@@ -95,6 +95,21 @@ model Process {
   @@map("processes")
 }
 
+model AbandonedCheckout {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String?
+  email         String?
+  phone         String?
+  document      String?
+  documentType  String?  @map("document_type")
+  product       String?
+  paymentMethod String?  @map("payment_method")
+  installments  Int?
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@map("abandoned_checkouts")
+}
+
 model NurtureLog {
   id      String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   leadId  String   @map("lead_id") @db.Uuid

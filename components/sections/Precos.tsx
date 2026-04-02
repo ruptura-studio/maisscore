@@ -4,29 +4,42 @@ import { WHATSAPP_COMPRAR } from '@/lib/config'
 const PLANOS = [
   {
     tipo: 'CPF',
-    descricao: 'Regularização de pessoa física',
-    // TODO: text-[48px] — sem token de 48px para preço; heading-1 é 48px mas com font-weight diferente
-    preco: 'R$ 595',
+    descricao: 'Pessoa física',
+    tipoColor: 'text-brand-orange',
+    btnClass: 'btn-primary',
+    btnLabel: 'Limpar meu CPF',
+    moeda: 'R$',
+    valor: '595',
     centavos: ',00',
     pagamento: 'PIX à vista ou 2× no cartão',
     features: [
-      'Limpeza completa do nome no Serasa/SPC',
-      'Acompanhamento individual até o resultado',
-      'Segurança jurídica em todo o processo',
-      'Resultado em 15 a 30 dias úteis',
+      'Retirada de restrições Serasa, SPC e Boa Vista',
+      'Retirada de restrições em Cartório de Protesto',
+      'Acompanhamento pelo WhatsApp do início ao fim',
+      'Processo inicia em até 7 dias úteis',
+      'Resultado em até 30 dias úteis',
+      'Guia: como aumentar o score após limpar o nome',
+      'Checklist para aprovação de crédito',
     ],
   },
   {
     tipo: 'CNPJ',
-    descricao: 'Regularização de pessoa jurídica',
-    preco: 'R$ 795',
+    descricao: 'Pessoa jurídica',
+    tipoColor: 'text-brand-navy',
+    btnClass: 'btn-secondary',
+    btnLabel: 'Limpar meu CNPJ',
+    moeda: 'R$',
+    valor: '795',
     centavos: ',00',
     pagamento: 'PIX à vista ou 2× no cartão',
     features: [
-      'Limpeza completa do CNPJ no Serasa/SPC',
-      'Acompanhamento individual até o resultado',
-      'Segurança jurídica em todo o processo',
-      'Resultado em 15 a 30 dias úteis',
+      'Retirada de restrições Serasa, SPC e Boa Vista',
+      'Retirada de restrições em Cartório de Protesto',
+      'Acompanhamento pelo WhatsApp do início ao fim',
+      'Processo inicia em até 7 dias úteis',
+      'Resultado em até 30 dias úteis',
+      'Guia: como aumentar o score do seu CNPJ',
+      'Checklist para aprovação de crédito empresarial',
     ],
   },
 ]
@@ -41,76 +54,67 @@ export function Precos() {
         backgroundPosition: 'center',
       }}
     >
-      {/* Gradient branco cobrindo o fundo (top 100% → bottom 80%) */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            'linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0.95) 100%)',
-        }}
-      />
 
-      <div className="container-ms relative z-10 pt-[100px]">
-        {/* Bloco de texto — max 550px */}
-        <div className="mb-5 flex max-w-[550px] flex-col gap-4">
-          {/* TODO: text-[60px] sem token — text-h1 mobile (48px); text-display desktop (64px) */}
-          <h2
-            className="font-dm text-h1 font-normal text-brand-navy lg:text-display"
-            style={{ textShadow: '0 2px 10px rgba(255,255,255,0.7)' }}
-          >
-            Quanto vale voltar a ter acesso ao crédito?
-          </h2>
-          {/* text-[18px] → text-h6 font-normal (18px/DM); lg:text-[24px] → lg:text-h5 (24px/400/DM) */}
-          <p className="font-dm text-h6 font-normal text-grafite lg:text-h5">
-            Enquanto seu nome estiver sujo, você paga mais em juros, perde financiamentos e depende
-            de outras pessoas. Resolver agora custa menos do que continuar travado.
-          </p>
-        </div>
+      <div className="container-ms relative z-10 pt-24">
+        {/* Layout: coluna esquerda (texto + imagem) | coluna direita (cards) */}
+        <div className="relative flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-14">
 
-        {/* Linha inferior: imagem + cards */}
-        <div className="flex flex-col items-end gap-8 lg:flex-row lg:gap-[55px]">
-          {/* Imagem casal — visível só em desktop, alinhada à base */}
-          <div className="hidden shrink-0 self-end lg:block">
+          {/* Imagem casal — ancorada na base do container principal */}
+          <div className="pointer-events-none absolute bottom-0 left-0 hidden lg:block">
             <Image
               src="/img/casal.png"
               alt="Casal comemorando a regularização do CPF"
               width={525}
               height={739}
-              className="w-full max-w-[380px] object-contain xl:max-w-[525px]"
+              className="w-full max-w-[330px] object-contain"
             />
           </div>
 
-          {/* Lado direito: cards de preço + garantia */}
-          <div className="flex w-full flex-1 flex-col gap-[30px] pb-[90px]">
+          {/* Coluna esquerda: texto */}
+          <div className="flex shrink-0 flex-col gap-8 lg:max-w-[240px] xl:max-w-[288px]">
+            {/* Bloco de texto */}
+            <div className="flex flex-col gap-4">
+              <h2 className="font-dm text-h2 text-brand-navy">
+                Quanto vale voltar a ter acesso ao crédito?
+              </h2>
+              <p className="text-p text-grafite">
+                Enquanto seu nome estiver sujo, você paga mais em juros, perde financiamentos e depende
+                de outras pessoas. Resolver agora custa menos do que continuar travado.
+              </p>
+            </div>
+          </div>
+
+          {/* Coluna direita: cards de preço + garantia */}
+          <div className="flex flex-1 flex-col gap-8 pb-24">
             {/* Cards */}
-            <div className="flex flex-col gap-[30px] md:flex-row">
+            <div className="flex flex-col gap-4 md:flex-row">
               {PLANOS.map((plano) => (
                 <div
                   key={plano.tipo}
-                  className="flex flex-1 flex-col gap-[32px] rounded-xl bg-white px-[40px] py-[60px] shadow-[0_2px_8px_rgba(0,0,0,0.25)] xl:px-[60px] xl:py-[80px]"
+                  className="flex flex-1 flex-col gap-4 rounded-lg bg-white p-8 shadow-md"
                 >
                   {/* Identificação do plano */}
                   <div className="flex flex-col gap-1">
-                    {/* TODO: text-[13px] → text-cap (14px/DM/uppercase); tracking-[2px] override necessário pois token baked é 6px */}
-                    <span className="font-dm text-cap uppercase tracking-[2px] font-bold text-brand-orange">
+                    <span className={`text-subtitle ${plano.tipoColor}`}>
                       {plano.tipo}
                     </span>
-                    <p className="font-dm text-p text-foreground-alt">{plano.descricao}</p>
+                    <p className="text-label text-foreground-alt">{plano.descricao}</p>
                   </div>
 
                   {/* Preço */}
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-baseline gap-0.5">
-                      {/* TODO: text-[44px]/xl:text-[52px] sem tokens — usando text-h1 (48px) como aproximação */}
-                      <span className="font-dm text-h1 font-bold leading-none text-brand-navy">
-                        {plano.preco}
+                  <div className="flex flex-col items-center gap-1">
+                    <div className="flex items-start">
+                      <span className="font-dm text-price-sm text-brand-navy mt-1">
+                        {plano.moeda}
                       </span>
-                      {/* text-[22px] font-bold → text-h4 (24px/600/DM, mais próximo) */}
-                      <span className="font-dm text-h4 text-brand-navy">
+                      <span className="font-dm text-price tracking-price text-brand-navy">
+                        {plano.valor}
+                      </span>
+                      <span className="font-dm text-price-sm text-brand-navy mt-1">
                         {plano.centavos}
                       </span>
                     </div>
-                    <p className="font-dm text-lable text-foreground-alt">{plano.pagamento}</p>
+                    <p className="font-dm text-label text-foreground-alt">{plano.pagamento}</p>
                   </div>
 
                   {/* Features */}
@@ -118,25 +122,23 @@ export function Precos() {
                     {plano.features.map((feature, i) => (
                       <li key={i} className="flex items-center gap-3">
                         <Image
-                          src="/icons/check-circle-icon.svg"
+                          src="/icons/icon-ast.svg"
                           alt=""
-                          width={20}
-                          height={20}
+                          width={8}
+                          height={8}
                           className="shrink-0"
                         />
-                        <span className="font-dm text-p text-brand-navy">{feature}</span>
+                        <span className="text-label text-brand-navy">{feature}</span>
                       </li>
                     ))}
                   </ul>
 
                   {/* CTA */}
                   <a
-                    href={WHATSAPP_COMPRAR}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-primary w-full"
+                    href="/checkout"
+                    className={`${plano.btnClass} w-full`}
                   >
-                    Resolver Agora
+                    {plano.btnLabel}
                     <Image
                       src="/icons/arrow-up-icon.svg"
                       alt=""
@@ -150,7 +152,7 @@ export function Precos() {
             </div>
 
             {/* Texto de garantia */}
-            <p className="max-w-[477px] font-dm text-p-sm leading-[1.3] text-brand-navy">
+            <p className="w-full text-txt-xs text-brand-navy">
               <strong className="font-semibold">Garantia total de resultado</strong>
               <br />
               Se seu nome não ficar limpo em até 30 dias úteis, você recebe o dinheiro de volta. Sem

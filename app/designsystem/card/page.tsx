@@ -24,7 +24,7 @@ export default function CardPage() {
         <h1 className="text-h2 font-dm font-normal text-brand-navy mb-2">
           Card
         </h1>
-        <p className="text-p-lg text-neutral-400 mb-8">
+        <p className="text-lg text-neutral-400 mb-8">
           Container com bordas arredondadas e sombra para agrupar conteúdo relacionado.
           Composto por sub-componentes:{' '}
           <code className="font-mono text-brand-navy bg-neutral-50 px-1 rounded">CardHeader</code>,{' '}
@@ -45,7 +45,7 @@ export default function CardPage() {
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Card Simples
         </h2>
-        <p className="text-p-sm text-neutral-400 mb-4">
+        <p className="text-sm text-neutral-400 mb-4">
           Estrutura básica com cabeçalho, descrição e conteúdo.
         </p>
       </div>
@@ -79,7 +79,7 @@ export default function CardPage() {
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Card com Footer
         </h2>
-        <p className="text-p-sm text-neutral-400 mb-4">
+        <p className="text-sm text-neutral-400 mb-4">
           Adicione ações ou informações adicionais no rodapé do card.
         </p>
       </div>
@@ -119,7 +119,7 @@ export default function CardPage() {
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Card com Badge
         </h2>
-        <p className="text-p-sm text-neutral-400 mb-4">
+        <p className="text-sm text-neutral-400 mb-4">
           Combina Card com Badge para exibir status ou categorias.
         </p>
       </div>
@@ -159,7 +159,7 @@ export default function CardPage() {
         </h2>
       </div>
       <div className="border border-brand-border rounded-lg overflow-hidden">
-        <table className="w-full text-p-sm">
+        <table className="w-full text-sm">
           <thead className="bg-neutral-50 border-b border-brand-border">
             <tr>
               <th className="text-left px-4 py-3 text-brand-navy font-medium">Componente</th>

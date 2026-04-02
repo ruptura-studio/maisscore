@@ -15,7 +15,7 @@ export default function BotoesPage() {
         <h1 className="text-h2 font-dm font-normal text-brand-navy mb-2">
           Botões
         </h1>
-        <p className="text-p-lg text-neutral-400 mb-8">
+        <p className="text-lg text-neutral-400 mb-8">
           Classes utilitárias de botão definidas em{' '}
           <code className="font-mono text-brand-navy bg-neutral-50 px-1 rounded">
             globals.css
@@ -29,7 +29,7 @@ export default function BotoesPage() {
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           .btn-primary
         </h2>
-        <p className="text-p-sm text-neutral-400 mb-4">
+        <p className="text-sm text-neutral-400 mb-4">
           Fundo laranja (#ff4000), texto branco. Usado para a ação principal da página.
         </p>
       </div>
@@ -49,7 +49,7 @@ export default function BotoesPage() {
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           .btn-primary com ícone
         </h2>
-        <p className="text-p-sm text-neutral-400 mb-4">
+        <p className="text-sm text-neutral-400 mb-4">
           O botão já usa <code className="font-mono bg-neutral-50 px-1 rounded">gap-2</code>,
           basta adicionar um ícone ao lado do texto.
         </p>
@@ -74,7 +74,7 @@ export default function BotoesPage() {
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           .btn-secondary
         </h2>
-        <p className="text-p-sm text-neutral-400 mb-4">
+        <p className="text-sm text-neutral-400 mb-4">
           Fundo navy (#101c2e), texto branco. Usado para ações secundárias ou de contraste.
         </p>
       </div>
@@ -94,19 +94,19 @@ export default function BotoesPage() {
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           .nav-link
         </h2>
-        <p className="text-p-sm text-neutral-400 mb-4">
+        <p className="text-sm text-neutral-400 mb-4">
           Link de navegação. Texto navy, hover laranja com transição suave.
           Aplicado nos itens do Header.
         </p>
       </div>
       <div className="preview-full border border-brand-border rounded-lg p-8 flex items-center justify-center gap-8 bg-neutral-50 mb-4">
-        <a href="#" className="nav-link text-p-lg">
+        <a href="#" className="nav-link text-lg">
           Início
         </a>
-        <a href="#" className="nav-link text-p-lg">
+        <a href="#" className="nav-link text-lg">
           Como funciona
         </a>
-        <a href="#" className="nav-link text-p-lg">
+        <a href="#" className="nav-link text-lg">
           Depoimentos
         </a>
       </div>
@@ -123,7 +123,7 @@ export default function BotoesPage() {
         </h2>
       </div>
       <div className="border border-brand-border rounded-lg overflow-hidden">
-        <table className="w-full text-p-sm">
+        <table className="w-full text-sm">
           <thead className="bg-neutral-50 border-b border-brand-border">
             <tr>
               <th className="text-left px-4 py-3 text-brand-navy font-medium">Propriedade</th>

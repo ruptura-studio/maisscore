@@ -14,7 +14,7 @@ export default function InputPage() {
     <div>
       <div className="sg-prose">
         <h1 className="text-h2 font-dm font-normal text-brand-navy mb-2">Input</h1>
-        <p className="text-p-lg text-neutral-400 mb-8">
+        <p className="text-lg text-neutral-400 mb-8">
           Campo de texto para formulários. Definido em{' '}
           <code className="font-mono text-brand-navy bg-neutral-50 px-1 rounded">components/ui/input.tsx</code>.
         </p>
@@ -22,7 +22,7 @@ export default function InputPage() {
 
       <div className="sg-prose">
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Tipos</h2>
-        <p className="text-p-sm text-neutral-400 mb-4">Variações por tipo de dado.</p>
+        <p className="text-sm text-neutral-400 mb-4">Variações por tipo de dado.</p>
       </div>
       <div className="preview-full border border-brand-border rounded-lg p-8 flex flex-col gap-4 bg-neutral-50 mb-4">
         <div className="grid gap-2 w-full max-w-sm">
@@ -52,7 +52,7 @@ export default function InputPage() {
 
       <div className="sg-prose">
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Estados</h2>
-        <p className="text-p-sm text-neutral-400 mb-4">Disabled e com erro.</p>
+        <p className="text-sm text-neutral-400 mb-4">Disabled e com erro.</p>
       </div>
       <div className="preview-full border border-brand-border rounded-lg p-8 flex flex-col gap-4 bg-neutral-50 mb-4">
         <div className="grid gap-2 w-full max-w-sm">
@@ -72,7 +72,7 @@ export default function InputPage() {
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Especificações</h2>
       </div>
       <div className="border border-brand-border rounded-lg overflow-hidden">
-        <table className="w-full text-p-sm">
+        <table className="w-full text-sm">
           <thead className="bg-neutral-50 border-b border-brand-border">
             <tr>
               <th className="text-left px-4 py-3 text-brand-navy font-medium">Prop</th>

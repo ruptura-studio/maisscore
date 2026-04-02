@@ -15,12 +15,12 @@ export default function HomePage() {
       <Hero />
       <CtaResolverAgora />
       <Pesquisa />
-      <ComoFunciona />
+      <div id="como-funciona"><ComoFunciona /></div>
       <AgoraVocePode />
-      <Depoimentos />
-      <SobreNos />
-      <Precos />
-      <FAQ />
+      <div id="depoimentos"><Depoimentos /></div>
+      <div id="sobre"><SobreNos /></div>
+      <div id="precos"><Precos /></div>
+      <div id="faq"><FAQ /></div>
       <CtaWhatsapp />
       <BeneficiosBar />
     </>

@@ -10,42 +10,42 @@ export function HeaderTopBar() {
         <div className="flex items-center">
           <a
             href="mailto:contato@maisscore.com.br"
-            className="flex items-center gap-2 text-[14px] text-brand-navy hover:text-brand-orange transition-colors"
+            className="flex items-center gap-2 text-txt-sm text-disabled hover:text-brand-orange transition-colors"
           >
-            <Image src="/icons/email-icon.svg" alt="" width={14} height={14} className="shrink-0" />
+            <Image src="/icons/email-icon.svg" alt="" width={12} height={12} className="shrink-0" />
             contato@maisscore.com.br
           </a>
         </div>
 
         {/* Center: address */}
         <div className="flex items-center justify-center">
-          <span className="flex items-center gap-2 text-[14px] text-brand-navy">
-            <Image src="/icons/location-icon.svg" alt="" width={14} height={14} className="shrink-0" />
+          <span className="flex items-center gap-2 text-txt-sm text-disabled">
+            <Image src="/icons/location-icon.svg" alt="" width={12} height={12} className="shrink-0" />
             Alameda Rio Negro, 503, Alphaville, Barueri-SP
           </span>
         </div>
 
         {/* Right: social */}
-        <div className="flex items-center justify-end gap-[10px] text-[12px]">
+        <div className="flex items-center justify-end gap-2.5 text-txt-sm">
           <a
             href="https://instagram.com/maisscore"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1 hover:text-brand-orange transition-colors"
+            className="flex items-center gap-1 text-disabled hover:text-brand-orange transition-colors"
           >
             <span className="text-brand-orange">/</span>
-            <FaInstagram size={14} className="text-brand-orange" />
-            <span className="text-brand-navy">Instagram</span>
+            <FaInstagram size={12} className="text-brand-orange" />
+            <span>Instagram</span>
           </a>
           <a
             href={WHATSAPP_GERAL}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1 hover:text-brand-orange transition-colors"
+            className="flex items-center gap-1 text-disabled hover:text-brand-orange transition-colors"
           >
             <span className="text-brand-orange">/</span>
-            <FaWhatsapp size={14} className="text-brand-orange" />
-            <span className="text-brand-navy">WhatsApp</span>
+            <FaWhatsapp size={12} className="text-brand-orange" />
+            <span>WhatsApp</span>
           </a>
         </div>
       </div>

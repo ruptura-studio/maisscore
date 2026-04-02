@@ -37,19 +37,15 @@ const STEPS = [
 
 export function ComoFunciona() {
   return (
-    // TODO: bg-neutral-100 sem token no DS — usando bg-neutral-50; py-[120px] sem token — usando py-24 (96px) como aproximação
-    <section className="w-full bg-neutral-50 py-24">
-      {/* TODO: gap-10 (40px) fora da escala do DS — usando gap-8 (32px) */}
+    <section className="w-full bg-neutral-100 py-24">
       <div className="container-ms flex flex-col items-center gap-8">
 
         {/* Title */}
         <div className="flex flex-col items-center gap-6">
-          {/* TODO: text-[10px] sem token — usando text-lable (12px); tracking-[6px] sem token de letter-spacing no DS */}
-          <p className="font-dm text-lable font-light uppercase tracking-[6px] text-brand-navy">
+          <p className="font-dm text-cap text-disabled">
             Nosso método reativa crédito
           </p>
-          {/* TODO: text-[40px]/lg:text-[60px] sem tokens exatos — usando text-h1 (48px) para ambos; 60px não tem token entre heading-1 e display */}
-          <h2 className="font-dm text-h1 font-normal text-brand-navy text-center">
+          <h2 className="font-dm text-h2 text-brand-navy text-center">
             Como a Mais Score limpa seu nome
           </h2>
         </div>
@@ -64,9 +60,8 @@ export function ComoFunciona() {
               }`}
             >
               {/* Text */}
-              <div className="flex flex-col gap-4 lg:max-w-[550px]">
-                {/* text-[28px] → text-h4 (24px, mais próximo); lg:text-[36px] → lg:text-h2 (36px, exato) */}
-                <h3 className="font-dm text-h4 font-bold text-brand-navy lg:text-h2">
+              <div className="flex flex-1 flex-col gap-4">
+                <h3 className="font-dm text-h3 text-brand-navy">
                   {step.title}
                 </h3>
                 <p className="font-dm text-p text-grafite">
@@ -80,21 +75,20 @@ export function ComoFunciona() {
                     height={8}
                     className="shrink-0"
                   />
-                  {/* text-[10px] → text-lable (12px, mais próximo disponível no DS) */}
-                  <span className="font-dm text-lable font-normal text-white">
+                  <span className="font-dm text-label text-white">
                     {step.badge}
                   </span>
                 </span>
               </div>
 
               {/* Image */}
-              <div className="w-full shrink-0 lg:w-[576px]">
+              <div className="flex flex-1 justify-center">
                 <Image
                   src={step.image}
                   alt={step.imageAlt}
-                  width={576}
-                  height={424}
-                  className="h-auto w-full"
+                  width={363}
+                  height={267}
+                  className="h-auto w-full max-w-content-sm"
                 />
               </div>
             </div>

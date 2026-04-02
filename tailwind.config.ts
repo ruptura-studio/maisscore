@@ -10,11 +10,11 @@ const config: Config = {
   ],
   safelist: [
     'text-display',
-    'text-h1', 'text-h2', 'text-h3', 'text-h4', 'text-h5', 'text-h6',
+    'text-h2', 'text-h3',
     'text-subtitle',
     'text-cap',
-    'text-p-lg', 'text-p', 'text-p-sm',
-    'text-lable',
+    'text-lg', 'text-p', 'text-sm',
+    'text-label',
     'text-txt-sm', 'text-txt-xs',
   ],
   theme: {
@@ -30,6 +30,7 @@ const config: Config = {
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
+  			disabled: '#a0a0a0',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
@@ -53,7 +54,6 @@ const config: Config = {
   			accent: {
   				DEFAULT: 'hsl(var(--accent))',
   				foreground: 'hsl(var(--accent-foreground))',
-  				dark: '#1E4ED8'
   			},
   			destructive: {
   				DEFAULT: 'hsl(var(--destructive))',
@@ -94,11 +94,14 @@ const config: Config = {
   			brand: {
   				orange: '#ff4000',
   				navy: '#101c2e',
-  				border: '#d4d4d4'
+  				border: '#d4d4d4',
+  				star: '#EE9E16',
   			},
   			grafite: '#2E2E2E',
-  			'neutral-400': '#a3a3a3',
   			'neutral-50': '#fafafa',
+  			'neutral-100': '#f2f2f2',
+  			'neutral-200': '#e9e9e9',
+  			'neutral-400': '#a3a3a3',
   			'foreground-alt': '#404040',
   			'border-light': '#d4d4d4'
   		},
@@ -117,21 +120,19 @@ const config: Config = {
   			]
   		},
   		fontSize: {
-  			'display': ['64px', { lineHeight: '74px', fontWeight: '400' }],
-  			'h1': ['48px', { lineHeight: '52px', fontWeight: '600' }],
-  			'h2': ['36px', { lineHeight: '40px', fontWeight: '600' }],
-  			'h3': ['36px', { lineHeight: '40px', fontWeight: '400' }],
-  			'h4': ['24px', { lineHeight: '28px', fontWeight: '600' }],
-  			'h5': ['24px', { lineHeight: '28px', fontWeight: '400' }],
-  			'h6': ['18px', { lineHeight: '22px', fontWeight: '600' }],
+  			'display': ['40px', { lineHeight: '44px', fontWeight: '400' }],
+  			'price': ['48px', { lineHeight: '50px', fontWeight: '700' }],
+  			'price-sm': ['16px', { lineHeight: '18px', fontWeight: '700' }],
+  			'h2': ['24px', { lineHeight: '28px', fontWeight: '400' }],
+  			'h3': ['18px', { lineHeight: '22px', fontWeight: '600' }],
   			'subtitle': ['16px', { lineHeight: '20px', fontWeight: '600' }],
   			'cap': ['14px', { lineHeight: '18px', fontWeight: '400', letterSpacing: '6px' }],
-  			'p-sm': ['14px', { lineHeight: '16px', fontWeight: '400', letterSpacing: '-2px' }],
-  			'p': ['14px', { lineHeight: '18px', fontWeight: '400', letterSpacing: '-2px' }],
-  			'p-lg': ['16px', { lineHeight: '20px', fontWeight: '400' }],
-  			'lable': ['12px', { lineHeight: '14px', fontWeight: '400' }],
-  			'txt-sm': ['12px', { lineHeight: '14px', fontWeight: '400', letterSpacing: '-2px' }],
-  			'txt-xs': ['10px', { lineHeight: '12px', fontWeight: '400', letterSpacing: '-2px' }],
+  			'sm': ['14px', { lineHeight: '16px', fontWeight: '400' }],
+  			'p': ['12px', { lineHeight: '14px', fontWeight: '400' }],
+  			'lg': ['16px', { lineHeight: '20px', fontWeight: '400' }],
+  			'label': ['12px', { lineHeight: '14px', fontWeight: '400' }],
+  			'txt-sm': ['12px', { lineHeight: '14px', fontWeight: '400' }],
+  			'txt-xs': ['10px', { lineHeight: '12px', fontWeight: '400' }],
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
@@ -140,7 +141,6 @@ const config: Config = {
   			full: '9999px'
   		},
   		boxShadow: {
-  			xs: '0 1px 2px rgba(0,0,0,0.05)',
   			sm: '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)',
   			md: '0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.04)',
   			lg: '0 10px 15px rgba(0,0,0,0.08), 0 4px 6px rgba(0,0,0,0.04)',
@@ -153,10 +153,17 @@ const config: Config = {
   			'4': '16px',
   			'6': '24px',
   			'8': '32px',
-  			'24': '96px'
+  			'24': '96px',
+  		},
+  		letterSpacing: {
+  			'price': '-4px',
   		},
   		maxWidth: {
-  			container: '1440px'
+  			container: '1200px',
+  			display: '17rem',
+  			'content-sm': '363px',
+  			'content-md': '520px',
+  			'content-lg': '560px',
   		},
   		keyframes: {
   			'accordion-down': {

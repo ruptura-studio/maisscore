@@ -30,23 +30,23 @@ type TestimonialProps = {
 
 function TestimonialCard({ quote, name, avatar }: TestimonialProps) {
   return (
-    <div className="flex h-full flex-col items-center bg-white px-[45px] pb-[60px] pt-[69px]">
+    <div className="flex h-full flex-col items-center bg-white p-8">
       {/* Quote icon */}
       <Image
         src="/icons/icon-aspas.svg"
         alt=""
         width={30}
         height={22}
-        className="mb-[23px] shrink-0"
+        className="mb-6 shrink-0"
       />
 
       {/* Quote text */}
-      <p className="font-dm text-h6 font-light italic text-brand-navy text-center">
+      <p className="font-dm text-sm italic text-brand-navy text-center">
         {quote}
       </p>
 
       {/* Author */}
-      <div className="mt-[40px] flex flex-col items-center gap-[5px]">
+      <div className="mt-4 flex flex-col items-center gap-1">
         <Image
           src={avatar}
           alt={name}
@@ -54,12 +54,12 @@ function TestimonialCard({ quote, name, avatar }: TestimonialProps) {
           height={80}
           className="h-20 w-20 rounded-full object-cover"
         />
-        <p className="mt-[10px] font-dm text-h6 font-light text-brand-navy text-center">
+        <p className="mt-2 font-dm text-p text-brand-navy text-center">
           {name}
         </p>
         <div className="flex items-center gap-1">
           {Array.from({ length: 5 }).map((_, i) => (
-            <Star key={i} size={12} className="fill-[#EE9E16] text-[#EE9E16]" />
+            <Star key={i} size={12} className="fill-brand-star text-brand-star" />
           ))}
         </div>
       </div>
@@ -71,24 +71,20 @@ export function Depoimentos() {
   const [active, setActive] = useState(0)
 
   return (
-    {/* TODO: py-[120px] sem token — usando py-24 (96px) */}
-    <section className="w-full bg-[#f2f2f2] py-24">
+    <section className="w-full bg-neutral-100 py-24">
       <div className="container-ms flex flex-col items-center gap-8">
 
         {/* Header */}
         <div className="flex flex-col items-center gap-4 pb-4">
-          {/* TODO: text-[10px] sem token — usando text-lable (12px); tracking-[6px] = cap behavior manual */}
-          <p className="font-dm text-lable font-light uppercase tracking-[6px] text-brand-navy">
+          <p className="font-dm text-cap text-disabled">
             Depoimentos
           </p>
-          {/* TODO: text-[60px] sem token — usando text-h1 (48px) mobile e text-display (64px) desktop */}
-          <h2 className="font-dm text-h1 font-normal text-brand-navy text-center lg:text-display">
+          <h2 className="font-dm text-h2 text-brand-navy text-center">
             O que nossos clientes dizem
           </h2>
         </div>
 
         {/* Desktop: 3 columns */}
-        {/* TODO: gap-[30px] sem token — usando gap-8 (32px) */}
         <div className="hidden w-full grid-cols-3 gap-8 lg:grid">
           {TESTIMONIALS.map((t, i) => (
             <TestimonialCard key={i} {...t} />
@@ -98,7 +94,7 @@ export function Depoimentos() {
         {/* Mobile: carousel */}
         <div className="flex w-full flex-col items-center gap-6 lg:hidden">
           <TestimonialCard {...TESTIMONIALS[active]} />
-          <div className="flex items-center gap-[16px]">
+          <div className="flex items-center gap-4">
             {TESTIMONIALS.map((_, i) => (
               <button
                 key={i}

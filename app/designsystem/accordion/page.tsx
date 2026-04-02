@@ -20,7 +20,7 @@ export default function AccordionPage() {
         <h1 className="text-h2 font-dm font-normal text-brand-navy mb-2">
           Accordion
         </h1>
-        <p className="text-p-lg text-neutral-400 mb-8">
+        <p className="text-lg text-neutral-400 mb-8">
           Seções expansíveis verticalmente. Ideal para FAQs e conteúdo progressivo.
           Definido em{' '}
           <code className="font-mono text-brand-navy bg-neutral-50 px-1 rounded">
@@ -35,7 +35,7 @@ export default function AccordionPage() {
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           type=&quot;single&quot;
         </h2>
-        <p className="text-p-sm text-neutral-400 mb-4">
+        <p className="text-sm text-neutral-400 mb-4">
           Apenas um item aberto por vez. Com{' '}
           <code className="font-mono bg-neutral-50 px-1 rounded">collapsible</code>{' '}
           o item aberto pode ser fechado novamente.
@@ -92,7 +92,7 @@ export default function AccordionPage() {
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           type=&quot;multiple&quot;
         </h2>
-        <p className="text-p-sm text-neutral-400 mb-4">
+        <p className="text-sm text-neutral-400 mb-4">
           Vários itens podem ficar abertos simultaneamente.
         </p>
       </div>
@@ -144,7 +144,7 @@ export default function AccordionPage() {
         </h2>
       </div>
       <div className="border border-brand-border rounded-lg overflow-hidden">
-        <table className="w-full text-p-sm">
+        <table className="w-full text-sm">
           <thead className="bg-neutral-50 border-b border-brand-border">
             <tr>
               <th className="text-left px-4 py-3 text-brand-navy font-medium">Prop</th>

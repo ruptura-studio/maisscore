@@ -17,7 +17,7 @@ export default function PopoverPage() {
     <div>
       <div className="sg-prose">
         <h1 className="text-h2 font-dm font-normal text-brand-navy mb-2">Popover</h1>
-        <p className="text-p-lg text-neutral-400 mb-8">
+        <p className="text-lg text-neutral-400 mb-8">
           Conteúdo flutuante acionado por clique. Diferente do HoverCard, requer interação explícita. Definido em{' '}
           <code className="font-mono text-brand-navy bg-neutral-50 px-1 rounded">components/ui/popover.tsx</code>.
         </p>
@@ -25,7 +25,7 @@ export default function PopoverPage() {
 
       <div className="sg-prose">
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Informação Adicional</h2>
-        <p className="text-p-sm text-neutral-400 mb-4">Botão de info que abre um popover explicativo.</p>
+        <p className="text-sm text-neutral-400 mb-4">Botão de info que abre um popover explicativo.</p>
       </div>
       <div className="preview-full border border-brand-border rounded-lg p-8 flex items-center justify-center gap-4 bg-neutral-50 mb-4">
         <span className="text-sm text-brand-navy">Taxa de sucesso</span>
@@ -53,7 +53,7 @@ export default function PopoverPage() {
 
       <div className="sg-prose">
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Mini Formulário</h2>
-        <p className="text-p-sm text-neutral-400 mb-4">Popover com campos de entrada.</p>
+        <p className="text-sm text-neutral-400 mb-4">Popover com campos de entrada.</p>
       </div>
       <div className="preview-full border border-brand-border rounded-lg p-8 flex items-center justify-center bg-neutral-50 mb-4">
         <Popover>
@@ -89,7 +89,7 @@ export default function PopoverPage() {
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Especificações</h2>
       </div>
       <div className="border border-brand-border rounded-lg overflow-hidden">
-        <table className="w-full text-p-sm">
+        <table className="w-full text-sm">
           <thead className="bg-neutral-50 border-b border-brand-border">
             <tr>
               <th className="text-left px-4 py-3 text-brand-navy font-medium">Prop (PopoverContent)</th>

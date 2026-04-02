@@ -10,11 +10,6 @@ const spacingScale = [
 
 const shadows = [
   {
-    token: 'shadow-xs',
-    value: '0 1px 2px rgba(0,0,0,0.05)',
-    tailwind: 'shadow-xs',
-  },
-  {
     token: 'shadow-sm',
     value: '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04)',
     tailwind: 'shadow-sm',
@@ -52,7 +47,7 @@ export default function EspacamentoPage() {
         <h1 className="text-h2 font-dm font-normal text-brand-navy mb-2">
           Espaçamento & Sombras
         </h1>
-        <p className="text-p-lg text-neutral-400 mb-8">
+        <p className="text-lg text-neutral-400 mb-8">
           Escala de espaçamento, elevações e raios de borda do sistema de design.
         </p>
       </div>
@@ -67,8 +62,8 @@ export default function EspacamentoPage() {
         {spacingScale.map((item) => (
           <div key={item.token} className="flex items-center gap-4">
             <div className="w-28 shrink-0">
-              <p className="text-lable font-mono text-brand-orange">{item.tailwind}</p>
-              <p className="text-lable text-neutral-400">{item.value}</p>
+              <p className="text-label font-mono text-brand-orange">{item.tailwind}</p>
+              <p className="text-label text-neutral-400">{item.value}</p>
             </div>
             <div
               className="h-6 rounded bg-brand-orange/20 border border-brand-orange/40"
@@ -91,7 +86,7 @@ export default function EspacamentoPage() {
               className={`w-full h-20 bg-white rounded-lg ${shadow.tailwind} border border-brand-border/40`}
             />
             <div className="text-center">
-              <p className="text-lable font-mono text-brand-orange">{shadow.token}</p>
+              <p className="text-label font-mono text-brand-orange">{shadow.token}</p>
             </div>
           </div>
         ))}
@@ -111,8 +106,8 @@ export default function EspacamentoPage() {
               style={{ borderRadius: item.style }}
             />
             <div className="text-center">
-              <p className="text-lable font-mono text-brand-orange">{item.token}</p>
-              <p className="text-lable text-neutral-400">{item.label}</p>
+              <p className="text-label font-mono text-brand-orange">{item.token}</p>
+              <p className="text-label text-neutral-400">{item.label}</p>
             </div>
           </div>
         ))}

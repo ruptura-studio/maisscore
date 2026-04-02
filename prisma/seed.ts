@@ -10,14 +10,14 @@ const prisma = new PrismaClient({ adapter })
 async function main() {
   await prisma.product.upsert({
     where: { slug: 'limpa-nome-cpf' },
-    update: { name: 'Limpa Nome CPF', price: 49500 },
-    create: { slug: 'limpa-nome-cpf', name: 'Limpa Nome CPF', price: 49500, active: true },
+    update: { name: 'Limpa Nome CPF', price: 59500 },
+    create: { slug: 'limpa-nome-cpf', name: 'Limpa Nome CPF', price: 59500, active: true },
   })
 
   await prisma.product.upsert({
     where: { slug: 'limpa-nome-cnpj' },
-    update: { name: 'Limpa Nome CNPJ', price: 69500 },
-    create: { slug: 'limpa-nome-cnpj', name: 'Limpa Nome CNPJ', price: 69500, active: true },
+    update: { name: 'Limpa Nome CNPJ', price: 79500 },
+    create: { slug: 'limpa-nome-cnpj', name: 'Limpa Nome CNPJ', price: 79500, active: true },
   })
 
   await prisma.product.upsert({

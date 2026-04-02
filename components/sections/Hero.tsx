@@ -93,7 +93,7 @@ export function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full bg-[#e9e9e9] overflow-hidden h-[1000px] [@media(orientation:landscape)]:h-[calc(100dvh-var(--header-height))]"
+      className="relative w-full bg-neutral-200 overflow-hidden h-[1000px] [@media(orientation:landscape)]:h-[calc(100dvh-var(--header-height))]"
     >
       {/* Background */}
       <div className="absolute inset-0 pointer-events-none z-0">
@@ -122,7 +122,7 @@ export function Hero() {
                 Limpe seu nome em até 30 dias
               </h1>
               <div className="flex flex-col gap-4" style={{ maxWidth: '550px' }}>
-                <p className="font-dm font-normal text-brand-navy text-h5">
+                <p className="font-dm font-normal text-brand-navy text-h2">
                   Mesmo sem quitar as suas dívidas
                 </p>
                 <div className="font-sans font-normal text-grafite text-p">
@@ -135,9 +135,7 @@ export function Hero() {
             {/* CTAs */}
             <div className="flex items-center gap-4 flex-wrap">
               <a
-                href={WHATSAPP_COMPRAR}
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/checkout"
                 className="btn-primary"
               >
                 Quero limpar meu nome agora <Image src="/icons/arrow-up-icon.svg" alt="" width={10} height={10} className="shrink-0" />
@@ -197,45 +195,45 @@ export function Hero() {
             {/* Card 97% — entry 0.1s · float 4s · parallax depth -22/-16 */}
             <div
               ref={card97Ref}
-              className="absolute bg-white rounded-[16px] shadow-card flex flex-col items-center justify-center gap-[4px] px-[16px]"
+              className="absolute bg-white rounded-[16px] shadow-card flex flex-col items-center justify-center gap-[3px] px-[13px] py-[13px]"
               style={{
-                top: '8.7%', right: '12%', width: '138px', height: '180px',
+                top: '8.7%', right: '12%',
                 transform: 'scale(0.95)',
                 willChange: 'transform, translate',
                 animation: 'hero-card-in 0.6s cubic-bezier(0.22,1,0.36,1) 0.1s both, hero-float 4s ease-in-out 0.7s infinite',
               }}
             >
-              <div className="relative" style={{ width: '64px', height: '64px' }}>
+              <div className="relative" style={{ width: '51px', height: '51px' }}>
                 <Image src="/img/hero-card-grafico.png" alt="" fill className="object-contain" />
               </div>
               <span
-                className="font-dm font-normal text-brand-navy text-center text-h4"
+                className="font-dm font-normal text-brand-navy text-center text-lg"
               >97%</span>
               <span
-                className="font-dm font-normal text-brand-navy text-center text-lable"
+                className="font-dm font-normal text-brand-navy text-center text-txt-xs"
               >taxa de sucesso</span>
             </div>
 
             {/* Card 7 dias — entry 0.35s · float 3.5s · parallax depth -15/-12 */}
             <div
               ref={card7Ref}
-              className="absolute bg-white rounded-[16px] shadow-card flex items-center gap-[12px] px-[16px]"
+              className="absolute bg-white rounded-[16px] shadow-card flex items-center gap-[10px] px-[13px] py-[13px]"
               style={{
-                top: 'calc(32% - 50px)', left: 'calc(4% - 30px)', width: '196px', height: '106px',
+                top: 'calc(32% - 50px)', left: 'calc(4% - 30px)',
                 transform: 'scale(0.95)',
                 willChange: 'transform, translate',
                 animation: 'hero-card-in 0.6s cubic-bezier(0.22,1,0.36,1) 0.35s both, hero-float 3.5s ease-in-out 0.95s infinite',
               }}
             >
-              <div className="relative flex-none" style={{ width: '58px', height: '58px' }}>
+              <div className="relative flex-none" style={{ width: '46px', height: '46px' }}>
                 <Image src="/img/hero-card-calendar-bg.png" alt="" fill className="object-contain" />
               </div>
               <div className="flex flex-col gap-[2px]">
                 <span
-                  className="font-dm font-normal text-brand-navy whitespace-nowrap text-h4"
+                  className="font-dm font-normal text-brand-navy whitespace-nowrap text-lg"
                 >7 dias</span>
                 <span
-                  className="font-dm font-normal text-brand-navy whitespace-nowrap text-lable"
+                  className="font-dm font-normal text-brand-navy whitespace-nowrap text-txt-xs"
                 >Processo iniciado</span>
               </div>
             </div>
@@ -243,9 +241,9 @@ export function Hero() {
             {/* Card R$595 — entry 0.6s · float 5s · parallax depth -28/-20 */}
             <div
               ref={cardPriceRef}
-              className="absolute bg-brand-orange rounded-[16px] flex items-center justify-between px-[18px]"
+              className="absolute bg-brand-orange rounded-[16px] flex items-center gap-[10px] px-[14px] py-[13px]"
               style={{
-                bottom: '35%', right: '2%', width: '194px', height: '90px',
+                bottom: '35%', right: '2%',
                 transform: 'scale(0.95)',
                 willChange: 'transform, translate',
                 animation: 'hero-card-in 0.6s cubic-bezier(0.22,1,0.36,1) 0.6s both, hero-float 5s ease-in-out 1.2s infinite',
@@ -253,15 +251,14 @@ export function Hero() {
             >
               <div className="flex flex-col gap-[2px]">
                 <div className="flex items-start text-white font-dm font-normal">
-                  <span className="text-lable" style={{ marginTop: '4px' }}>R$</span>
-                  <span className="text-h4">595</span>
+                  <span className="text-txt-xs" style={{ marginTop: '3px' }}>R$</span>
+                  <span className="text-lg">595</span>
                 </div>
                 <span
-                  className="text-white font-dm font-normal text-lable"
-                  style={{ width: '90px' }}
+                  className="text-white font-dm font-normal text-txt-xs"
                 >para CPF à vista</span>
               </div>
-              <div className="relative flex-none" style={{ width: '50px', height: '50px' }}>
+              <div className="relative flex-none" style={{ width: '40px', height: '40px' }}>
                 <Image src="/img/hero-card-price.png" alt="" fill className="object-contain" />
               </div>
             </div>

@@ -34,7 +34,7 @@ export default function NextThemesPage() {
     <div>
       <div className="sg-prose">
         <h1 className="text-h2 font-dm font-normal text-brand-navy mb-2">next-themes</h1>
-        <p className="text-p-lg text-neutral-400 mb-8">
+        <p className="text-lg text-neutral-400 mb-8">
           Biblioteca para gerenciar temas (claro/escuro/sistema) em Next.js.
           Instalado via{' '}
           <code className="font-mono text-brand-navy bg-neutral-50 px-1 rounded">npm install next-themes</code>.
@@ -44,7 +44,7 @@ export default function NextThemesPage() {
 
       <div className="sg-prose">
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Toggle de Tema</h2>
-        <p className="text-p-sm text-neutral-400 mb-4">Tema ativo: use <code className="font-mono bg-neutral-50 px-1 rounded">useTheme()</code> para ler e alterar.</p>
+        <p className="text-sm text-neutral-400 mb-4">Tema ativo: use <code className="font-mono bg-neutral-50 px-1 rounded">useTheme()</code> para ler e alterar.</p>
       </div>
       <div className="preview-full border border-brand-border rounded-lg p-8 flex items-center justify-center bg-neutral-50 mb-4">
         <ThemeDemo />
@@ -63,7 +63,7 @@ function ThemeToggle() {
 
       <div className="sg-prose">
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Setup</h2>
-        <p className="text-p-sm text-neutral-400 mb-4">Envolver o app com <code className="font-mono bg-neutral-50 px-1 rounded">ThemeProvider</code>.</p>
+        <p className="text-sm text-neutral-400 mb-4">Envolver o app com <code className="font-mono bg-neutral-50 px-1 rounded">ThemeProvider</code>.</p>
       </div>
       <CodeBlock code={`// app/layout.tsx
 import { ThemeProvider } from 'next-themes'
@@ -89,7 +89,7 @@ export default function RootLayout({ children }) {
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">API — useTheme()</h2>
       </div>
       <div className="border border-brand-border rounded-lg overflow-hidden">
-        <table className="w-full text-p-sm">
+        <table className="w-full text-sm">
           <thead className="bg-neutral-50 border-b border-brand-border">
             <tr>
               <th className="text-left px-4 py-3 text-brand-navy font-medium">Retorno</th>

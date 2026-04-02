@@ -78,10 +78,10 @@ export function Pesquisa() {
           <div className="rounded-sm border border-border-light bg-neutral-50 p-6">
             {/* Card header */}
             <div className="flex items-center justify-between mb-4">
-              <span className="font-dm font-normal text-brand-navy text-subtitle">
+              <span className="font-dm text-brand-navy text-subtitle">
                 Inadimplência no Brasil
               </span>
-              <span className="font-sans text-brand-orange text-lable">
+              <span className="font-sans text-brand-orange text-label">
                 Fonte: Serasa Experian
               </span>
             </div>
@@ -102,7 +102,7 @@ export function Pesquisa() {
                       y1={y}
                       x2={CHART_RIGHT}
                       y2={y}
-                      stroke="#e5e5e5"
+                      className="stroke-neutral-200"
                       strokeWidth="1"
                     />
                     <text
@@ -110,7 +110,7 @@ export function Pesquisa() {
                       y={y + 4}
                       textAnchor="end"
                       fontSize="10"
-                      fill="#a3a3a3"
+                      className="fill-neutral-400"
                       fontFamily="sans-serif"
                     >
                       {label} mi
@@ -126,7 +126,7 @@ export function Pesquisa() {
               <path
                 d={linePath}
                 fill="none"
-                stroke="#ff4000"
+                className="stroke-brand-orange"
                 strokeWidth="2.5"
                 strokeLinejoin="round"
                 strokeLinecap="round"
@@ -140,7 +140,7 @@ export function Pesquisa() {
                   cy={toY(d.value)}
                   r="4"
                   fill="white"
-                  stroke="#ff4000"
+                  className="stroke-brand-orange"
                   strokeWidth="2"
                 />
               ))}
@@ -153,7 +153,7 @@ export function Pesquisa() {
                   y={CHART_BOTTOM + 18}
                   textAnchor="middle"
                   fontSize="10"
-                  fill="#a3a3a3"
+                  className="fill-neutral-400"
                   fontFamily="sans-serif"
                 >
                   {d.label}
@@ -164,7 +164,7 @@ export function Pesquisa() {
 
           {/* Text content */}
           <div className="flex flex-col gap-6">
-            <h2 className="font-dm font-normal text-brand-navy text-h1">
+            <h2 className="font-dm text-brand-navy text-h2">
               76 milhões de Brasileiros travados pelo nome sujo
             </h2>
             <div className="flex flex-col gap-4 text-p text-grafite">
@@ -192,10 +192,10 @@ export function Pesquisa() {
               <div className="relative w-8 h-8">
                 <Image src={stat.icon} alt="" fill className="object-contain" />
               </div>
-              <span className="font-dm font-normal text-brand-navy text-subtitle">
+              <span className="font-dm text-brand-navy text-subtitle">
                 {stat.title}
               </span>
-              <p className="font-sans text-grafite text-p-sm">
+              <p className="font-sans text-grafite text-p">
                 {stat.description}
               </p>
             </div>

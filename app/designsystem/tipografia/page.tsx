@@ -1,17 +1,37 @@
+import config from '@/tailwind.config'
+
+// Extrai fontSize do Tailwind config — fonte única da verdade
+const twFontSize = (config.theme?.extend?.fontSize ?? {}) as Record<
+  string,
+  [string, { lineHeight?: string; fontWeight?: string; letterSpacing?: string }]
+>
+
+function getTokenProps(key: string) {
+  const entry = twFontSize[key]
+  if (!entry) return { size: '—', lineHeight: '—', weight: '—', letterSpacing: '0' }
+  const [size, opts] = entry
+  return {
+    size,
+    lineHeight: opts.lineHeight ?? '—',
+    weight: opts.fontWeight ?? '400',
+    letterSpacing: opts.letterSpacing ?? '0',
+  }
+}
+
 const fontFamilies = [
   {
     token: 'font-dm',
     cssVar: '--font-dm-sans',
     name: 'DM Sans',
     fontClass: 'font-dm',
-    usage: 'Headings, botões, CTAs, cap, lable',
+    usage: 'Headings, botões, CTAs, cap, label',
   },
   {
     token: 'font-sans',
     cssVar: '--font-geist-sans',
     name: 'Geist Sans',
     fontClass: 'font-sans',
-    usage: 'Parágrafos, UI geral (p, p-lg, p-sm, txt-*)',
+    usage: 'Parágrafos, UI geral (p, lg, sm, txt-*)',
   },
   {
     token: 'font-mono',
@@ -22,165 +42,32 @@ const fontFamilies = [
   },
 ]
 
-const fontScale = [
-  {
-    token: 'text-display',
-    size: '64px',
-    lineHeight: '74px',
-    weight: '400',
-    font: 'DM Sans',
-    fontClass: 'font-dm',
-    capitalizacao: 'as typed',
-    tracking: '0',
-  },
-  {
-    token: 'text-h1',
-    size: '48px',
-    lineHeight: '52px',
-    weight: '600',
-    font: 'DM Sans',
-    fontClass: 'font-dm',
-    capitalizacao: 'as typed',
-    tracking: '0',
-  },
-  {
-    token: 'text-h2',
-    size: '36px',
-    lineHeight: '40px',
-    weight: '600',
-    font: 'DM Sans',
-    fontClass: 'font-dm',
-    capitalizacao: 'as typed',
-    tracking: '0',
-  },
-  {
-    token: 'text-h3',
-    size: '36px',
-    lineHeight: '40px',
-    weight: '400',
-    font: 'DM Sans',
-    fontClass: 'font-dm',
-    capitalizacao: 'as typed',
-    tracking: '0',
-  },
-  {
-    token: 'text-h4',
-    size: '24px',
-    lineHeight: '28px',
-    weight: '600',
-    font: 'DM Sans',
-    fontClass: 'font-dm',
-    capitalizacao: 'as typed',
-    tracking: '0',
-  },
-  {
-    token: 'text-h5',
-    size: '24px',
-    lineHeight: '28px',
-    weight: '400',
-    font: 'DM Sans',
-    fontClass: 'font-dm',
-    capitalizacao: 'as typed',
-    tracking: '0',
-  },
-  {
-    token: 'text-h6',
-    size: '18px',
-    lineHeight: '22px',
-    weight: '600',
-    font: 'DM Sans',
-    fontClass: 'font-dm',
-    capitalizacao: 'as typed',
-    tracking: '0',
-  },
-  {
-    token: 'text-subtitle',
-    size: '16px',
-    lineHeight: '20px',
-    weight: '600',
-    font: 'DM Sans',
-    fontClass: 'font-dm',
-    capitalizacao: 'as typed',
-    tracking: '0',
-  },
-  {
-    token: 'text-cap',
-    size: '14px',
-    lineHeight: '18px',
-    weight: '400',
-    font: 'DM Sans',
-    fontClass: 'font-dm',
-    capitalizacao: 'uppercase',
-    tracking: '6px',
-    extraClass: 'uppercase tracking-[6px]',
-  },
-  {
-    token: 'text-p-sm',
-    size: '14px',
-    lineHeight: '16px',
-    weight: '400',
-    font: 'Geist Sans',
-    fontClass: 'font-sans',
-    capitalizacao: 'as typed',
-    tracking: '-2px',
-  },
-  {
-    token: 'text-p',
-    size: '14px',
-    lineHeight: '18px',
-    weight: '400',
-    font: 'Geist Sans',
-    fontClass: 'font-sans',
-    capitalizacao: 'as typed',
-    tracking: '-2px',
-  },
-  {
-    token: 'text-p-lg',
-    size: '16px',
-    lineHeight: '20px',
-    weight: '400',
-    font: 'Geist Sans',
-    fontClass: 'font-sans',
-    capitalizacao: 'as typed',
-    tracking: '0',
-  },
-  {
-    token: 'text-lable',
-    size: '12px',
-    lineHeight: '14px',
-    weight: '400',
-    font: 'DM Sans',
-    fontClass: 'font-dm',
-    capitalizacao: 'as typed',
-    tracking: '0',
-  },
-  {
-    token: 'text-txt-sm',
-    size: '12px',
-    lineHeight: '14px',
-    weight: '400',
-    font: 'Geist Sans',
-    fontClass: 'font-sans',
-    capitalizacao: 'as typed',
-    tracking: '-2px',
-  },
-  {
-    token: 'text-txt-xs',
-    size: '10px',
-    lineHeight: '12px',
-    weight: '400',
-    font: 'Geist Sans',
-    fontClass: 'font-sans',
-    capitalizacao: 'as typed',
-    tracking: '-2px',
-  },
+// Metadados que não vêm do Tailwind config
+const fontScaleMeta: {
+  token: string
+  font: string
+  fontClass: string
+  capitalizacao: string
+  extraClass?: string
+}[] = [
+  { token: 'text-display',  font: 'DM Sans',    fontClass: 'font-dm',   capitalizacao: 'as typed' },
+  { token: 'text-h2',       font: 'DM Sans',    fontClass: 'font-dm',   capitalizacao: 'as typed' },
+  { token: 'text-h3',       font: 'DM Sans',    fontClass: 'font-dm',   capitalizacao: 'as typed' },
+  { token: 'text-subtitle', font: 'DM Sans',    fontClass: 'font-dm',   capitalizacao: 'as typed' },
+  { token: 'text-cap',      font: 'DM Sans',    fontClass: 'font-dm',   capitalizacao: 'uppercase', extraClass: 'uppercase tracking-[6px]' },
+  { token: 'text-sm',     font: 'Geist Sans', fontClass: 'font-sans', capitalizacao: 'as typed' },
+  { token: 'text-p',        font: 'Geist Sans', fontClass: 'font-sans', capitalizacao: 'as typed' },
+  { token: 'text-lg',     font: 'Geist Sans', fontClass: 'font-sans', capitalizacao: 'as typed' },
+  { token: 'text-label',    font: 'DM Sans',    fontClass: 'font-dm',   capitalizacao: 'as typed' },
+  { token: 'text-txt-sm',   font: 'Geist Sans', fontClass: 'font-sans', capitalizacao: 'as typed' },
+  { token: 'text-txt-xs',   font: 'Geist Sans', fontClass: 'font-sans', capitalizacao: 'as typed' },
 ]
 
 export default function TipografiaPage() {
   return (
     <div>
       <div className="sg-prose">
-        <h1 className="text-h2 font-dm font-normal text-brand-navy mb-2">
+        <h1 className="text-h2 font-dm text-brand-navy mb-2">
           Tipografia
         </h1>
         <p className="text-p text-neutral-400 mb-8">
@@ -190,7 +77,7 @@ export default function TipografiaPage() {
 
       {/* Font Families */}
       <div className="sg-prose">
-        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-dm text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Famílias Tipográficas
         </h2>
       </div>
@@ -200,80 +87,84 @@ export default function TipografiaPage() {
             key={family.token}
             className="border border-brand-border rounded-lg p-6 bg-white"
           >
-            <p className={`text-[32px] font-normal text-brand-navy mb-3 ${family.fontClass}`}>
+            <p className={`text-[32px] text-brand-navy mb-3 ${family.fontClass}`}>
               Aa Bb Cc
             </p>
-            <p className="text-lable font-mono text-brand-orange mb-1">
+            <p className="text-label font-mono text-brand-orange mb-1">
               {family.token}
             </p>
-            <p className="text-p-sm font-medium text-brand-navy mb-1">
+            <p className="text-sm text-brand-navy mb-1">
               {family.name}
             </p>
-            <p className="text-lable font-mono text-neutral-400 mb-2">
+            <p className="text-label font-mono text-neutral-400 mb-2">
               {family.cssVar}
             </p>
-            <p className="text-lable text-neutral-400">{family.usage}</p>
+            <p className="text-label text-neutral-400">{family.usage}</p>
           </div>
         ))}
       </div>
 
       {/* Font Scale */}
       <div className="sg-prose">
-        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+        <h2 className="text-subtitle font-dm text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Escala de Tamanhos
         </h2>
       </div>
       <div className="border border-brand-border rounded-lg overflow-hidden">
-        <table className="w-full text-p-sm">
+        <table className="w-full text-sm">
           <thead className="bg-neutral-50 border-b border-brand-border">
             <tr>
-              <th className="text-left px-4 py-3 text-brand-navy font-medium">Token</th>
-              <th className="text-left px-4 py-3 text-brand-navy font-medium">Tamanho</th>
-              <th className="text-left px-4 py-3 text-brand-navy font-medium hidden md:table-cell">Line Height</th>
-              <th className="text-left px-4 py-3 text-brand-navy font-medium hidden md:table-cell">Peso</th>
-              <th className="text-left px-4 py-3 text-brand-navy font-medium hidden lg:table-cell">Fonte</th>
-              <th className="text-left px-4 py-3 text-brand-navy font-medium hidden lg:table-cell">Capitalização</th>
-              <th className="text-left px-4 py-3 text-brand-navy font-medium hidden lg:table-cell">Tracking</th>
-              <th className="text-left px-4 py-3 text-brand-navy font-medium">Preview</th>
+              <th className="text-left px-4 py-3 text-brand-navy">Token</th>
+              <th className="text-left px-4 py-3 text-brand-navy">Tamanho</th>
+              <th className="text-left px-4 py-3 text-brand-navy hidden md:table-cell">Line Height</th>
+              <th className="text-left px-4 py-3 text-brand-navy hidden md:table-cell">Peso</th>
+              <th className="text-left px-4 py-3 text-brand-navy hidden lg:table-cell">Fonte</th>
+              <th className="text-left px-4 py-3 text-brand-navy hidden lg:table-cell">Capitalização</th>
+              <th className="text-left px-4 py-3 text-brand-navy hidden lg:table-cell">Tracking</th>
+              <th className="text-left px-4 py-3 text-brand-navy">Preview</th>
             </tr>
           </thead>
           <tbody>
-            {fontScale.map((item, index) => (
-              <tr
-                key={`${item.token}-${index}`}
-                className={`border-b border-brand-border last:border-0 ${
-                  index % 2 === 0 ? 'bg-white' : 'bg-neutral-50'
-                }`}
-              >
-                <td className="px-4 py-3 font-mono text-brand-orange text-lable">
-                  {item.token}
-                </td>
-                <td className="px-4 py-3 text-neutral-400 font-mono">{item.size}</td>
-                <td className="px-4 py-3 text-neutral-400 font-mono hidden md:table-cell">
-                  {item.lineHeight}
-                </td>
-                <td className="px-4 py-3 text-neutral-400 hidden md:table-cell">
-                  {item.weight}
-                </td>
-                <td className="px-4 py-3 hidden lg:table-cell">
-                  <span className={`text-lable ${item.fontClass} text-brand-navy`}>{item.font}</span>
-                </td>
-                <td className="px-4 py-3 text-neutral-400 hidden lg:table-cell text-lable">
-                  {item.capitalizacao}
-                </td>
-                <td className="px-4 py-3 text-neutral-400 font-mono hidden lg:table-cell text-lable">
-                  {item.tracking}
-                </td>
-                <td className="px-4 py-3">
-                  <span
-                    className={`${item.token} ${item.fontClass}${'extraClass' in item ? ` ${item.extraClass}` : ''} text-brand-navy`}
-                    style={{ fontWeight: item.weight }}
-                  >
-                    Mais Score
-                  </span>
-                </td>
-              </tr>
-            ))}
+            {fontScaleMeta.map((item, index) => {
+              const { size, lineHeight, weight, letterSpacing } = getTokenProps(
+                item.token.replace('text-', '')
+              )
+              return (
+                <tr
+                  key={item.token}
+                  className={`border-b border-brand-border last:border-0 ${
+                    index % 2 === 0 ? 'bg-white' : 'bg-neutral-50'
+                  }`}
+                >
+                  <td className="px-4 py-3 font-mono text-brand-orange text-label">
+                    {item.token}
+                  </td>
+                  <td className="px-4 py-3 text-neutral-400 font-mono">{size}</td>
+                  <td className="px-4 py-3 text-neutral-400 font-mono hidden md:table-cell">
+                    {lineHeight}
+                  </td>
+                  <td className="px-4 py-3 text-neutral-400 hidden md:table-cell">
+                    {weight}
+                  </td>
+                  <td className="px-4 py-3 hidden lg:table-cell">
+                    <span className={`text-label ${item.fontClass} text-brand-navy`}>{item.font}</span>
+                  </td>
+                  <td className="px-4 py-3 text-neutral-400 hidden lg:table-cell text-label">
+                    {item.capitalizacao}
+                  </td>
+                  <td className="px-4 py-3 text-neutral-400 font-mono hidden lg:table-cell text-label">
+                    {letterSpacing}
+                  </td>
+                  <td className="px-4 py-3">
+                    <span
+                      className={`${item.token} ${item.fontClass}${item.extraClass ? ` ${item.extraClass}` : ''} text-brand-navy`}
+                    >
+                      Mais Score
+                    </span>
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>

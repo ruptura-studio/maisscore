@@ -3,7 +3,7 @@ import { WHATSAPP_COMPRAR } from '@/lib/config'
 
 export function CtaResolverAgora() {
   return (
-    <section className="relative w-full overflow-hidden" style={{ minHeight: '650px' }}>
+    <section className="relative w-full overflow-hidden py-24">
       {/* Background image */}
       <div className="absolute inset-0">
         <Image
@@ -20,14 +20,14 @@ export function CtaResolverAgora() {
         className="absolute inset-0"
         style={{
           background:
-            'linear-gradient(to left, rgba(16,28,46,0.80) 0%, rgba(16,28,46,0.70) 40%, rgba(16,28,46,0.30) 70%, rgba(16,28,46,0.05) 100%)',
+            'linear-gradient(to left, rgba(16,28,46,0.90) 0%, rgba(16,28,46,0.75) 40%, rgba(16,28,46,0.30) 70%, rgba(16,28,46,0.05) 100%)',
         }}
       />
 
       {/* Content — right-aligned */}
-      <div className="container-ms relative z-10 flex items-center justify-end py-20" style={{ minHeight: '650px' }}>
-        <div className="flex flex-col gap-8 max-w-[680px]">
-          <blockquote className="font-dm font-normal text-white text-h1">
+      <div className="container-ms relative z-10 flex justify-end">
+        <div className="flex flex-col gap-8 max-w-content-lg">
+          <blockquote className="font-dm text-white text-h2">
             "Enquanto você espera, seu CPF continua bloqueando crédito, emprego e oportunidades."
           </blockquote>
 
@@ -38,9 +38,7 @@ export function CtaResolverAgora() {
 
           <div>
             <a
-              href={WHATSAPP_COMPRAR}
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/checkout"
               className="btn-primary"
             >
               Resolver Agora

@@ -36,7 +36,7 @@ export default function TablePage() {
     <div>
       <div className="sg-prose">
         <h1 className="text-h2 font-dm font-normal text-brand-navy mb-2">Table</h1>
-        <p className="text-p-lg text-neutral-400 mb-8">
+        <p className="text-lg text-neutral-400 mb-8">
           Tabela semântica com header, body e footer. Definido em{' '}
           <code className="font-mono text-brand-navy bg-neutral-50 px-1 rounded">components/ui/table.tsx</code>.
         </p>
@@ -44,7 +44,7 @@ export default function TablePage() {
 
       <div className="sg-prose">
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Lista de Clientes</h2>
-        <p className="text-p-sm text-neutral-400 mb-4">Tabela com status como Badge.</p>
+        <p className="text-sm text-neutral-400 mb-4">Tabela com status como Badge.</p>
       </div>
       <div className="preview-full border border-brand-border rounded-lg p-4 bg-neutral-50 mb-4 overflow-x-auto">
         <Table>
@@ -96,7 +96,7 @@ export default function TablePage() {
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Sub-componentes</h2>
       </div>
       <div className="border border-brand-border rounded-lg overflow-hidden">
-        <table className="w-full text-p-sm">
+        <table className="w-full text-sm">
           <thead className="bg-neutral-50 border-b border-brand-border">
             <tr>
               <th className="text-left px-4 py-3 text-brand-navy font-medium">Componente</th>

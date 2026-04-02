@@ -10,22 +10,24 @@ import Image from 'next/image'
 import { HeaderTopBar } from '@/components/shared/HeaderTopBar'
 
 const navLinks = [
+  { label: 'Como Funciona', href: '#como-funciona' },
   { label: 'Nossos Clientes', href: '#depoimentos' },
   { label: 'Sobre Nós', href: '#sobre' },
-  { label: 'Como Funciona', href: '#como-funciona' },
   { label: 'FAQ', href: '#faq' },
-  { label: 'Contato', href: '#cta' },
+  { label: 'Preço', href: '#precos' },
 ]
 
 export function Header() {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
   const isDS = pathname.startsWith('/designsystem')
+  const isLegal = pathname === '/privacidade' || pathname === '/termos' || pathname === '/reembolso'
+  const hideNav = isDS || isLegal
 
   return (
     <header className={cn('w-full bg-white border-b border-brand-border sticky top-0 z-50', isDS && 'm-0')}>
       {/* Top bar */}
-      {!isDS && <HeaderTopBar />}
+      {!hideNav && <HeaderTopBar />}
 
       {/* Main nav */}
       <div className={cn('flex items-center justify-between', isDS ? 'py-4 px-4' : 'container-ms py-4 lg:py-5')}>
@@ -34,19 +36,19 @@ export function Header() {
           <Image
             src="/img/logo-mais-score-black.svg"
             alt="Mais Score"
-            width={160}
-            height={42}
+            width={144}
+            height={38}
             priority
           />
         </a>
 
         {/* Desktop Nav */}
-        <nav className={cn('hidden lg:flex items-center gap-1', isDS && '!hidden')}>
+        <nav className={cn('hidden lg:flex items-center gap-1', hideNav && '!hidden')}>
           {navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="nav-link flex items-center gap-1 px-3 py-2 text-[15px] font-light whitespace-nowrap"
+              className="nav-link flex items-center gap-1 px-3 py-2 whitespace-nowrap"
             >
               {link.label}
               <svg width="6" height="4" viewBox="0 0 6 4" fill="none" className="text-brand-orange">
@@ -59,14 +61,14 @@ export function Header() {
         {/* Phone CTA */}
         <a
           href="tel:+5515974058014"
-          className={cn('hidden lg:flex items-center gap-2 text-brand-navy font-medium text-[16px] hover:text-brand-orange transition-colors', isDS && '!hidden')}
+          className={cn('hidden lg:flex items-center gap-2 text-brand-navy text-lg hover:text-brand-orange transition-colors', hideNav && '!hidden')}
         >
           <Image src="/icons/whatsapp-icon.svg" alt="" width={28} height={28} className="shrink-0" />
           15 97405-8014
         </a>
 
         {/* Mobile Menu Toggle */}
-        {!isDS && (
+        {!hideNav && (
           <button
             className="lg:hidden text-brand-navy p-2"
             onClick={() => setOpen(!open)}
@@ -89,14 +91,14 @@ export function Header() {
               key={link.href}
               href={link.href}
               onClick={() => setOpen(false)}
-              className="px-3 py-3 text-[15px] text-brand-navy hover:text-brand-orange transition-colors border-b border-[#f0f0f0]"
+              className="px-3 py-3 text-sm text-brand-navy hover:text-brand-orange transition-colors border-b border-neutral-100"
             >
               {link.label}
             </a>
           ))}
           <a
             href="tel:+5515974058014"
-            className="mt-3 flex items-center gap-2 text-brand-navy font-medium text-[15px] px-3 py-2"
+            className="mt-3 flex items-center gap-2 text-brand-navy text-sm px-3 py-2"
           >
             <Image src="/icons/whatsapp-icon.svg" alt="" width={20} height={20} className="shrink-0" />
             15 97405-8014
@@ -106,7 +108,7 @@ export function Header() {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setOpen(false)}
-            className="mt-2 btn-primary !h-auto py-3 px-4 text-[15px] rounded-full"
+            className="mt-2 btn-primary !h-auto py-3 px-4 text-sm rounded-full"
           >
             <FaWhatsapp size={16} />
             Falar com especialista

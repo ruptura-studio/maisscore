@@ -70,7 +70,7 @@ export default function IconesPage() {
         <h1 className="text-h2 font-dm font-normal text-brand-navy mb-2">
           Ícones
         </h1>
-        <p className="text-p-lg text-neutral-400 mb-8">
+        <p className="text-lg text-neutral-400 mb-8">
           Biblioteca de ícones do projeto. Todos os arquivos ficam em{' '}
           <code className="font-mono text-brand-navy bg-neutral-50 px-1 rounded">
             public/icons/
@@ -92,7 +92,7 @@ export default function IconesPage() {
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Como usar
         </h2>
-        <p className="text-p-sm text-neutral-400 mb-4">
+        <p className="text-sm text-neutral-400 mb-4">
           Importe o componente e passe o nome do ícone via prop <code className="font-mono text-brand-navy bg-neutral-50 px-1 rounded">name</code>. O tipo <code className="font-mono text-brand-navy bg-neutral-50 px-1 rounded">IconName</code> garante autocompletar com os nomes válidos.
         </p>
       </div>
@@ -116,7 +116,7 @@ export default function IconesPage() {
             <h2 className="text-subtitle font-medium text-brand-navy mb-1 mt-10 pb-2 border-b border-brand-border">
               {group.title}
             </h2>
-            <p className="text-p-sm text-neutral-400 mb-4">{group.description}</p>
+            <p className="text-sm text-neutral-400 mb-4">{group.description}</p>
           </div>
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
             {group.names.map((name) => (
@@ -131,13 +131,13 @@ export default function IconesPage() {
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Referência completa
         </h2>
-        <p className="text-p-sm text-neutral-400 mb-4">
+        <p className="text-sm text-neutral-400 mb-4">
           Todos os {allNames.length} tokens disponíveis e seus caminhos em{' '}
           <code className="font-mono text-brand-navy bg-neutral-50 px-1 rounded">public/</code>.
         </p>
       </div>
       <div className="border border-brand-border rounded-lg overflow-hidden">
-        <table className="w-full text-p-sm">
+        <table className="w-full text-sm">
           <thead className="bg-neutral-50 border-b border-brand-border">
             <tr>
               <th className="text-left px-4 py-3 text-brand-navy font-medium w-10">Preview</th>

@@ -21,7 +21,7 @@ export default function SelectPage() {
     <div>
       <div className="sg-prose">
         <h1 className="text-h2 font-dm font-normal text-brand-navy mb-2">Select</h1>
-        <p className="text-p-lg text-neutral-400 mb-8">
+        <p className="text-lg text-neutral-400 mb-8">
           Campo de seleção nativo com estilo customizado. Definido em{' '}
           <code className="font-mono text-brand-navy bg-neutral-50 px-1 rounded">components/ui/select.tsx</code>.
         </p>
@@ -29,7 +29,7 @@ export default function SelectPage() {
 
       <div className="sg-prose">
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Seleção Simples</h2>
-        <p className="text-p-sm text-neutral-400 mb-4">Lista de opções sem agrupamento.</p>
+        <p className="text-sm text-neutral-400 mb-4">Lista de opções sem agrupamento.</p>
       </div>
       <div className="preview-full border border-brand-border rounded-lg p-8 flex flex-wrap items-center gap-4 bg-neutral-50 mb-4">
         <Select>
@@ -57,7 +57,7 @@ export default function SelectPage() {
 
       <div className="sg-prose">
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Com Grupos</h2>
-        <p className="text-p-sm text-neutral-400 mb-4">Opções agrupadas por categoria.</p>
+        <p className="text-sm text-neutral-400 mb-4">Opções agrupadas por categoria.</p>
       </div>
       <div className="preview-full border border-brand-border rounded-lg p-8 flex flex-wrap items-center gap-4 bg-neutral-50 mb-4">
         <Select>
@@ -96,7 +96,7 @@ export default function SelectPage() {
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">Especificações</h2>
       </div>
       <div className="border border-brand-border rounded-lg overflow-hidden">
-        <table className="w-full text-p-sm">
+        <table className="w-full text-sm">
           <thead className="bg-neutral-50 border-b border-brand-border">
             <tr>
               <th className="text-left px-4 py-3 text-brand-navy font-medium">Prop (Select)</th>

@@ -16,7 +16,7 @@ const contactLinks = [
 ]
 
 const linkClass =
-  'flex items-center gap-2 font-dm text-[14px] text-white/70 hover:text-white transition-colors'
+  'flex items-center gap-2 font-dm text-sm text-white/70 hover:text-white transition-colors'
 
 export function Footer() {
   const pathname = usePathname()
@@ -28,16 +28,16 @@ export function Footer() {
     <footer>
       {/* Main content */}
       <div
-        className="w-full"
+        className="w-full bg-brand-navy bg-cover bg-center bg-no-repeat"
         style={{
-          background: 'linear-gradient(135deg, #0f1c2e 0%, #101e30 100%)',
+          backgroundImage: "url('/img/footer.png')",
         }}
       >
         <div className="container-ms py-[100px]">
-          <div className="flex flex-col gap-16 lg:flex-row lg:items-start lg:gap-[92px]">
+          <div className="flex flex-col gap-16 lg:flex-row lg:items-start lg:gap-24">
 
             {/* Coluna esquerda — logo + tagline */}
-            <div className="flex flex-col gap-6 lg:max-w-[400px]">
+            <div className="flex flex-col gap-6 lg:max-w-[264px]">
               <a href="/">
                 <Image
                   src="/img/logo-mais-score-white.svg"
@@ -47,7 +47,7 @@ export function Footer() {
                   className="h-auto w-auto max-w-[200px]"
                 />
               </a>
-              <p className="font-dm text-[18px] leading-[1.6] text-white/80 lg:text-[20px]">
+              <p className="font-dm text-p text-white/80">
                 Não somos uma empresa de negociação de dívidas. Somos especialistas em devolver o que
                 o seu nome merece: acesso, crédito e dignidade.
               </p>
@@ -56,7 +56,7 @@ export function Footer() {
             {/* Colunas direitas */}
             <div className="flex flex-1 flex-col gap-10">
               {/* Links + contatos */}
-              <div className="flex flex-col gap-10 sm:flex-row sm:gap-[92px]">
+              <div className="flex flex-col gap-10 sm:flex-row sm:justify-end sm:gap-16">
 
                 {/* Links institucionais */}
                 <div className="flex flex-col gap-4">
@@ -97,16 +97,6 @@ export function Footer() {
 
               </div>
 
-              {/* Badges de pagamento — alinhados à direita */}
-              <div className="flex justify-end">
-                <Image
-                  src="/img/payments.png"
-                  alt="Visa, Mastercard e PIX"
-                  width={180}
-                  height={40}
-                  className="h-auto w-auto max-h-[40px]"
-                />
-              </div>
             </div>
 
           </div>
@@ -114,15 +104,19 @@ export function Footer() {
       </div>
 
       {/* Bottom bar */}
-      <div
-        className="w-full border-t border-white/10"
-        style={{ background: '#0f1c2e' }}
-      >
-        <div className="container-ms py-9 flex items-center justify-center">
-          <p className="font-dm text-[14px] font-light text-brand-orange text-center leading-[1.5]">
+      <div className="w-full bg-brand-navy border-t border-white/10">
+        <div className="container-ms py-9 flex items-center justify-between gap-6">
+          <p className="font-dm text-txt-xs text-brand-orange">
             © 2026 Mais Score — uma marca Ruptura Comércio Digital Ltda. | CNPJ: 64.945.712/0001-66
             - Alameda Rio Negro, 503, Alphaville, Barueri-SP
           </p>
+          <Image
+            src="/img/payments.png"
+            alt="Visa, Mastercard e PIX"
+            width={180}
+            height={40}
+            className="h-auto w-auto max-h-[30px] shrink-0"
+          />
         </div>
       </div>
     </footer>

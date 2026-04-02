@@ -31,7 +31,7 @@ export function GridOverlay() {
     <>
       {/* ── Camada 1: Grid de 12 colunas ── */}
       <div className="fixed inset-0 z-[9998] pointer-events-none">
-        <div className="w-full h-full mx-auto px-6 md:px-16 xl:px-24 max-w-[1440px]">
+        <div className="w-full h-full mx-auto px-6 md:px-16 xl:px-24 max-w-[1200px]">
           <div className="h-full grid grid-cols-12 gap-6">
             {Array.from({ length: 12 }).map((_, i) => (
               <div key={i} className="h-full bg-green-400 opacity-10" />
@@ -43,12 +43,12 @@ export function GridOverlay() {
       {/* ── Camada 2: Frame do container interno (1088px) ── */}
       <div className="fixed inset-0 z-[9999] pointer-events-none">
         {/* Replica .container-ms */}
-        <div className="w-full h-full mx-auto px-6 md:px-16 xl:px-24 max-w-[1920px]">
-          {/* Replica .content-ms — max-w-[1088px] */}
+        <div className="w-full h-full mx-auto px-6 md:px-16 xl:px-24 max-w-[1200px]">
+          {/* Replica .content-ms — max-w-container = 1200px */}
           <div
             className="h-full mx-auto"
             style={{
-              maxWidth: '1440px',
+              maxWidth: '1200px',
               outline: '3px dashed rgba(255, 100, 0, 0.6)',
               outlineOffset: '-1px',
             }}

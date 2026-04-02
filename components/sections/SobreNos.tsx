@@ -28,31 +28,30 @@ export function SobreNos() {
     <>
       {/* Seção 1 — Hero com imagem de fundo */}
       <section
-        className="relative w-full overflow-hidden bg-cover bg-center bg-no-repeat"
+        className="relative w-full overflow-hidden bg-cover bg-center bg-no-repeat border-b border-brand-navy/10"
         style={{ backgroundImage: "url('/img/background-cpf-negativado.png')" }}
       >
-        <div className="container-ms flex flex-col-reverse items-center gap-10 pt-16 lg:flex-row lg:items-end lg:gap-10 lg:pt-[145px]">
+        <div className="container-ms flex flex-col-reverse items-center gap-10 pt-24 lg:flex-row lg:items-center lg:gap-10">
           {/* Imagem da garota */}
-          <Image
-            src="/img/garota-mostrando-score.png"
-            alt="Garota mostrando score no celular"
-            width={637}
-            height={710}
-            className="w-full max-w-[420px] self-end object-contain lg:max-w-[637px]"
-          />
+          <div className="flex w-full items-end justify-center lg:w-1/2">
+            <Image
+              src="/img/garota-mostrando-score.png"
+              alt="Garota mostrando score no celular"
+              width={319}
+              height={355}
+              className="w-full max-w-[210px] self-end object-contain lg:max-w-[319px]"
+            />
+          </div>
 
           {/* Bloco de texto */}
-          <div className="flex flex-col gap-10 pb-10 lg:max-w-[530px] lg:pb-20">
-            {/* text-[24px] font-bold → text-h4 (24px/600/DM, exato) */}
-            <p className="font-dm text-h4 text-brand-orange">
+          <div className="flex w-full flex-col justify-center gap-6 lg:w-1/2">
+            <p className="font-dm text-subtitle text-brand-orange">
               SOBRE NÓS
             </p>
-            {/* TODO: text-[60px] sem token — text-h1 mobile (48px); text-display desktop (64px, mais próximo) */}
-            <h2 className="font-dm text-h1 font-normal text-brand-navy lg:text-display">
+            <h2 className="font-dm text-h2 text-brand-navy">
               Por trás de cada CPF desbloqueado, existe uma história que recomeçou
             </h2>
-            {/* text-[18px] → text-h6 font-normal (18px/DM, override 600→normal); lg:text-[24px] → lg:text-h5 (24px/400/DM) */}
-            <p className="font-dm text-h6 font-normal text-brand-navy lg:text-h5">
+            <p className="font-dm text-p text-brand-navy">
               Por trás de cada CPF negativado existe uma pessoa que quer voltar a crescer. A Mais Score existe para isso... devolver o acesso ao crédito de forma legal, rápida e garantida.
             </p>
           </div>
@@ -60,26 +59,21 @@ export function SobreNos() {
       </section>
 
       {/* Seção 2 — Nossa História (4 cards) */}
-      <section className="w-full border-b border-brand-navy/10 bg-white pb-[110px] pt-[60px]">
+      <section className="w-full border-b border-brand-navy/10 bg-white pb-28 pt-16">
         <div className="container-ms">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
             {INFOBOXES.map((item, i) => (
-              // TODO: bg-[#f2f2f2] — sem token equivalente no design system
               <div
                 key={i}
-                {/* TODO: gap-[10px] → gap-3 (12px); rounded-xl → rounded-lg; px/pb/pt sem tokens DS */}
-              className="flex flex-col gap-3 rounded-lg bg-[#f2f2f2] px-[45px] pb-[60px] pt-[69px]"
+                className="flex flex-col gap-2 rounded-lg bg-neutral-100 p-8"
               >
-                {/* text-[16px] font-bold → text-subtitle (16px/600/DM, exato) */}
                 <p className="font-dm text-subtitle text-brand-orange">
                   {item.overline}
                 </p>
-                {/* text-[24px] font-bold → text-h4 (24px/600/DM, exato) */}
-                <h3 className="font-dm text-h4 text-brand-navy">
+                <h3 className="font-dm text-subtitle text-foreground">
                   {item.heading}
                 </h3>
-                {/* text-[18px] → text-h6 font-normal (18px/DM, override 600→normal) */}
-                <p className="font-dm text-h6 font-normal text-foreground-alt">
+                <p className="font-dm text-p text-foreground-alt">
                   {item.body}
                 </p>
               </div>

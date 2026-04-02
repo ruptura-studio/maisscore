@@ -65,16 +65,14 @@ const FAQ_DIREITA = [
 
 export function FAQ() {
   return (
-    <section className="w-full bg-white py-[80px] lg:py-[110px]">
+    <section className="w-full bg-white py-20 lg:py-24">
       <div className="container-ms">
         {/* Cabeçalho */}
-        <div className="mb-[60px] flex flex-col gap-4 lg:max-w-[600px]">
-          {/* TODO: text-[13px] → text-cap (14px/DM/uppercase); tracking-[2px] override (token baked = 6px) */}
-          <p className="font-dm text-cap uppercase font-bold tracking-[2px] text-brand-orange">
+        <div className="mb-16 flex flex-col items-center gap-4 text-center">
+          <p className="font-dm text-cap text-disabled">
             DÚVIDAS FREQUENTES
           </p>
-          {/* TODO: text-[52px] sem token — usando text-h1 (48px, mais próximo) */}
-          <h2 className="font-dm text-h1 font-normal text-brand-navy">
+          <h2 className="font-dm text-h2 text-brand-navy">
             Tudo que você precisa saber antes de começar
           </h2>
         </div>
@@ -89,12 +87,10 @@ export function FAQ() {
           >
             {FAQ_ESQUERDA.map((item, i) => (
               <AccordionItem key={i} value={`esq-${i}`} className="border-0">
-                {/* TODO: text-[15px] → text-p (14px, mais próximo); lg:text-[16px] → lg:text-p-lg (16px, exato) */}
-                <AccordionTrigger className="px-5 py-4 text-left font-dm text-p font-medium text-brand-navy hover:no-underline hover:text-brand-orange lg:text-p-lg">
+                <AccordionTrigger className="px-5 py-4 text-left font-dm text-sm text-brand-navy/60 hover:no-underline hover:text-brand-orange [&[data-state=open]]:text-brand-navy">
                   {item.pergunta}
                 </AccordionTrigger>
-                {/* text-[14px] → text-p (14px/Geist); TODO: lg:text-[15px] sem token — usando lg:text-p (14px) */}
-                <AccordionContent className="px-5 pb-4 font-sans text-p text-neutral-400">
+                <AccordionContent className="px-5 pb-4 font-dm text-p text-foreground-alt">
                   {item.resposta}
                 </AccordionContent>
               </AccordionItem>
@@ -109,12 +105,10 @@ export function FAQ() {
           >
             {FAQ_DIREITA.map((item, i) => (
               <AccordionItem key={i} value={`dir-${i}`} className="border-0">
-                {/* TODO: text-[15px] → text-p (14px, mais próximo); lg:text-[16px] → lg:text-p-lg (16px, exato) */}
-                <AccordionTrigger className="px-5 py-4 text-left font-dm text-p font-medium text-brand-navy hover:no-underline hover:text-brand-orange lg:text-p-lg">
+                <AccordionTrigger className="px-5 py-4 text-left font-dm text-sm text-brand-navy/60 hover:no-underline hover:text-brand-orange [&[data-state=open]]:text-brand-navy">
                   {item.pergunta}
                 </AccordionTrigger>
-                {/* text-[14px] → text-p (14px/Geist); TODO: lg:text-[15px] sem token — usando lg:text-p (14px) */}
-                <AccordionContent className="px-5 pb-4 font-sans text-p text-neutral-400">
+                <AccordionContent className="px-5 pb-4 font-dm text-p text-foreground-alt">
                   {item.resposta}
                 </AccordionContent>
               </AccordionItem>

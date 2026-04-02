@@ -16,7 +16,7 @@ export default function HeaderNavPage() {
         <h1 className="text-h2 font-dm font-normal text-brand-navy mb-2">
           Header & Nav
         </h1>
-        <p className="text-p-lg text-neutral-400 mb-8">
+        <p className="text-lg text-neutral-400 mb-8">
           Componentes de navegação e estrutura do header do site.
         </p>
       </div>
@@ -26,7 +26,7 @@ export default function HeaderNavPage() {
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           Header
         </h2>
-        <p className="text-p-sm text-neutral-400 mb-4">
+        <p className="text-sm text-neutral-400 mb-4">
           Header principal do site — logo, navegação desktop, CTA de telefone e menu mobile.
           No styleguide, nav e CTA ficam ocultos automaticamente (detecção via{' '}
           <code className="font-mono bg-neutral-50 px-1 rounded">usePathname</code>).
@@ -48,7 +48,7 @@ export default function HeaderNavPage() {
         <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
           HeaderTopBar
         </h2>
-        <p className="text-p-sm text-neutral-400 mb-4">
+        <p className="text-sm text-neutral-400 mb-4">
           Barra superior do header — email, endereço e redes sociais. Visível apenas em desktop{' '}
           (<code className="font-mono bg-neutral-50 px-1 rounded">lg:</code>).
           Oculta no styleguide e em mobile.
