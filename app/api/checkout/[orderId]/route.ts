@@ -2,6 +2,16 @@ import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/db'
 import { getPayment, getPixQrCode } from '@/lib/asaas'
 
+async function fireClientWebhook(payload: Record<string, unknown>) {
+  const url = process.env.WEBHOOK_CLIENT_URL
+  if (!url) return
+  fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  }).catch(() => {})
+}
+
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ orderId: string }> }
@@ -46,12 +56,27 @@ export async function GET(
           where: { id: payment.id },
           data: { status: 'confirmed', confirmedAt: new Date() },
         })
-        await prisma.order.update({
+        const updatedOrder = await prisma.order.update({
           where: { id: order.id },
           data: { status: 'pago' },
+          include: { lead: true, product: true },
         })
         await prisma.process.create({
           data: { orderId: order.id, status: 'aguardando_inicio' },
+        })
+        await prisma.lead.update({
+          where: { id: updatedOrder.leadId },
+          data: { status: 'cliente' },
+        })
+        fireClientWebhook({
+          orderId: order.id,
+          leadId: updatedOrder.leadId,
+          name: updatedOrder.lead.name,
+          phone: updatedOrder.lead.phone,
+          email: updatedOrder.lead.email,
+          productSlug: updatedOrder.product.slug,
+          method: payment.method,
+          amount: payment.amount,
         })
         currentStatus = 'confirmed'
       }

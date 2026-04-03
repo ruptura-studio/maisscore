@@ -20,22 +20,25 @@ model Product {
 }
 
 model Lead {
-  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name        String
-  phone       String   @unique
-  email       String?
-  channel     String?
-  status      String   @default("novo")
-  utmSource   String?  @map("utm_source")
-  utmMedium   String?  @map("utm_medium")
-  utmCampaign String?  @map("utm_campaign")
-  notionId    String?  @map("notion_id")
-  crmId       String?  @map("crm_id")
-  notes       String?
-  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
-  orders      Order[]
-  nurtureLog  NurtureLog[]
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String
+  phone         String   @unique
+  email         String?
+  channel       String?
+  status        String   @default("novo")
+  companyName   String?  @map("company_name")
+  leadType      String?  @map("lead_type")
+  checkoutStep  Int?     @map("checkout_step")
+  utmSource     String?  @map("utm_source")
+  utmMedium     String?  @map("utm_medium")
+  utmCampaign   String?  @map("utm_campaign")
+  notionId      String?  @map("notion_id")
+  crmId         String?  @map("crm_id")
+  notes         String?
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  orders        Order[]
+  nurtureLog    NurtureLog[]
 
   @@map("leads")
 }
@@ -71,6 +74,7 @@ model Payment {
   pixExpiresAt    DateTime? @map("pix_expires_at") @db.Timestamptz
   boletoUrl       String?   @map("boleto_url")
   boletoExpiresAt DateTime? @map("boleto_expires_at") @db.Timestamptz
+  remoteIp        String?   @map("remote_ip")
   confirmedAt     DateTime? @map("confirmed_at") @db.Timestamptz
   createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz

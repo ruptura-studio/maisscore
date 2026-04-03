@@ -22,7 +22,8 @@ export function Header() {
   const pathname = usePathname()
   const isDS = pathname.startsWith('/designsystem')
   const isLegal = pathname === '/privacidade' || pathname === '/termos' || pathname === '/reembolso'
-  const hideNav = isDS || isLegal
+  const isCheckout = pathname.startsWith('/checkout')
+  const hideNav = isDS || isLegal || isCheckout
 
   return (
     <header className={cn('w-full bg-white border-b border-brand-border sticky top-0 z-50', isDS && 'm-0')}>

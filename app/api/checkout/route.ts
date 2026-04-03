@@ -17,7 +17,28 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const { name, email, phone, document, documentType, productSlug, paymentMethod, installments } = parsed.data
+    const {
+      name,
+      email,
+      phone,
+      document,
+      documentType,
+      razaoSocial,
+      productSlug,
+      paymentMethod,
+      installments,
+      remoteIp,
+      creditCard,
+      cardHolderDiffers,
+      cardHolderInfo,
+      postalCode,
+      address,
+      addressNumber,
+      complement,
+      neighborhood,
+      city,
+      state,
+    } = parsed.data
 
     // 2. Buscar produto
     const product = await prisma.product.findUnique({ where: { slug: productSlug } })
@@ -26,13 +47,30 @@ export async function POST(req: NextRequest) {
     }
 
     // 3. Upsert lead
+    const leadType = documentType === 'CNPJ' ? 'cnpj' : 'cpf'
     const lead = await prisma.lead.upsert({
       where: { phone },
-      create: { name, phone, email, channel: 'checkout', status: 'em_atendimento' },
-      update: { name, email, status: 'em_atendimento' },
+      create: {
+        name,
+        phone,
+        email,
+        channel: 'checkout',
+        status: 'em_atendimento',
+        companyName: razaoSocial,
+        leadType,
+        checkoutStep: paymentMethod === 'PIX' ? 2 : 3,
+      },
+      update: {
+        name,
+        email,
+        status: 'em_atendimento',
+        companyName: razaoSocial,
+        leadType,
+        checkoutStep: paymentMethod === 'PIX' ? 2 : 3,
+      },
     })
 
-    // 4. Criar order (pricePaid será atualizado após calcular encargos)
+    // 4. Criar order
     const order = await prisma.order.create({
       data: {
         leadId: lead.id,
@@ -45,14 +83,24 @@ export async function POST(req: NextRequest) {
     })
 
     // 5. Criar cliente + cobrança no Asaas
-    const customer = await findOrCreateCustomer({ name, email, phone, cpfCnpj: document })
+    const customer = await findOrCreateCustomer({
+      name,
+      email,
+      phone,
+      cpfCnpj: document,
+      companyName: razaoSocial,
+    })
 
-    // Para cartão parcelado, aplica encargos Asaas sobre o valor base
     const effectivePriceCents =
       paymentMethod === 'CREDIT_CARD' && installments > 1
         ? totalWithInstallmentFee(product.price, installments)
         : product.price
     const valueInReais = effectivePriceCents / 100
+
+    // Resolve titular do cartão
+    const holderName = cardHolderDiffers && cardHolderInfo ? cardHolderInfo.name : name
+    const holderCpfCnpj = cardHolderDiffers && cardHolderInfo ? cardHolderInfo.cpfCnpj : document
+    const holderPhone = cardHolderDiffers && cardHolderInfo ? cardHolderInfo.phone : phone
 
     const payment = await createPayment({
       customerId: customer.id,
@@ -61,6 +109,25 @@ export async function POST(req: NextRequest) {
       description: product.name,
       externalReference: order.id,
       installmentCount: installments,
+      remoteIp,
+      ...(paymentMethod === 'CREDIT_CARD' && creditCard
+        ? {
+            creditCard,
+            creditCardHolderInfo: {
+              name: holderName,
+              email,
+              cpfCnpj: holderCpfCnpj,
+              phone: holderPhone,
+              postalCode: postalCode ?? '',
+              address: address ?? '',
+              addressNumber: addressNumber ?? '',
+              complement,
+              city,
+              state,
+              neighborhood,
+            },
+          }
+        : {}),
     })
 
     // 6. Para PIX, buscar QR code
@@ -85,8 +152,29 @@ export async function POST(req: NextRequest) {
         amount: effectivePriceCents,
         pixKey: pixPayload,
         pixExpiresAt,
+        remoteIp,
       },
     })
+
+    // 8. Dispara webhook hot-lead após PIX (fire-and-forget)
+    if (paymentMethod === 'PIX' && process.env.WEBHOOK_HOT_LEAD_URL) {
+      fetch(process.env.WEBHOOK_HOT_LEAD_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          leadId: lead.id,
+          orderId: order.id,
+          name,
+          phone,
+          email,
+          leadType,
+          companyName: razaoSocial,
+          productSlug,
+          method: paymentMethod,
+          amount: valueInReais,
+        }),
+      }).catch(() => {})
+    }
 
     return Response.json({
       success: true,
@@ -100,7 +188,7 @@ export async function POST(req: NextRequest) {
       },
     })
   } catch (error) {
-    console.error('[POST /api/checkout]', error)
+    console.error('[POST /api/checkout]', String(error))
     return Response.json(
       { success: false, error: 'Erro ao processar pagamento. Tente novamente.' },
       { status: 500 }

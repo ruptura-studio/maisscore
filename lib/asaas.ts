@@ -50,6 +50,7 @@ export async function findOrCreateCustomer(params: {
   email: string
   phone: string
   cpfCnpj: string
+  companyName?: string
 }): Promise<AsaasCustomer> {
   // Busca cliente existente pelo CPF/CNPJ
   const search = await asaasFetch<{ data: AsaasCustomer[] }>(
@@ -69,6 +70,8 @@ export async function findOrCreateCustomer(params: {
       mobilePhone: params.phone,
       cpfCnpj: params.cpfCnpj,
       personType,
+      ...(params.companyName ? { company: params.companyName } : {}),
+      notificationDisabled: true,
     }),
   })
 }
@@ -78,10 +81,31 @@ export async function findOrCreateCustomer(params: {
 export async function createPayment(params: {
   customerId: string
   billingType: 'PIX' | 'CREDIT_CARD'
-  value: number          // em reais (ex: 595.00)
+  value: number
   description: string
   externalReference: string
   installmentCount?: number
+  remoteIp?: string
+  creditCard?: {
+    holderName: string
+    number: string
+    expiryMonth: string
+    expiryYear: string
+    ccv: string
+  }
+  creditCardHolderInfo?: {
+    name: string
+    email: string
+    cpfCnpj: string
+    phone: string
+    postalCode: string
+    address: string
+    addressNumber: string
+    complement?: string
+    city?: string
+    state?: string
+    neighborhood?: string
+  }
 }): Promise<AsaasPayment> {
   const dueDate = new Date()
   dueDate.setDate(dueDate.getDate() + 1)
@@ -101,6 +125,9 @@ export async function createPayment(params: {
       ...(params.billingType === 'CREDIT_CARD' && installmentCount > 1
         ? { installmentCount, installmentValue: parseFloat((params.value / installmentCount).toFixed(2)) }
         : {}),
+      ...(params.creditCard ? { creditCard: params.creditCard } : {}),
+      ...(params.creditCardHolderInfo ? { creditCardHolderInfo: params.creditCardHolderInfo } : {}),
+      ...(params.remoteIp ? { remoteIp: params.remoteIp } : {}),
     }),
   })
 }
