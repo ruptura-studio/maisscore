@@ -32,12 +32,8 @@ export async function POST(req: NextRequest) {
       cardHolderDiffers,
       cardHolderInfo,
       postalCode,
-      address,
       addressNumber,
       complement,
-      neighborhood,
-      city,
-      state,
     } = parsed.data
 
     // 2. Buscar produto
@@ -119,12 +115,8 @@ export async function POST(req: NextRequest) {
               cpfCnpj: holderCpfCnpj,
               phone: holderPhone,
               postalCode: postalCode ?? '',
-              address: address ?? '',
               addressNumber: addressNumber ?? '',
               complement,
-              city,
-              state,
-              neighborhood,
             },
           }
         : {}),

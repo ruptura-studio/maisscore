@@ -59,24 +59,3 @@ npm run dev       # Start dev server
 npm run build     # Production build
 npm run lint      # ESLint
 ```
-
-## Design & Figma
-- Figma MCP is connected — use `figma:implement-design` skill for pixel-perfect implementation
-- Always validate visual output with a screenshot after design changes
-- Design tokens live in Tailwind config (`tailwind.config.ts`)
-
-## Protocolo de Continuidade de Sessão (OBRIGATÓRIO)
-
-### Ao receber "continue" / "continua" / "retoma" / "próximo passo"
-ANTES de qualquer outra ação, executar OBRIGATORIAMENTE nesta ordem:
-1. Buscar a página AutoWork no Notion (ID: `327f73c2-ebc1-80b8-b1d8-d7ec2f202ac2`) via MCP Notion
-2. Ler `session_snapshot.md` como fallback se Notion indisponível
-3. Confirmar em **2 linhas**: o que estava sendo feito e qual é o próximo passo
-4. Executar o próximo passo imediatamente
-
-**O Notion AutoWork tem prioridade absoluta sobre o session_snapshot.md.**
-
-### Ao encerrar cada sessão (antes do usuário dar /clear)
-Executar OBRIGATORIAMENTE:
-1. Registrar na página AutoWork no Notion: data/hora, o que foi feito, próximo passo exato
-2. Sobrescrever `session_snapshot.md` com estado atualizado

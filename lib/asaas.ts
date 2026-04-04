@@ -1,5 +1,7 @@
 const BASE_URL = process.env.ASAAS_BASE_URL!
-const API_KEY = process.env.ASAAS_API_KEY!
+// ASAAS_API_KEY começa com "$" — @next/env no Node.js v24 expande "$" para string vazia.
+// Workaround: usar ASAAS_API_KEY_VALUE (sem "$") no .env.local; em prod a Vercel usa ASAAS_API_KEY diretamente.
+const API_KEY = process.env.ASAAS_API_KEY || ('$' + process.env.ASAAS_API_KEY_VALUE!)
 
 async function asaasFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE_URL}${path}`, {
@@ -99,12 +101,8 @@ export async function createPayment(params: {
     cpfCnpj: string
     phone: string
     postalCode: string
-    address: string
     addressNumber: string
     complement?: string
-    city?: string
-    state?: string
-    neighborhood?: string
   }
 }): Promise<AsaasPayment> {
   const dueDate = new Date()

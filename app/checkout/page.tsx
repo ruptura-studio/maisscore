@@ -4,6 +4,13 @@ import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { totalWithInstallmentFee, installmentValueCents } from '@/lib/installment-fees'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction } from '@/components/ui/alert-dialog'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { ButtonGroup } from '@/components/ui/button-group'
+import { Button } from '@/components/ui/button'
+import { Shield, Info, User, Building2 } from 'lucide-react'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -16,6 +23,7 @@ const PRODUCTS = {
   cpf: {
     slug: 'limpa-nome-cpf' as const,
     label: 'Limpar CPF',
+    icon: User,
     price: 'R$ 595,00',
     priceInCents: 59500,
     maxInstallments: 3,
@@ -27,6 +35,7 @@ const PRODUCTS = {
   cnpj: {
     slug: 'limpa-nome-cnpj' as const,
     label: 'Limpar CNPJ',
+    icon: Building2,
     price: 'R$ 795,00',
     priceInCents: 79500,
     maxInstallments: 3,
@@ -37,12 +46,34 @@ const PRODUCTS = {
   },
 }
 
-const TERMS = [
-  'Que este serviço não quitará minhas dívidas.',
-  'Que este serviço apenas removerá as restrições em meu CPF ou CNPJ.',
-  'Que executar este serviço não me garante crédito.',
-  'Que o prazo para remoção das restrições é entre 15 a 30 dias úteis.',
-  'Com a Política de Privacidade e Termos de Utilização do site Mais Score.',
+const TERMOS_SECTIONS = [
+  { title: '1. Aceitação dos Termos', content: `Ao acessar o site <strong>maisscore.com.br</strong> ou contratar qualquer serviço da <strong>Mais Score</strong> (marca da Ruptura Comércio Digital Ltda., CNPJ 64.945.712/0001-66), você declara ter lido, compreendido e concordado com estes Termos de Uso. Caso não concorde com alguma disposição, pedimos que não utilize nossos serviços.` },
+  { title: '2. Descrição do Serviço', content: `A Mais Score oferece serviços de <strong>regularização de CPF e melhoria de score de crédito</strong> por meio de processo jurídico próprio, que inclui:\n    <ul>\n      <li>Análise da situação cadastral junto aos órgãos de proteção ao crédito (Serasa, SPC e similares).</li>\n      <li>Identificação de restrições indevidas ou passíveis de contestação.</li>\n      <li>Condução do processo de exclusão ou regularização dessas restrições.</li>\n      <li>Acompanhamento e comunicação sobre o andamento do processo.</li>\n    </ul>\n    <strong>Não somos uma empresa de negociação ou quitação de dívidas.</strong> Nosso serviço atua exclusivamente na via jurídica para remoção de restrições ilegais ou irregulares.` },
+  { title: '3. Elegibilidade', content: `Para contratar nossos serviços, o usuário deve:\n    <ul>\n      <li>Ser pessoa física brasileira, maior de 18 anos ou emancipada legalmente.</li>\n      <li>Possuir CPF válido e ativo perante a Receita Federal.</li>\n      <li>Fornecer informações verdadeiras, completas e atualizadas no momento do cadastro.</li>\n    </ul>\n    A Mais Score reserva-se o direito de recusar a prestação de serviços caso as condições acima não sejam atendidas.` },
+  { title: '4. Cadastro e Responsabilidades do Usuário', content: `O usuário é responsável por:\n    <ul>\n      <li>Fornecer dados verdadeiros e manter suas informações atualizadas.</li>\n      <li>Guardar sigilo de quaisquer credenciais de acesso eventualmente criadas.</li>\n      <li>Não utilizar o serviço para fins ilícitos, fraudulentos ou lesivos a terceiros.</li>\n      <li>Comunicar imediatamente a Mais Score caso identifique uso não autorizado de seus dados.</li>\n    </ul>\n    A Mais Score não se responsabiliza por danos decorrentes de informações incorretas fornecidas pelo usuário.` },
+  { title: '5. Contratação e Pagamento', content: `O serviço é contratado mediante:\n    <ul>\n      <li>Aceite eletrônico destes Termos de Uso e da Política de Privacidade.</li>\n      <li>Pagamento do valor acordado, conforme plano escolhido, via cartão de crédito, PIX ou boleto.</li>\n    </ul>\n    O pagamento é processado por gateways certificados e seguros. Após a confirmação do pagamento, o processo de análise e regularização será iniciado em até <strong>2 dias úteis</strong>.` },
+  { title: '6. Prazo e Entrega', content: `O prazo estimado para a regularização é de <strong>até 30 dias úteis</strong> a partir do início do processo, podendo variar conforme a complexidade do caso e os prazos legais dos órgãos competentes. A Mais Score manterá o cliente informado sobre o andamento via WhatsApp e e-mail.` },
+  { title: '7. Taxa de Sucesso e Garantias', content: `A Mais Score possui taxa histórica de sucesso de <strong>97%</strong>. Nos casos em que não seja possível obter a regularização, o cliente será comunicado com a devida justificativa. As condições de reembolso, quando aplicáveis, estão descritas na Política de Reembolso.` },
+  { title: '8. Propriedade Intelectual', content: `Todo o conteúdo disponível no site maisscore.com.br — incluindo textos, imagens, logotipos, layout e código-fonte — é de propriedade exclusiva da Ruptura Comércio Digital Ltda. e está protegido pela legislação brasileira de direitos autorais.` },
+  { title: '9. Limitação de Responsabilidade', content: `A Mais Score não se responsabiliza por:\n    <ul>\n      <li>Resultados adversos decorrentes de informações incorretas fornecidas pelo cliente.</li>\n      <li>Atrasos causados por demoras nos sistemas dos órgãos de proteção ao crédito.</li>\n      <li>Danos indiretos, lucros cessantes ou perdas consequenciais de qualquer natureza.</li>\n    </ul>` },
+  { title: '10. Rescisão e Cancelamento', content: `O usuário pode solicitar o cancelamento do serviço a qualquer momento pelo WhatsApp (15) 97405-8014 ou pelo e-mail contato@maisscore.com.br. O direito de arrependimento, conforme o Código de Defesa do Consumidor (Art. 49), pode ser exercido em até <strong>7 dias corridos</strong> após a contratação, com reembolso integral.` },
+  { title: '11. Alterações nos Termos', content: `A Mais Score pode atualizar estes Termos a qualquer momento. Alterações relevantes serão comunicadas por e-mail ou por aviso no site.` },
+  { title: '12. Lei Aplicável e Foro', content: `Estes Termos são regidos pelas leis da República Federativa do Brasil. Fica eleito o foro da Comarca de Barueri-SP para dirimir quaisquer controvérsias.` },
+  { title: '13. Contato', content: `<ul><li><strong>E-mail:</strong> contato@maisscore.com.br</li><li><strong>WhatsApp:</strong> (15) 97405-8014</li><li><strong>Endereço:</strong> Alameda Rio Negro, 503, Alphaville, Barueri-SP</li></ul>` },
+]
+
+const PRIVACIDADE_SECTIONS = [
+  { title: '1. Quem somos', content: `A <strong>Mais Score</strong> é uma marca da <strong>Ruptura Comércio Digital Ltda.</strong>, inscrita no CNPJ 64.945.712/0001-66, com sede na Alameda Rio Negro, 503, Alphaville, Barueri-SP.` },
+  { title: '2. Dados que coletamos', content: `Coletamos apenas os dados necessários para a prestação dos nossos serviços:\n    <ul>\n      <li><strong>Dados de identificação:</strong> nome completo, CPF, data de nascimento e e-mail.</li>\n      <li><strong>Dados de contato:</strong> número de telefone (WhatsApp) e endereço.</li>\n      <li><strong>Dados de navegação:</strong> endereço IP, tipo de navegador, páginas visitadas e tempo de sessão.</li>\n      <li><strong>Dados de pagamento:</strong> processados por gateways certificados (Asaas); não armazenamos dados de cartão em nossos servidores.</li>\n    </ul>` },
+  { title: '3. Como usamos seus dados', content: `Utilizamos seus dados para:\n    <ul>\n      <li>Prestar o serviço de regularização de CPF e score de crédito contratado.</li>\n      <li>Comunicar atualizações sobre o andamento do seu processo via WhatsApp e e-mail.</li>\n      <li>Processar pagamentos e emitir documentos fiscais.</li>\n      <li>Cumprir obrigações legais e regulatórias.</li>\n    </ul>` },
+  { title: '4. Base legal para o tratamento', content: `Tratamos seus dados com base nas hipóteses legais previstas na <strong>LGPD (Lei 13.709/2018)</strong>: execução de contrato, cumprimento de obrigação legal, legítimo interesse e consentimento.` },
+  { title: '5. Compartilhamento de dados', content: `Não vendemos seus dados. Podemos compartilhá-los somente com parceiros operacionais, autoridades públicas quando exigido por lei, e assessores jurídicos necessários ao processo.` },
+  { title: '6. Cookies e rastreamento', content: `Utilizamos cookies essenciais, analíticos (Google Analytics) e de marketing (Meta Pixel, ativados somente com consentimento).` },
+  { title: '7. Por quanto tempo guardamos seus dados', content: `Retemos seus dados pelo tempo necessário para cumprir a finalidade para a qual foram coletados e atender obrigações legais (mínimo 5 anos para documentos fiscais).` },
+  { title: '8. Seus direitos como titular', content: `Conforme a LGPD, você tem direito a acesso, correção, exclusão, portabilidade, revogação do consentimento e oposição. Para exercer seus direitos: <strong>privacidade@maisscore.com.br</strong>. Respondemos em até 15 dias úteis.` },
+  { title: '9. Segurança dos dados', content: `Adotamos criptografia em trânsito (TLS), controle de acesso por perfil e monitoramento contínuo de incidentes.` },
+  { title: '10. Alterações nesta Política', content: `Podemos atualizar esta Política periodicamente, com notificação por e-mail ou aviso no site.` },
+  { title: '11. Contato e Encarregado (DPO)', content: `<ul><li><strong>E-mail:</strong> privacidade@maisscore.com.br</li><li><strong>WhatsApp:</strong> (15) 97405-8014</li><li><strong>Endereço:</strong> Alameda Rio Negro, 503, Alphaville, Barueri-SP</li></ul>` },
 ]
 
 // ── Formatters ──────────────────────────────────────────────────────────────
@@ -180,29 +211,86 @@ function Stepper({ step, labels }: { step: number; labels: string[] }) {
   )
 }
 
-// ── Terms checkboxes ─────────────────────────────────────────────────────────
+// ── Terms checkbox + modals ───────────────────────────────────────────────────
 
-function TermsBlock({
-  values,
-  onChange,
-}: {
-  values: boolean[]
-  onChange: (i: number, checked: boolean) => void
+function LegalModal({ open, onClose, title, sections }: {
+  open: boolean
+  onClose: () => void
+  title: string
+  sections: { title: string; content: string }[]
 }) {
   return (
-    <div className="flex flex-col gap-3">
-      <h2 className="text-subtitle text-brand-navy">Declaro que estou ciente:</h2>
-      {TERMS.map((term, i) => (
-        <label key={i} className="flex cursor-pointer items-start gap-3">
-          <input
-            type="checkbox"
-            checked={values[i]}
-            onChange={(e) => onChange(i, e.target.checked)}
-            className="mt-0.5 h-4 w-4 shrink-0 accent-brand-orange"
-          />
-          <span className="text-sm text-brand-navy">{term}</span>
-        </label>
-      ))}
+    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent className="max-h-[80vh] max-w-2xl overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="font-dm text-h3 text-brand-navy">{title}</DialogTitle>
+        </DialogHeader>
+        <div className="flex flex-col gap-6 pt-2">
+          {sections.map((s) => (
+            <div key={s.title} className="border-t border-brand-border pt-4">
+              <h3 className="mb-2 font-dm text-xs font-semibold uppercase tracking-wide text-brand-navy/60">{s.title}</h3>
+              <div
+                className="text-sm text-brand-navy/70 leading-relaxed prose-section"
+                dangerouslySetInnerHTML={{ __html: s.content }}
+              />
+            </div>
+          ))}
+        </div>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function TermsBlock({
+  value,
+  onChange,
+}: {
+  value: boolean
+  onChange: (checked: boolean) => void
+}) {
+  const [openModal, setOpenModal] = useState<'termos' | 'privacidade' | null>(null)
+  return (
+    <div>
+      <label className="flex cursor-pointer items-start gap-3">
+        <input
+          type="checkbox"
+          checked={value}
+          onChange={(e) => onChange(e.target.checked)}
+          className="mt-0.5 h-4 w-4 shrink-0 accent-brand-orange"
+        />
+        <span className="text-sm text-brand-navy">
+          Declaro que li e concordo com os{' '}
+          <button
+            type="button"
+            onClick={() => setOpenModal('termos')}
+            className="text-brand-orange underline hover:opacity-80"
+          >
+            Termos e condições
+          </button>{' '}
+          do serviço e{' '}
+          <button
+            type="button"
+            onClick={() => setOpenModal('privacidade')}
+            className="text-brand-orange underline hover:opacity-80"
+          >
+            Política de privacidade
+          </button>
+          .
+        </span>
+      </label>
+
+      <LegalModal
+        open={openModal === 'termos'}
+        onClose={() => setOpenModal(null)}
+        title="Termos e Condições"
+        sections={TERMOS_SECTIONS}
+      />
+      <LegalModal
+        open={openModal === 'privacidade'}
+        onClose={() => setOpenModal(null)}
+        title="Política de Privacidade"
+        sections={PRIVACIDADE_SECTIONS}
+      />
     </div>
   )
 }
@@ -213,9 +301,9 @@ function CheckoutContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  const initialProduct = (searchParams.get('produto') as Product) || 'cpf'
-  const [selectedProduct, setSelectedProduct] = useState<Product>(
-    initialProduct === 'cnpj' ? 'cnpj' : 'cpf'
+  const initialProduct = searchParams.get('produto') as Product | null
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(
+    initialProduct === 'cnpj' ? 'cnpj' : initialProduct === 'cpf' ? 'cpf' : null
   )
   const [step, setStep] = useState<1 | 2 | 3>(1)
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('PIX')
@@ -224,27 +312,24 @@ function CheckoutContent() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', document: '', companyName: '' })
   const [address, setAddress] = useState({
     cep: '',
-    street: '',
-    neighborhood: '',
-    city: '',
-    state: '',
     number: '',
     complement: '',
   })
-  const [cepLoading, setCepLoading] = useState(false)
   const [card, setCard] = useState({ number: '', month: '', year: '', cvv: '' })
   const [cardHolderDiffers, setCardHolderDiffers] = useState(false)
   const [cardHolder, setCardHolder] = useState({ name: '', cpfCnpj: '', phone: '' })
-  const [pixTerms, setPixTerms] = useState<boolean[]>(Array(5).fill(false))
-  const [cardTerms, setCardTerms] = useState<boolean[]>(Array(5).fill(false))
+  const [pixTerm, setPixTerm] = useState(false)
+  const [cardTerm, setCardTerm] = useState(false)
+  const [addressInfo, setAddressInfo] = useState<{ logradouro: string; bairro: string; localidade: string; uf: string } | null>(null)
   const [clientIp, setClientIp] = useState('')
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
   const [serverError, setServerError] = useState('')
   const [submitted, setSubmitted] = useState(false)
+  const [showValidationAlert, setShowValidationAlert] = useState(false)
 
-  const product = PRODUCTS[selectedProduct]
-  const installmentOptions = getInstallmentOptions(product.priceInCents, product.maxInstallments)
+  const product = selectedProduct ? PRODUCTS[selectedProduct] : null
+  const installmentOptions = product ? getInstallmentOptions(product.priceInCents, product.maxInstallments) : []
   const stepLabels =
     paymentMethod === 'PIX' ? ['Cadastro', 'Confirmação'] : ['Cadastro', 'Pagamento', 'Confirmação']
 
@@ -277,8 +362,8 @@ function CheckoutContent() {
               email: email || null,
               phone: phone.replace(/\D/g, '') || null,
               document: document.replace(/\D/g, '') || null,
-              documentType: product.documentType,
-              product: product.slug,
+              documentType: product?.documentType,
+              product: product?.slug,
               paymentMethod,
               installments: paymentMethod === 'CREDIT_CARD' ? installments : null,
             }),
@@ -291,30 +376,21 @@ function CheckoutContent() {
     return () => window.removeEventListener('beforeunload', saveAbandoned)
   }, [form, submitted, paymentMethod, installments, product])
 
-  // CEP auto-complete
-  async function handleCepChange(value: string) {
+  // CEP change handler
+  function handleCepChange(value: string) {
     const formatted = formatCep(value)
     setAddress((a) => ({ ...a, cep: formatted }))
-    const digits = value.replace(/\D/g, '')
+    const digits = formatted.replace(/\D/g, '')
     if (digits.length === 8) {
-      setCepLoading(true)
-      try {
-        const res = await fetch(`https://viacep.com.br/ws/${digits}/json/`)
-        const data = await res.json()
-        if (!data.erro) {
-          setAddress((a) => ({
-            ...a,
-            street: data.logradouro || '',
-            neighborhood: data.bairro || '',
-            city: data.localidade || '',
-            state: data.uf || '',
-          }))
-        }
-      } catch {
-        // silent fail
-      } finally {
-        setCepLoading(false)
-      }
+      fetch(`https://viacep.com.br/ws/${digits}/json/`)
+        .then((r) => r.json())
+        .then((d) => {
+          if (!d.erro) setAddressInfo({ logradouro: d.logradouro, bairro: d.bairro, localidade: d.localidade, uf: d.uf })
+          else setAddressInfo(null)
+        })
+        .catch(() => setAddressInfo(null))
+    } else {
+      setAddressInfo(null)
     }
   }
 
@@ -327,7 +403,7 @@ function CheckoutContent() {
     if (form.phone.replace(/\D/g, '').length < 10) e.phone = 'Telefone inválido'
     const docDigits = form.document.replace(/\D/g, '')
     const expectedLen = selectedProduct === 'cpf' ? 11 : 14
-    if (docDigits.length !== expectedLen) e.document = `${product.documentLabel} inválido`
+    if (docDigits.length !== expectedLen) e.document = `${product?.documentLabel} inválido`
     if (selectedProduct === 'cnpj' && !form.companyName.trim()) {
       e.companyName = 'Razão Social obrigatória'
     }
@@ -341,10 +417,6 @@ function CheckoutContent() {
     if (!card.year) e.cardYear = 'Selecione o ano'
     if (card.cvv.length !== 3) e.cardCvv = 'CVV inválido'
     if (address.cep.replace(/\D/g, '').length !== 8) e.cep = 'CEP inválido'
-    if (!address.street.trim()) e.street = 'Endereço obrigatório'
-    if (!address.neighborhood.trim()) e.neighborhood = 'Bairro obrigatório'
-    if (!address.city.trim()) e.city = 'Cidade obrigatória'
-    if (!address.state.trim()) e.state = 'UF obrigatória'
     if (!address.number.trim()) e.number = 'Número obrigatório'
     if (cardHolderDiffers) {
       if (cardHolder.name.trim().length < 2) e.holderName = 'Nome do titular obrigatório'
@@ -360,6 +432,7 @@ function CheckoutContent() {
   async function goNext() {
     setServerError('')
     if (step === 1) {
+      if (!canAdvanceStep1) { setShowValidationAlert(true); return }
       const errs = validateStep1()
       if (Object.keys(errs).length > 0) { setErrors(errs); return }
       setErrors({})
@@ -373,14 +446,15 @@ function CheckoutContent() {
           email: form.email.trim(),
           phone: form.phone.replace(/\D/g, ''),
           document: form.document.replace(/\D/g, ''),
-          documentType: product.documentType,
+          documentType: product?.documentType,
           razaoSocial: form.companyName.trim() || undefined,
-          productSlug: product.slug,
+          productSlug: product?.slug,
         }),
       }).catch(() => {})
       setStep(2)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } else if (step === 2 && paymentMethod === 'CREDIT_CARD') {
+      if (!canAdvanceStep2Card) { setShowValidationAlert(true); return }
       const errs = validateStep2Card()
       if (Object.keys(errs).length > 0) { setErrors(errs); return }
       setErrors({})
@@ -391,7 +465,7 @@ function CheckoutContent() {
           step: 2,
           phone: form.phone.replace(/\D/g, ''),
           paymentMethod: 'CREDIT_CARD',
-          productSlug: product.slug,
+          productSlug: product?.slug,
         }),
       }).catch(() => {})
       setStep(3)
@@ -421,21 +495,17 @@ function CheckoutContent() {
           email: form.email.trim(),
           phone: form.phone.replace(/\D/g, ''),
           document: form.document.replace(/\D/g, ''),
-          documentType: product.documentType,
+          documentType: product?.documentType,
           razaoSocial: form.companyName.trim() || undefined,
-          productSlug: product.slug,
+          productSlug: product?.slug,
           paymentMethod,
           installments: paymentMethod === 'CREDIT_CARD' ? installments : 1,
           remoteIp: clientIp || undefined,
           ...(paymentMethod === 'CREDIT_CARD'
             ? {
                 postalCode: address.cep.replace(/\D/g, ''),
-                address: address.street.trim(),
                 addressNumber: address.number.trim(),
                 complement: address.complement.trim() || undefined,
-                neighborhood: address.neighborhood.trim(),
-                city: address.city.trim(),
-                state: address.state.trim(),
                 creditCard: {
                   holderName: cardHolderDiffers ? cardHolder.name.trim() : form.name.trim(),
                   number: card.number.replace(/\s/g, ''),
@@ -471,13 +541,35 @@ function CheckoutContent() {
     }
   }
 
-  const totalCents =
-    paymentMethod === 'CREDIT_CARD' && installments > 1
+  const totalCents = product
+    ? paymentMethod === 'CREDIT_CARD' && installments > 1
       ? totalWithInstallmentFee(product.priceInCents, installments)
       : product.priceInCents
+    : 0
 
-  const allPixTerms = pixTerms.every(Boolean)
-  const allCardTerms = cardTerms.every(Boolean)
+  const allPixTerms = pixTerm
+  const allCardTerms = cardTerm
+
+  const canAdvanceStep1 =
+    !!selectedProduct &&
+    form.name.trim().length >= 2 &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) &&
+    form.phone.replace(/\D/g, '').length >= 10 &&
+    form.document.replace(/\D/g, '').length === (selectedProduct === 'cpf' ? 11 : 14) &&
+    (selectedProduct !== 'cnpj' || form.companyName.trim().length > 0)
+
+  const canAdvanceStep2Card =
+    card.number.replace(/\s/g, '').length === 16 &&
+    !!card.month &&
+    !!card.year &&
+    card.cvv.length === 3 &&
+    address.cep.replace(/\D/g, '').length === 8 &&
+    address.number.trim().length > 0 &&
+    (!cardHolderDiffers || (
+      cardHolder.name.trim().length >= 2 &&
+      (cardHolder.cpfCnpj.replace(/\D/g, '').length === 11 || cardHolder.cpfCnpj.replace(/\D/g, '').length === 14) &&
+      cardHolder.phone.replace(/\D/g, '').length >= 10
+    ))
 
   return (
     <TooltipProvider>
@@ -490,35 +582,47 @@ function CheckoutContent() {
             <div className="flex flex-col gap-4">
               {/* Seleção de produto */}
               <div className="rounded-lg bg-white p-6 shadow-sm">
-                <h2 className="mb-4 text-subtitle text-brand-navy">Selecione o serviço</h2>
-                <div className="flex flex-col gap-3 sm:flex-row">
-                  {(Object.entries(PRODUCTS) as [Product, typeof PRODUCTS.cpf][]).map(([key, p]) => (
-                    <button
-                      key={key}
-                      type="button"
-                      onClick={() => setSelectedProduct(key)}
-                      className={`flex flex-1 flex-col gap-1 rounded-lg border-2 p-4 text-left transition-colors ${
-                        selectedProduct === key
-                          ? 'border-brand-orange bg-[#fff4f0]'
-                          : 'border-brand-border bg-white hover:border-neutral-400'
-                      }`}
-                    >
-                      <span
-                        className={`text-subtitle ${
-                          selectedProduct === key ? 'text-brand-orange' : 'text-brand-navy'
+                <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-brand-navy/60">Selecione o serviço</h2>
+                <ButtonGroup variant="spaced" className="w-full">
+                  {(Object.entries(PRODUCTS) as [Product, typeof PRODUCTS.cpf][]).map(([key, p]) => {
+                    const Icon = p.icon
+                    const isSelected = selectedProduct === key
+                    return (
+                      <Button
+                        key={key}
+                        type="button"
+                        variant="outline"
+                        onClick={() => setSelectedProduct(key)}
+                        className={`flex flex-1 items-center justify-start gap-3 px-3 py-2.5 h-auto bg-white hover:bg-[#fff4f0] hover:border-brand-orange/40 ${
+                          isSelected ? 'bg-[#fff4f0] border-brand-orange text-brand-navy' : ''
                         }`}
                       >
-                        {p.label}
-                      </span>
-                      <span className="font-dm text-h3 text-brand-navy">{p.price}</span>
-                    </button>
-                  ))}
-                </div>
+                        <Icon size={16} className={`shrink-0 ${isSelected ? 'text-brand-orange' : 'text-brand-navy/50'}`} />
+                        <div className="flex flex-col items-start">
+                          <span className={`text-xs font-semibold leading-tight ${isSelected ? 'text-brand-orange' : ''}`}>{p.label}</span>
+                          <span className={`text-xs ${isSelected ? 'text-brand-orange/80' : 'text-brand-navy/60'}`}>{p.price}</span>
+                        </div>
+                      </Button>
+                    )
+                  })}
+                </ButtonGroup>
               </div>
 
               {/* Dados pessoais */}
-              <div className="rounded-lg bg-white p-6 shadow-sm">
-                <h2 className="mb-4 text-subtitle text-brand-navy">Seus dados</h2>
+              {selectedProduct && <div className="rounded-lg bg-white p-6 shadow-sm">
+                <div className="mb-4 flex items-center gap-2">
+                  <h2 className="text-xs font-semibold uppercase tracking-wide text-brand-navy/60">Seus dados</h2>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button type="button" className="text-brand-navy/50 hover:text-brand-navy transition-colors">
+                        <Info size={16} />
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="max-w-xs text-sm text-brand-navy">
+                      Os dados cadastrados no formulário abaixo, serão utilizados para dar entrada no processo jurídico. É importante que você preencha corretamente para não invalidar o processo.
+                    </PopoverContent>
+                  </Popover>
+                </div>
                 <div className="flex flex-col gap-4">
                   <Field label="Nome completo" error={errors.name} required>
                     <input
@@ -566,7 +670,7 @@ function CheckoutContent() {
                       />
                     </Field>
 
-                    <Field label={product.documentLabel} error={errors.document} required>
+                    <Field label={product?.documentLabel ?? 'Documento'} error={errors.document} required>
                       <input
                         type="text"
                         inputMode="numeric"
@@ -578,16 +682,20 @@ function CheckoutContent() {
                               : formatCnpj(e.target.value)
                           setForm((f) => ({ ...f, document: formatted }))
                         }}
-                        placeholder={product.documentPlaceholder}
-                        maxLength={product.documentMaxLength}
+                        placeholder={product?.documentPlaceholder ?? '000.000.000-00'}
+                        maxLength={product?.documentMaxLength ?? 14}
                         className={inputCls(errors.document)}
                       />
                     </Field>
                   </div>
                 </div>
-              </div>
+              </div>}
 
-              <button type="button" onClick={goNext} className="btn-secondary w-full">
+              <button
+                type="button"
+                onClick={goNext}
+                className="btn-secondary w-full !rounded-md h-11"
+              >
                 Avançar
               </button>
             </div>
@@ -598,16 +706,16 @@ function CheckoutContent() {
             <div className="flex flex-col gap-4">
               {/* Seleção de método */}
               <div className="rounded-lg bg-white p-6 shadow-sm">
-                <h2 className="mb-4 text-subtitle text-brand-navy">Como você quer pagar?</h2>
+                <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-brand-navy/60">Como você quer pagar?</h2>
                 <PaymentMethodSelector method={paymentMethod} onChange={setPaymentMethod} />
 
                 {/* Resumo do serviço */}
                 <div className="mt-4 rounded-lg border border-brand-border bg-neutral-50 p-4">
                   <p className="text-sm font-medium text-brand-navy">
-                    Serviço: {product.label}
+                    Serviço: {product?.label}
                   </p>
                   <p className="mt-0.5 text-sm text-brand-navy">
-                    Valor: R$ {formatCurrency(product.priceInCents)}
+                    Valor: R$ {formatCurrency(product?.priceInCents ?? 0)}
                   </p>
                   <hr className="my-3 border-brand-border" />
                   <p className="text-xs text-foreground-alt">
@@ -618,12 +726,12 @@ function CheckoutContent() {
 
               {/* Termos */}
               <div className="rounded-lg bg-white p-6 shadow-sm">
-                <TermsBlock
-                  values={pixTerms}
-                  onChange={(i, checked) =>
-                    setPixTerms((t) => t.map((v, idx) => (idx === i ? checked : v)))
-                  }
-                />
+                <TermsBlock value={pixTerm} onChange={setPixTerm} />
+                <hr className="my-4 border-brand-border" />
+                <p className="flex items-center justify-center gap-2 text-sm text-brand-navy">
+                  <Shield className="h-4 w-4 shrink-0 text-brand-orange" />
+                  Garantia de 7 dias — reembolso integral
+                </p>
               </div>
 
               {serverError && (
@@ -632,37 +740,23 @@ function CheckoutContent() {
                 </p>
               )}
 
-              <div className="flex gap-3">
-                <button type="button" onClick={goBack} className="btn-secondary flex-1">
-                  Voltar
-                </button>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="flex-1">
-                      <button
-                        type="button"
-                        onClick={allPixTerms ? handleSubmit : undefined}
-                        disabled={loading || !allPixTerms}
-                        className="btn-primary w-full disabled:opacity-50"
-                      >
-                        {loading ? (
-                          <span className="flex items-center justify-center gap-2">
-                            <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
-                            Processando...
-                          </span>
-                        ) : (
-                          'AVANÇAR'
-                        )}
-                      </button>
-                    </span>
-                  </TooltipTrigger>
-                  {!allPixTerms && (
-                    <TooltipContent>
-                      Para prosseguir é preciso aceitar e concordar com todos os termos acima.
-                    </TooltipContent>
-                  )}
-                </Tooltip>
-              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  if (!allPixTerms) { setShowValidationAlert(true); return }
+                  if (!loading) handleSubmit()
+                }}
+                className="btn-secondary w-full !rounded-md h-11"
+              >
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+                    Processando...
+                  </span>
+                ) : (
+                  'Avançar'
+                )}
+              </button>
             </div>
           )}
 
@@ -670,7 +764,7 @@ function CheckoutContent() {
           {step === 2 && paymentMethod === 'CREDIT_CARD' && (
             <div className="flex flex-col gap-4">
               <div className="rounded-lg bg-white p-6 shadow-sm">
-                <h2 className="mb-4 text-subtitle text-brand-navy">Como você quer pagar?</h2>
+                <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-brand-navy/60">Como você quer pagar?</h2>
                 <PaymentMethodSelector method={paymentMethod} onChange={setPaymentMethod} />
 
                 <div className="mt-4 flex flex-col gap-4">
@@ -822,7 +916,7 @@ function CheckoutContent() {
 
               {/* Endereço */}
               <div className="rounded-lg bg-white p-6 shadow-sm">
-                <h2 className="mb-4 text-subtitle text-brand-navy">Endereço do titular</h2>
+                <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-brand-navy/60">Endereço do titular</h2>
                 <div className="flex flex-col gap-4">
                   <div className="grid grid-cols-2 gap-4">
                     <Field label="CEP" error={errors.cep} required>
@@ -836,11 +930,6 @@ function CheckoutContent() {
                           maxLength={9}
                           className={inputCls(errors.cep)}
                         />
-                        {cepLoading && (
-                          <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-brand-border border-t-brand-navy" />
-                          </div>
-                        )}
                       </div>
                     </Field>
 
@@ -855,75 +944,34 @@ function CheckoutContent() {
                     </Field>
                   </div>
 
-                  <Field label="Endereço (Rua / Av.)" error={errors.street} required>
+                  {addressInfo && (
+                    <p className="text-sm text-foreground-alt">
+                      {addressInfo.logradouro}, {addressInfo.bairro} — {addressInfo.localidade}/{addressInfo.uf}
+                    </p>
+                  )}
+
+                  <Field label="Complemento">
                     <input
                       type="text"
-                      value={address.street}
-                      onChange={(e) => setAddress((a) => ({ ...a, street: e.target.value }))}
-                      placeholder="Rua das Flores"
-                      className={inputCls(errors.street)}
+                      value={address.complement}
+                      onChange={(e) => setAddress((a) => ({ ...a, complement: e.target.value }))}
+                      placeholder="Bloco A, Apto 42"
+                      className={inputCls()}
                     />
                   </Field>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <Field label="Bairro" error={errors.neighborhood} required>
-                      <input
-                        type="text"
-                        value={address.neighborhood}
-                        onChange={(e) => setAddress((a) => ({ ...a, neighborhood: e.target.value }))}
-                        placeholder="Centro"
-                        className={inputCls(errors.neighborhood)}
-                      />
-                    </Field>
-
-                    <Field label="Complemento">
-                      <input
-                        type="text"
-                        value={address.complement}
-                        onChange={(e) => setAddress((a) => ({ ...a, complement: e.target.value }))}
-                        placeholder="Bloco A, Apto 42"
-                        className={inputCls()}
-                      />
-                    </Field>
-                  </div>
-
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="col-span-2">
-                      <Field label="Cidade" error={errors.city} required>
-                        <input
-                          type="text"
-                          value={address.city}
-                          onChange={(e) => setAddress((a) => ({ ...a, city: e.target.value }))}
-                          placeholder="São Paulo"
-                          className={inputCls(errors.city)}
-                        />
-                      </Field>
-                    </div>
-
-                    <Field label="UF" error={errors.state} required>
-                      <input
-                        type="text"
-                        value={address.state}
-                        onChange={(e) =>
-                          setAddress((a) => ({
-                            ...a,
-                            state: e.target.value.toUpperCase().slice(0, 2),
-                          }))
-                        }
-                        placeholder="SP"
-                        maxLength={2}
-                        className={inputCls(errors.state)}
-                      />
-                    </Field>
-                  </div>
                 </div>
               </div>
 
               <div className="flex gap-3">
-                <button type="button" onClick={goBack} className="btn-secondary flex-1">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={goBack}
+                  className="flex-1 h-11 rounded-md border-brand-border bg-white text-brand-navy hover:bg-neutral-50"
+                >
                   Voltar
-                </button>
-                <button type="button" onClick={goNext} className="btn-secondary flex-1">
+                </Button>
+                <button type="button" onClick={goNext} className="btn-secondary flex-1 !rounded-md h-11">
                   Avançar
                 </button>
               </div>
@@ -935,17 +983,17 @@ function CheckoutContent() {
             <div className="flex flex-col gap-4">
               {/* Resumo do pedido */}
               <div className="rounded-lg bg-white p-6 shadow-sm">
-                <h2 className="mb-4 text-subtitle text-brand-navy">Resumo do pedido</h2>
+                <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-brand-navy/60">Resumo do pedido</h2>
                 <div className="flex flex-col gap-3">
                   <div className="flex items-start justify-between gap-2">
-                    <span className="text-sm text-foreground-alt">{product.label}</span>
-                    <span className="font-dm text-subtitle text-brand-navy">{product.price}</span>
+                    <span className="text-sm text-foreground-alt">{product?.label}</span>
+                    <span className="font-dm text-subtitle text-brand-navy">{product?.price}</span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-foreground-alt">Taxas e encargos</span>
                     <span className="text-sm text-foreground-alt">
-                      {installments > 1
+                      {installments > 1 && product
                         ? `R$ ${formatCurrency(
                             totalWithInstallmentFee(product.priceInCents, installments) -
                               product.priceInCents
@@ -965,7 +1013,7 @@ function CheckoutContent() {
                       {installments === 1
                         ? '1× no cartão de crédito'
                         : `${installments}× de R$ ${formatCurrency(
-                            installmentValueCents(product.priceInCents, installments)
+                            installmentValueCents(product?.priceInCents ?? 0, installments)
                           )} no cartão`}
                     </p>
                   </div>
@@ -976,7 +1024,7 @@ function CheckoutContent() {
                       {cardHolderDiffers && cardHolder.name ? cardHolder.name : form.name}
                     </p>
                     <p className="mt-0.5 text-foreground-alt">
-                      <span className="font-medium text-brand-navy">{product.documentLabel}:</span>{' '}
+                      <span className="font-medium text-brand-navy">{product?.documentLabel}:</span>{' '}
                       {form.document}
                     </p>
                   </div>
@@ -985,12 +1033,12 @@ function CheckoutContent() {
 
               {/* Termos */}
               <div className="rounded-lg bg-white p-6 shadow-sm">
-                <TermsBlock
-                  values={cardTerms}
-                  onChange={(i, checked) =>
-                    setCardTerms((t) => t.map((v, idx) => (idx === i ? checked : v)))
-                  }
-                />
+                <TermsBlock value={cardTerm} onChange={setCardTerm} />
+                <hr className="my-4 border-brand-border" />
+                <p className="flex items-center justify-center gap-2 text-sm text-brand-navy">
+                  <Shield className="h-4 w-4 shrink-0 text-brand-orange" />
+                  Garantia de 7 dias — reembolso integral
+                </p>
               </div>
 
               {serverError && (
@@ -1000,9 +1048,14 @@ function CheckoutContent() {
               )}
 
               <div className="flex gap-3">
-                <button type="button" onClick={goBack} className="btn-secondary flex-1">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={goBack}
+                  className="flex-1 h-11 rounded-md border-brand-border bg-white text-brand-navy hover:bg-neutral-50"
+                >
                   Voltar
-                </button>
+                </Button>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <span className="flex-1">
@@ -1010,7 +1063,7 @@ function CheckoutContent() {
                         type="button"
                         onClick={allCardTerms ? handleSubmit : undefined}
                         disabled={loading || !allCardTerms}
-                        className="btn-primary w-full disabled:opacity-50"
+                        className="btn-secondary w-full !rounded-md h-11 disabled:opacity-50"
                       >
                         {loading ? (
                           <span className="flex items-center justify-center gap-2">
@@ -1025,7 +1078,7 @@ function CheckoutContent() {
                   </TooltipTrigger>
                   {!allCardTerms && (
                     <TooltipContent>
-                      Para prosseguir é preciso aceitar e concordar com todos os termos acima.
+                      Para prosseguir é preciso aceitar os termos acima.
                     </TooltipContent>
                   )}
                 </Tooltip>
@@ -1034,11 +1087,26 @@ function CheckoutContent() {
           )}
         </div>
       </div>
+      <AlertDialog open={showValidationAlert} onOpenChange={setShowValidationAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Campos incompletos</AlertDialogTitle>
+            <AlertDialogDescription>
+              Antes de prosseguir, preencha corretamente todos os campos.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setShowValidationAlert(false)}>
+              Entendi
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </TooltipProvider>
   )
 }
 
-// ── PaymentMethodSelector (extracted to avoid repetition) ────────────────────
+// ── PaymentMethodSelector ─────────────────────────────────────────────────────
 
 function PaymentMethodSelector({
   method,
@@ -1048,88 +1116,15 @@ function PaymentMethodSelector({
   onChange: (m: PaymentMethod) => void
 }) {
   return (
-    <div className="flex gap-3">
-      <button
-        type="button"
-        onClick={() => onChange('PIX')}
-        className={`flex flex-1 items-center gap-3 rounded-lg border-2 p-4 transition-colors ${
-          method === 'PIX'
-            ? 'border-brand-orange bg-[#fff4f0]'
-            : 'border-brand-border hover:border-neutral-400'
-        }`}
-      >
-        <div
-          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
-            method === 'PIX' ? 'bg-brand-orange' : 'bg-neutral-200'
-          }`}
-        >
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            className={method === 'PIX' ? 'text-white' : 'text-foreground-alt'}
-          >
-            <path
-              d="M9.5 2C9.5 2 7 2 5.5 3.5C4 5 4 7.5 4 7.5V9M9.5 22C9.5 22 7 22 5.5 20.5C4 19 4 16.5 4 16.5V15M14.5 2C14.5 2 17 2 18.5 3.5C20 5 20 7.5 20 7.5V9M14.5 22C14.5 22 17 22 18.5 20.5C20 19 20 16.5 20 16.5V15"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <rect x="7" y="10" width="10" height="4" rx="1" stroke="currentColor" strokeWidth="1.5" />
-          </svg>
-        </div>
-        <div className="flex-1 text-left">
-          <p className="text-sm font-medium text-brand-navy">PIX</p>
-          <p className="text-txt-xs text-foreground-alt">Aprovação em segundos</p>
-        </div>
-        <div
-          className={`h-5 w-5 shrink-0 rounded-full border-2 ${
-            method === 'PIX' ? 'border-brand-orange bg-brand-orange' : 'border-brand-border'
-          }`}
-        />
-      </button>
-
-      <button
-        type="button"
-        onClick={() => onChange('CREDIT_CARD')}
-        className={`flex flex-1 items-center gap-3 rounded-lg border-2 p-4 transition-colors ${
-          method === 'CREDIT_CARD'
-            ? 'border-brand-orange bg-[#fff4f0]'
-            : 'border-brand-border hover:border-neutral-400'
-        }`}
-      >
-        <div
-          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
-            method === 'CREDIT_CARD' ? 'bg-brand-orange' : 'bg-neutral-200'
-          }`}
-        >
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            className={method === 'CREDIT_CARD' ? 'text-white' : 'text-foreground-alt'}
-          >
-            <rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
-            <path d="M2 10h20" stroke="currentColor" strokeWidth="1.5" />
-            <path d="M6 15h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
-        </div>
-        <div className="flex-1 text-left">
-          <p className="text-sm font-medium text-brand-navy">Cartão de crédito</p>
-          <p className="text-txt-xs text-foreground-alt">Até 3× com encargos</p>
-        </div>
-        <div
-          className={`h-5 w-5 shrink-0 rounded-full border-2 ${
-            method === 'CREDIT_CARD'
-              ? 'border-brand-orange bg-brand-orange'
-              : 'border-brand-border'
-          }`}
-        />
-      </button>
-    </div>
+    <Select value={method} onValueChange={(v) => onChange(v as PaymentMethod)}>
+      <SelectTrigger className="h-11 w-full border-brand-border text-brand-navy focus:ring-brand-navy">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="PIX">PIX — Aprovação em segundos</SelectItem>
+        <SelectItem value="CREDIT_CARD">Cartão de Crédito</SelectItem>
+      </SelectContent>
+    </Select>
   )
 }
 

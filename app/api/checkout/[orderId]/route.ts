@@ -21,10 +21,10 @@ export async function GET(
 
     const order = await prisma.order.findUnique({
       where: { id: orderId },
-      include: { payment: true, product: true },
+      include: { payment: true, product: true, lead: true },
     })
 
-    if (!order || !order.payment) {
+    if (!order || !order.payment || !order.lead) {
       return Response.json({ success: false, error: 'Pedido não encontrado.' }, { status: 404 })
     }
 
@@ -40,6 +40,7 @@ export async function GET(
           method: payment.method,
           amount: payment.amount,
           productName: product.name,
+          phone: order.lead.phone,
         },
       })
     }
@@ -104,6 +105,7 @@ export async function GET(
         method: payment.method,
         amount: payment.amount,
         productName: product.name,
+        phone: order.lead.phone,
         pixQrCode,
         pixPayload,
         pixExpiresAt: payment.pixExpiresAt?.toISOString() ?? null,

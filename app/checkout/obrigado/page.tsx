@@ -13,6 +13,7 @@ interface OrderData {
   method: string
   amount: number
   productName: string
+  phone?: string | null
   pixQrCode?: string | null
   pixPayload?: string | null
   pixExpiresAt?: string | null
@@ -142,16 +143,15 @@ function ObrigadoContent() {
                 <strong className="text-brand-navy">{order.productName}</strong>.
               </p>
             </div>
-            <div className="w-full rounded-lg border border-brand-border bg-neutral-50 p-4 text-left">
-              <p className="text-sm text-foreground-alt">
-                Nossa equipe já foi notificada e iniciará o processo em breve. Você receberá
-                atualizações via WhatsApp e e-mail.
-              </p>
-              <p className="mt-2 text-txt-xs text-foreground-alt">
-                Prazo estimado: até 30 dias úteis após início do processo.
+            <div className="w-full rounded-lg border border-brand-border bg-neutral-50 p-4 text-center">
+              <p className="text-sm font-semibold text-brand-navy">O que acontece agora:</p>
+              <p className="mt-2 text-sm text-foreground-alt">Nossa equipe já foi notificada.</p>
+              <p className="mt-1 text-sm text-foreground-alt">
+                Você receberá todas as informações do processo pelo WhatsApp{' '}
+                {order.phone && <strong className="text-brand-navy">{order.phone}</strong>}
               </p>
             </div>
-            <a href="/" className="btn-primary w-full text-center">
+            <a href="/" className="btn-secondary w-full !rounded-md text-center">
               Voltar ao site
             </a>
           </div>

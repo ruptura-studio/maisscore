@@ -31,7 +31,7 @@ export function Header() {
       {!hideNav && <HeaderTopBar />}
 
       {/* Main nav */}
-      <div className={cn('flex items-center justify-between', isDS ? 'py-4 px-4' : 'container-ms py-4 lg:py-5')}>
+      <div className={cn('flex items-center', hideNav ? 'justify-center' : 'justify-between', isDS ? 'py-4 px-4' : 'container-ms py-4 lg:py-5')}>
         {/* Logo */}
         <a href={isDS ? '/designsystem' : '/'} className="flex items-center shrink-0">
           <Image

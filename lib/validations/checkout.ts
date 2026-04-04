@@ -36,14 +36,10 @@ export const checkoutSchema = z
     paymentMethod: z.enum(['PIX', 'CREDIT_CARD']),
     installments: z.number().int().min(1).max(3).optional().default(1),
     remoteIp: z.string().optional(),
-    // Endereço — obrigatório apenas para CREDIT_CARD
+    // Endereço — apenas CEP + número para CREDIT_CARD (Asaas não exige logradouro/bairro/cidade)
     postalCode: z.string().optional(),
-    address: z.string().optional(),
     addressNumber: z.string().optional(),
     complement: z.string().optional(),
-    neighborhood: z.string().optional(),
-    city: z.string().optional(),
-    state: z.string().optional(),
     // Cartão
     creditCard: z
       .object({
@@ -73,13 +69,6 @@ export const checkoutSchema = z
           code: z.ZodIssueCode.custom,
           message: 'CEP deve ter 8 dígitos',
           path: ['postalCode'],
-        })
-      }
-      if (!data.address?.trim()) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Endereço obrigatório',
-          path: ['address'],
         })
       }
       if (!data.addressNumber?.trim()) {
