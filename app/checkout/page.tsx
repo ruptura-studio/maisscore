@@ -327,11 +327,29 @@ function CheckoutContent() {
   const [serverError, setServerError] = useState('')
   const [submitted, setSubmitted] = useState(false)
   const [showValidationAlert, setShowValidationAlert] = useState(false)
+  const [dbPrices, setDbPrices] = useState<Record<string, number>>({})
 
   const product = selectedProduct ? PRODUCTS[selectedProduct] : null
-  const installmentOptions = product ? getInstallmentOptions(product.priceInCents, product.maxInstallments) : []
+  const productPrice = selectedProduct
+    ? (dbPrices[PRODUCTS[selectedProduct].slug] ?? PRODUCTS[selectedProduct].priceInCents)
+    : 0
+  const installmentOptions = product ? getInstallmentOptions(productPrice, product.maxInstallments) : []
   const stepLabels =
     paymentMethod === 'PIX' ? ['Cadastro', 'Confirmação'] : ['Cadastro', 'Pagamento', 'Confirmação']
+
+  // Carrega preços do banco de dados
+  useEffect(() => {
+    fetch('/api/products')
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.success) {
+          const map: Record<string, number> = {}
+          for (const p of d.data) map[p.slug] = p.price
+          setDbPrices(map)
+        }
+      })
+      .catch(() => {})
+  }, [])
 
   // Captura IP do cliente
   useEffect(() => {
@@ -543,8 +561,8 @@ function CheckoutContent() {
 
   const totalCents = product
     ? paymentMethod === 'CREDIT_CARD' && installments > 1
-      ? totalWithInstallmentFee(product.priceInCents, installments)
-      : product.priceInCents
+      ? totalWithInstallmentFee(productPrice, installments)
+      : productPrice
     : 0
 
   const allPixTerms = pixTerm
@@ -600,7 +618,9 @@ function CheckoutContent() {
                         <Icon size={16} className={`shrink-0 ${isSelected ? 'text-brand-orange' : 'text-brand-navy/50'}`} />
                         <div className="flex flex-col items-start">
                           <span className={`text-xs font-semibold leading-tight ${isSelected ? 'text-brand-orange' : ''}`}>{p.label}</span>
-                          <span className={`text-xs ${isSelected ? 'text-brand-orange/80' : 'text-brand-navy/60'}`}>{p.price}</span>
+                          <span className={`text-xs ${isSelected ? 'text-brand-orange/80' : 'text-brand-navy/60'}`}>
+                            {dbPrices[p.slug] != null ? `R$ ${formatCurrency(dbPrices[p.slug]!)}` : p.price}
+                          </span>
                         </div>
                       </Button>
                     )
@@ -715,7 +735,7 @@ function CheckoutContent() {
                     Serviço: {product?.label}
                   </p>
                   <p className="mt-0.5 text-sm text-brand-navy">
-                    Valor: R$ {formatCurrency(product?.priceInCents ?? 0)}
+                    Valor: R$ {formatCurrency(productPrice)}
                   </p>
                   <hr className="my-3 border-brand-border" />
                   <p className="text-xs text-foreground-alt">
@@ -987,7 +1007,7 @@ function CheckoutContent() {
                 <div className="flex flex-col gap-3">
                   <div className="flex items-start justify-between gap-2">
                     <span className="text-sm text-foreground-alt">{product?.label}</span>
-                    <span className="font-dm text-subtitle text-brand-navy">{product?.price}</span>
+                    <span className="font-dm text-subtitle text-brand-navy">R$ {formatCurrency(productPrice)}</span>
                   </div>
 
                   <div className="flex items-center justify-between">
@@ -995,8 +1015,8 @@ function CheckoutContent() {
                     <span className="text-sm text-foreground-alt">
                       {installments > 1 && product
                         ? `R$ ${formatCurrency(
-                            totalWithInstallmentFee(product.priceInCents, installments) -
-                              product.priceInCents
+                            totalWithInstallmentFee(productPrice, installments) -
+                              productPrice
                           )}`
                         : 'R$ 0,00'}
                     </span>
@@ -1013,7 +1033,7 @@ function CheckoutContent() {
                       {installments === 1
                         ? '1× no cartão de crédito'
                         : `${installments}× de R$ ${formatCurrency(
-                            installmentValueCents(product?.priceInCents ?? 0, installments)
+                            installmentValueCents(productPrice, installments)
                           )} no cartão`}
                     </p>
                   </div>
