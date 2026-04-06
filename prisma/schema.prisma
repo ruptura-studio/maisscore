@@ -34,6 +34,8 @@ model Lead {
   utmCampaign   String?  @map("utm_campaign")
   notionId      String?  @map("notion_id")
   crmId         String?  @map("crm_id")
+  stage              String?  @default("lead") @map("stage")
+  lastInteractionAt  DateTime? @map("last_interaction_at") @db.Timestamptz
   notes         String?
   createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz
