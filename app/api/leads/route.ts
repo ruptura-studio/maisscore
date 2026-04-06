@@ -2,6 +2,17 @@ import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/db'
 import { createLeadSchema } from '@/lib/validations/lead'
 
+function classifyTraffic(utm: {
+  source?: string | null
+  medium?: string | null
+  campaign?: string | null
+}): 'cold' | 'warm' | 'hot' {
+  if (utm.source === 'cpa_partner' || utm.medium === 'affiliate') return 'hot'
+  if (utm.campaign?.includes('cpa') || utm.campaign?.includes('urgency')) return 'hot'
+  if (utm.medium === 'cpc' || utm.campaign?.includes('comparison')) return 'warm'
+  return 'cold'
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
@@ -15,7 +26,13 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const { name, phone, email, channel, utmSource, utmMedium, utmCampaign } = parsed.data
+    const { name, phone, email, channel, utmSource, utmMedium, utmCampaign, utmContent, utmTerm } = parsed.data
+
+    const trafficTemperature = classifyTraffic({
+      source: utmSource,
+      medium: utmMedium,
+      campaign: utmCampaign,
+    })
 
     // 2. Salvar no Supabase via Prisma (upsert por telefone)
     const lead = await prisma.lead.upsert({
@@ -25,17 +42,25 @@ export async function POST(req: NextRequest) {
         phone,
         email: email || null,
         channel: channel ?? 'site',
-        utmSource:   utmSource   ?? null,
-        utmMedium:   utmMedium   ?? null,
-        utmCampaign: utmCampaign ?? null,
+        utmSource:          utmSource    ?? null,
+        utmMedium:          utmMedium    ?? null,
+        utmCampaign:        utmCampaign  ?? null,
+        utmContent:         utmContent   ?? null,
+        utmTerm:            utmTerm      ?? null,
+        trafficTemperature,
         status: 'novo',
+        stage: 'lead',
       },
       update: {
         name,
         email: email || null,
-        utmSource:   utmSource   ?? null,
-        utmMedium:   utmMedium   ?? null,
-        utmCampaign: utmCampaign ?? null,
+        utmSource:          utmSource    ?? null,
+        utmMedium:          utmMedium    ?? null,
+        utmCampaign:        utmCampaign  ?? null,
+        utmContent:         utmContent   ?? null,
+        utmTerm:            utmTerm      ?? null,
+        trafficTemperature,
+        lastInteractionAt: new Date(),
       },
     })
 
@@ -44,7 +69,14 @@ export async function POST(req: NextRequest) {
       fetch(process.env.N8N_WEBHOOK_LEADS, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ leadId: lead.id, name, phone, email, channel }),
+        body: JSON.stringify({
+          leadId: lead.id,
+          name,
+          phone,
+          email,
+          channel,
+          trafficTemperature,
+        }),
       }).catch(() => {}) // n8n pode estar offline — não bloquear
     }
 

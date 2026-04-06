@@ -12,6 +12,8 @@ export const createLeadSchema = z.object({
   utmSource: z.string().optional(),
   utmMedium: z.string().optional(),
   utmCampaign: z.string().optional(),
+  utmContent: z.string().optional(),
+  utmTerm: z.string().optional(),
 })
 
 export type CreateLeadInput = z.infer<typeof createLeadSchema>
