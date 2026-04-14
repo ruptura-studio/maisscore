@@ -302,6 +302,7 @@ function CheckoutContent() {
   const searchParams = useSearchParams()
 
   const initialProduct = searchParams.get('produto') as Product | null
+  const initialPhone = searchParams.get('phone') ?? ''
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(
     initialProduct === 'cnpj' ? 'cnpj' : initialProduct === 'cpf' ? 'cpf' : null
   )
@@ -309,7 +310,7 @@ function CheckoutContent() {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('PIX')
   const [installments, setInstallments] = useState(1)
 
-  const [form, setForm] = useState({ name: '', email: '', phone: '', document: '', companyName: '' })
+  const [form, setForm] = useState({ name: '', email: '', phone: initialPhone, document: '', companyName: '' })
   const [address, setAddress] = useState({
     cep: '',
     number: '',
