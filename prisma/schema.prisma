@@ -20,30 +20,47 @@ model Product {
 }
 
 model Lead {
-  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name          String
-  phone         String   @unique
-  email         String?
-  channel       String?
-  status        String   @default("novo")
-  companyName   String?  @map("company_name")
-  leadType      String?  @map("lead_type")
-  checkoutStep  Int?     @map("checkout_step")
-  utmSource          String?  @map("utm_source")
-  utmMedium          String?  @map("utm_medium")
-  utmCampaign        String?  @map("utm_campaign")
-  utmContent         String?  @map("utm_content")
-  utmTerm            String?  @map("utm_term")
-  trafficTemperature String   @default("cold") @map("traffic_temperature")
-  notionId           String?  @map("notion_id")
-  crmId         String?  @map("crm_id")
-  stage              String?  @default("lead") @map("stage")
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name               String?
+  phone              String    @unique
+  email              String?
+  channel            String?
+  status             String    @default("novo")
+  companyName        String?   @map("company_name")
+  leadType           String?   @map("lead_type")
+  checkoutStep       Int?      @map("checkout_step")
+  utmSource          String?   @map("utm_source")
+  utmMedium          String?   @map("utm_medium")
+  utmCampaign        String?   @map("utm_campaign")
+  utmContent         String?   @map("utm_content")
+  utmTerm            String?   @map("utm_term")
+  trafficTemperature String    @default("cold") @map("traffic_temperature")
+  currentTemperature String?   @map("current_temperature")  // temperatura atual (pode mudar durante atendimento)
+  coraTemperature    String?   @map("cora_temperature")     // temperatura classificada pela Cora na triagem
+  objetivo           String?                                // para que quer limpar o nome
+  tempoEndividado    String?   @map("tempo_endividado")     // quanto tempo está com dívida
+  valorDivida        String?   @map("valor_divida")         // faixa de valor da dívida
+  estagioNegociacao  String?   @map("estagio_negociacao")   // se já tentou negociar
+  cpf                String?                                // CPF capturado em conversa ou checkout
+  cnpj               String?                                // CNPJ capturado em conversa ou checkout
+  isClient           Boolean   @default(false) @map("is_client") // se tem compra confirmada
+  acquisition        String?                                // produto adquirido (ex: limpa_cpf, limpa_cnpj)
+  acquisitionValue   Int?      @map("acquisition_value")   // valor pago em centavos
+  notionId           String?   @map("notion_id")
+  crmId              String?   @map("crm_id")
+  stage              String?   @default("lead") @map("stage")
+  pendingAction      String?   @map("pending_action")
+  reentryCount       Int       @default(0) @map("reentry_count")
   lastInteractionAt  DateTime? @map("last_interaction_at") @db.Timestamptz
-  notes         String?
-  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt     DateTime @updatedAt @map("updated_at") @db.Timestamptz
-  orders        Order[]
-  nurtureLog    NurtureLog[]
+  convertedAt        DateTime? @map("converted_at") @db.Timestamptz
+  lossReason         String?   @map("loss_reason")
+  notes              String?
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt          DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  orders             Order[]
+  nurtureLog         NurtureLog[]
+  leadEvents         LeadEvent[]
+  checkoutEvents     CheckoutEvent[]
 
   @@map("leads")
 }
@@ -130,4 +147,40 @@ model NurtureLog {
   lead    Lead     @relation(fields: [leadId], references: [id])
 
   @@map("nurture_log")
+}
+
+model LeadEvent {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId    String   @map("lead_id") @db.Uuid
+  type      String   // 'lead_capturado' | 'triagem_completa' | 'checkout_enviado' | 'pagamento_confirmado' | 'posvendas_iniciado' | 'perdido'
+  value     String?  // valor livre para contexto adicional
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  lead      Lead     @relation(fields: [leadId], references: [id])
+
+  @@map("lead_events")
+}
+
+model CheckoutEvent {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId    String   @map("lead_id") @db.Uuid
+  type      String   // 'url_gerada' | 'url_enviada' | 'link_clicado' | 'pagamento_confirmado' | 'abandonado'
+  metadata  String?  // JSON livre (ex: produto, valor, método)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  lead      Lead     @relation(fields: [leadId], references: [id])
+
+  @@map("checkout_events")
+}
+
+model MessageTemplate {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug      String   @unique                  // ex: 'cora_greeting', 'fernanda_cold_start'
+  flow      String                            // ex: 'cora_screening', 'cold_lead', 'posvendas'
+  step      Int                               // ordem dentro do fluxo (1, 2, 3...)
+  content   String                            // texto com variáveis: {first_name}, {checkout_url}
+  variables String[]                          // lista das variáveis: ['first_name']
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("message_templates")
 }
