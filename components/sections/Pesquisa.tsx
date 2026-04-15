@@ -174,7 +174,7 @@ export function Pesquisa() {
             </p>
             <div className="sm:hidden w-full">
               <Image
-                src="/img/grafico-inadimplencia-brasil.png"
+                src="/img/grafico-inadimplencia-brasil.svg"
                 alt="Gráfico de inadimplência no Brasil"
                 width={600}
                 height={400}
