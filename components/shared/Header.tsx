@@ -100,7 +100,7 @@ export function Header() {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setOpen(false)}
-            className="mt-2 btn-primary !h-auto py-3 px-4 text-sm rounded-full"
+            className="mt-2 btn-primary justify-center text-lg"
           >
             <FaWhatsapp size={16} />
             Falar com especialista
