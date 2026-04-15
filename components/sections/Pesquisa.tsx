@@ -68,14 +68,14 @@ const areaPath = [
 
 export function Pesquisa() {
   return (
-    <section className="w-full bg-white py-20">
-      <div className="container-ms flex flex-col gap-16">
+    <section className="w-full bg-white py-10 sm:py-20">
+      <div className="container-ms flex flex-col gap-4 sm:gap-16">
 
         {/* ── Top: chart + text ── */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
           {/* Chart card */}
-          <div className="rounded-sm border border-border-light bg-neutral-50 p-6">
+          <div className="hidden lg:block rounded-sm border border-border-light bg-neutral-50 p-6 order-2 lg:order-1">
             {/* Card header */}
             <div className="flex items-center justify-between mb-4">
               <span className="font-dm text-brand-navy text-subtitle">
@@ -163,12 +163,26 @@ export function Pesquisa() {
           </div>
 
           {/* Text content */}
-          <div className="flex flex-col gap-6">
-            <h2 className="font-dm text-brand-navy text-h2">
+          <div className="flex flex-col gap-4 sm:gap-6 order-1 lg:order-2">
+            <h2 className="font-dm font-light text-brand-navy text-[32px] leading-[32px] sm:text-h2 sm:font-normal">
               76 milhões de Brasileiros travados pelo nome sujo
             </h2>
+            <p className="sm:hidden font-sans text-grafite text-p">
+              O nome sujo não para no banco. Ele aparece na hora de alugar um imóvel, contratar
+              um plano de celular, conseguir um emprego. Cada dia negativado é mais uma porta
+              fechada.
+            </p>
+            <div className="sm:hidden w-full">
+              <Image
+                src="/img/grafico-inadimplencia-brasil.png"
+                alt="Gráfico de inadimplência no Brasil"
+                width={600}
+                height={400}
+                className="w-full h-auto"
+              />
+            </div>
             <div className="flex flex-col gap-4 text-p text-grafite">
-              <p>
+              <p className="hidden sm:block">
                 O nome sujo não para no banco. Ele aparece na hora de alugar um imóvel, contratar
                 um plano de celular, conseguir um emprego. Cada dia negativado é mais uma porta
                 fechada.
@@ -186,9 +200,9 @@ export function Pesquisa() {
         </div>
 
         {/* ── Bottom: 4 stat cards ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 lg:divide-x divide-border-light">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-0 lg:divide-x divide-border-light">
           {STATS.map((stat) => (
-            <div key={stat.title} className="flex flex-col gap-3 py-8 lg:py-0 lg:px-8 first:pl-0 last:pr-0">
+            <div key={stat.title} className="flex flex-col gap-3 py-4 lg:py-0 lg:px-8 first:pl-0 last:pr-0">
               <div className="relative w-8 h-8">
                 <Image src={stat.icon} alt="" fill className="object-contain" />
               </div>

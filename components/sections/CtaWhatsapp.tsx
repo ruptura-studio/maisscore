@@ -3,7 +3,7 @@ import { WHATSAPP_GERAL } from '@/lib/config'
 
 export function CtaWhatsapp() {
   return (
-    <section className="relative w-full overflow-hidden bg-brand-navy" style={{ minHeight: '340px' }}>
+    <section className="relative w-full overflow-hidden bg-brand-navy">
       {/* Imagem da mulher — lado esquerdo */}
       <div className="absolute bottom-0 left-0 h-full w-3/4 hidden lg:block">
         <Image
@@ -25,24 +25,23 @@ export function CtaWhatsapp() {
 
       {/* Conteúdo — lado direito */}
       <div
-        className="container-ms relative z-10 flex items-center justify-end py-20"
-        style={{ minHeight: '340px' }}
+        className="container-ms relative z-10 flex items-center justify-end py-10 sm:py-20"
       >
         <div className="flex w-full flex-col gap-6 lg:max-w-content-md">
           <h2 className="font-dm text-h2 text-white">
-            Fale com a gente agora pelo WhatsApp
+            Falar com um especialista pelo WhatsApp agora!
           </h2>
           {/* text-[16px] → text-lg (16px/Geist); lg:text-[18px] → lg:text-h3 (18px/DM) */}
-          <p className="font-sans text-p text-white/70">
+          <p className="font-sans text-sm text-white/70 pb-4">
             Nossa equipe está pronta para tirar suas dúvidas, avaliar o seu caso e
-            iniciar o processo de regularização do seu CPF ainda hoje.
+            iniciar o processo de regularização agora mesmo.
           </p>
           <div>
             <a
               href={WHATSAPP_GERAL}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-primary"
+              className="btn-primary w-full sm:w-auto justify-center text-lg"
             >
               Falar no WhatsApp
               <Image

@@ -21,7 +21,7 @@ const FEATURES = [
 export function BeneficiosBar() {
   return (
     <section className="w-full bg-white border-t border-brand-navy/10">
-      <div className="container-ms flex flex-col gap-8 py-16 lg:flex-row lg:items-center lg:justify-between lg:gap-24 lg:py-0 lg:min-h-[305px]">
+      <div className="container-ms flex flex-col gap-8 py-10 sm:py-16 lg:flex-row lg:items-center lg:justify-between lg:gap-24 lg:py-0 lg:min-h-[305px]">
 
         {/* Heading com destaque laranja */}
         <p className="font-dm text-h2 text-brand-navy lg:flex-1">
@@ -33,13 +33,13 @@ export function BeneficiosBar() {
         {/* Features */}
         <div className="flex flex-col gap-6 sm:flex-row sm:flex-wrap sm:gap-8 lg:flex-1 lg:gap-12 lg:flex-nowrap lg:justify-end">
           {FEATURES.map((feature) => (
-            <div key={feature.title} className="flex items-start gap-4">
+            <div key={feature.title} className="flex items-center gap-4">
               <Icon name={feature.icon} size={40} className="shrink-0" />
-              <div className="flex flex-col gap-2">
-                <span className="font-dm text-sm font-bold text-brand-navy">
+              <div className="flex flex-col gap-0">
+                <span className="font-dm text-lg sm:text-sm font-bold text-brand-navy">
                   {feature.title}
                 </span>
-                <span className="font-dm text-p text-grafite">
+                <span className="font-dm text-sm sm:text-p text-grafite">
                   {feature.description}
                 </span>
               </div>

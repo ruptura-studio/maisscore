@@ -31,7 +31,7 @@ export function SobreNos() {
         className="relative w-full overflow-hidden bg-cover bg-center bg-no-repeat border-b border-brand-navy/10"
         style={{ backgroundImage: "url('/img/background-cpf-negativado.png')" }}
       >
-        <div className="container-ms flex flex-col-reverse items-center gap-10 pt-24 lg:flex-row lg:items-center lg:gap-10">
+        <div className="container-ms flex flex-col-reverse items-center gap-10 pt-10 sm:pt-24 lg:flex-row lg:items-center lg:gap-10">
           {/* Imagem da garota */}
           <div className="flex w-full items-end justify-center lg:w-1/2">
             <Image
@@ -59,7 +59,7 @@ export function SobreNos() {
       </section>
 
       {/* Seção 2 — Nossa História (4 cards) */}
-      <section className="w-full border-b border-brand-navy/10 bg-white pb-28 pt-16">
+      <section className="w-full border-b border-brand-navy/10 bg-white pb-10 sm:pb-28 pt-0">
         <div className="container-ms">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
             {INFOBOXES.map((item, i) => (

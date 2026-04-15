@@ -3,7 +3,7 @@ import { WHATSAPP_COMPRAR } from '@/lib/config'
 
 export function CtaResolverAgora() {
   return (
-    <section className="relative w-full overflow-hidden py-24">
+    <section className="relative w-full overflow-hidden py-10 sm:py-24">
       {/* Background image */}
       <div className="absolute inset-0">
         <Image
@@ -26,17 +26,17 @@ export function CtaResolverAgora() {
 
       {/* Content — right-aligned */}
       <div className="container-ms relative z-10 flex justify-end">
-        <div className="flex flex-col gap-8 max-w-content-lg">
-          <blockquote className="font-dm text-white text-h2">
+        <div className="flex flex-col gap-8 max-w-[60%] sm:max-w-content-lg">
+          <blockquote className="font-dm text-white text-[14px] leading-[16px] sm:text-h2">
             "Enquanto você espera, seu CPF continua bloqueando crédito, emprego e oportunidades."
           </blockquote>
 
-          <p className="font-sans text-white/75 text-p">
+          <p className="hidden sm:block font-sans text-white/75 text-p">
             Cada dia com o nome sujo é um dia pagando mais caro: em juros, em oportunidades
             perdidas, em dependência. O problema não se resolve sozinho.
           </p>
 
-          <div>
+          <div className="hidden sm:block">
             <a
               href="/checkout"
               className="btn-primary"

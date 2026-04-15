@@ -71,7 +71,7 @@ export function Depoimentos() {
   const [active, setActive] = useState(0)
 
   return (
-    <section className="w-full bg-neutral-100 py-24">
+    <section className="w-full bg-neutral-100 py-10 sm:py-24">
       <div className="container-ms flex flex-col items-center gap-8">
 
         {/* Header */}

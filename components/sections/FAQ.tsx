@@ -65,10 +65,10 @@ const FAQ_DIREITA = [
 
 export function FAQ() {
   return (
-    <section className="w-full bg-white py-20 lg:py-24">
+    <section className="w-full bg-white py-10 sm:py-24">
       <div className="container-ms">
         {/* Cabeçalho */}
-        <div className="mb-16 flex flex-col items-center gap-4 text-center">
+        <div className="mb-4 sm:mb-16 flex flex-col items-center gap-4 text-center">
           <p className="font-dm text-cap text-disabled">
             DÚVIDAS FREQUENTES
           </p>

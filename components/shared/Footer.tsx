@@ -34,8 +34,8 @@ export function Footer() {
           backgroundImage: "url('/img/footer.png')",
         }}
       >
-        <div className="container-ms py-[100px]">
-          <div className="flex flex-col gap-16 lg:flex-row lg:items-start lg:gap-24">
+        <div className="container-ms py-10 sm:py-[100px]">
+          <div className="flex flex-col gap-8 lg:flex-row lg:items-start lg:gap-24">
 
             {/* Coluna esquerda — logo + tagline */}
             <div className="flex flex-col gap-6 lg:max-w-[264px]">
@@ -45,7 +45,7 @@ export function Footer() {
                   alt="Mais Score"
                   width={239}
                   height={39}
-                  className="h-auto w-auto max-w-[200px]"
+                  className="h-auto w-auto max-w-[144px]"
                 />
               </a>
               <p className="font-dm text-p text-white/80">
@@ -66,8 +66,8 @@ export function Footer() {
                       <Image
                         src="/icons/chevron-right.svg"
                         alt=""
-                        width={14}
-                        height={14}
+                        width={10}
+                        height={10}
                         className="shrink-0"
                       />
                       {link.label}
@@ -87,8 +87,8 @@ export function Footer() {
                       <Image
                         src="/icons/chevron-right.svg"
                         alt=""
-                        width={14}
-                        height={14}
+                        width={10}
+                        height={10}
                         className="shrink-0"
                       />
                       {link.label}
@@ -109,7 +109,6 @@ export function Footer() {
         <div className="container-ms py-9 flex items-center justify-between gap-6">
           <p className="font-dm text-txt-xs text-brand-orange">
             © 2026 Mais Score — uma marca Ruptura Comércio Digital Ltda. | CNPJ: 64.945.712/0001-66
-            - Alameda Rio Negro, 503, Alphaville, Barueri-SP
           </p>
           <Image
             src="/img/payments.png"

@@ -31,7 +31,7 @@ export function Header() {
       {!hideNav && <HeaderTopBar />}
 
       {/* Main nav */}
-      <div className={cn('flex items-center', hideNav ? 'justify-center' : 'justify-between', isDS ? 'py-4 px-4' : 'container-ms py-4 lg:py-5')}>
+      <div className={cn('flex items-center justify-between', isDS ? 'py-4 px-4' : 'container-ms py-4 lg:py-5')}>
         {/* Logo */}
         <a href={isDS ? '/designsystem' : '/'} className="flex items-center shrink-0">
           <Image
@@ -67,6 +67,14 @@ export function Header() {
           <Image src="/icons/whatsapp-icon.svg" alt="" width={28} height={28} className="shrink-0" />
           15 97405-8014
         </a>
+
+        {/* Voltar — páginas legais */}
+        {isLegal && (
+          <a href="/" className="flex items-center gap-1 text-sm text-brand-navy hover:text-brand-orange transition-colors">
+            <Image src="/icons/chevron-right.svg" alt="" width={10} height={10} className="shrink-0 rotate-180" />
+            Voltar
+          </a>
+        )}
 
         {/* Mobile Menu Toggle */}
         {!hideNav && (

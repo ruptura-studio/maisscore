@@ -92,13 +92,13 @@ const CARDS = [
 
 export function AgoraVocePode() {
   return (
-    <section className="w-full bg-brand-navy/10 py-24">
-      <div className="container-ms flex flex-col gap-4">
+    <section className="w-full bg-brand-navy/10 py-10 sm:py-24">
+      <div className="container-ms flex flex-col gap-4 sm:gap-16">
 
         {/* Heading */}
         <div className="flex flex-col items-center gap-4 pb-8">
           <p className="font-dm text-cap text-disabled">
-            Limpar o nome é apenas o começo
+            Hora de recomeçar
           </p>
           <h2 className="text-center font-dm text-h2 text-brand-navy">
             Agora você pode ter

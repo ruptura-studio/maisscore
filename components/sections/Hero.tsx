@@ -69,7 +69,6 @@ export function Hero() {
 
     function onMouseMove(e: MouseEvent) {
       const rect = section!.getBoundingClientRect()
-      // Normalizado: -0.5 (esquerda/cima) → 0 (centro) → +0.5 (direita/baixo)
       targetX = (e.clientX - rect.left)  / rect.width  - 0.5
       targetY = (e.clientY - rect.top)   / rect.height - 0.5
       isInside = true
@@ -93,10 +92,10 @@ export function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full bg-neutral-200 overflow-hidden h-[1000px] [@media(orientation:landscape)]:h-[calc(100dvh-var(--header-height))]"
+      className="relative w-full overflow-hidden sm:h-[1000px] [@media(orientation:landscape)]:h-[calc(100dvh-var(--header-height))]"
     >
-      {/* Background */}
-      <div className="absolute inset-0 pointer-events-none z-0">
+      {/* Background — desktop only */}
+      <div className="hidden sm:block absolute inset-0 pointer-events-none z-0">
         <Image
           src="/img/hero-bg-pattern.png"
           alt=""
@@ -107,23 +106,107 @@ export function Hero() {
         />
       </div>
 
-      {/* Container responsivo */}
-      <div className="container-ms h-full">
+      {/* ══════════════════════════════════════════
+          MOBILE LAYOUT (oculto em sm+)
+      ══════════════════════════════════════════ */}
+      <div className="sm:hidden flex flex-col h-full">
+
+        {/* Imagem + cards sobrepostos */}
+        <div className="relative w-full flex-1 flex justify-center" style={{ backgroundColor: '#DDDDDD' }}>
+          <Image
+            src="/img/pic-girl.png"
+            alt="Mulher sorrindo com cartão de crédito"
+            width={212}
+            height={212}
+            priority
+            className="object-cover object-top"
+          />
+
+          {/* Card Início */}
+          <div className="absolute top-[calc(8%+25px)] left-[calc(1rem+10px)] bg-white/80 rounded-xl shadow-card flex items-center gap-2 px-3 py-2">
+            <span className="w-2 h-2 rounded-full bg-brand-orange flex-none" />
+            <div className="flex flex-col">
+              <span className="font-dm font-normal text-brand-navy text-txt-xs leading-tight">Início</span>
+              <span className="font-dm font-normal text-brand-navy text-txt-xs leading-tight">Em até 7 dias</span>
+            </div>
+          </div>
+
+          {/* Card Nome Limpo */}
+          <div className="absolute top-[calc(8%+80px)] right-4 bg-white/80 rounded-xl shadow-card flex items-center gap-2 px-3 py-2">
+            <span className="w-2 h-2 rounded-full bg-brand-orange flex-none" />
+            <div className="flex flex-col">
+              <span className="font-dm font-normal text-brand-navy text-txt-xs leading-tight">Nome Limpo</span>
+              <span className="font-dm font-normal text-brand-navy text-txt-xs leading-tight">Em até 30 dias úteis</span>
+            </div>
+          </div>
+
+          {/* Card Atendimento */}
+          <div className="absolute bottom-[calc(8%+20px)] left-4 bg-white/80 rounded-xl shadow-card flex items-center gap-2 px-3 py-2">
+            <span className="w-2 h-2 rounded-full bg-brand-orange flex-none" />
+            <div className="flex flex-col">
+              <span className="font-dm font-normal text-brand-navy text-txt-xs leading-tight">Atendimento</span>
+              <span className="font-dm font-normal text-brand-navy text-txt-xs leading-tight">Direcionamento exclusivo</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Faixa laranja com título */}
+        <div className="bg-brand-orange px-5 py-4">
+          <h1 className="font-dm font-normal text-white text-[18px] leading-[20px] text-center">
+            Seu nome sujo está te custando muito mais do que você imagina!
+          </h1>
+        </div>
+
+        {/* Texto + social proof */}
+        <div className="bg-white px-5 py-8 flex items-center justify-between gap-4">
+          <p className="font-dm font-normal text-brand-navy text-[14px] leading-[14px] flex-1 max-w-[144px]">
+            Ter o nome limpo é um direito seu, que a gente faz valer.
+          </p>
+
+          {/* Social proof */}
+          <div className="flex flex-col items-end flex-none">
+            <div className="relative flex-none" style={{ width: '127px', height: '39px' }}>
+              {([
+                { i: 1, ml: 0 },
+                { i: 2, ml: 22 },
+                { i: 3, ml: 44 },
+                { i: 4, ml: 66 },
+                { i: 5, ml: 88 },
+              ] as const).map(({ i, ml }) => (
+                <div
+                  key={i}
+                  className="absolute rounded-full border-[2px] border-white overflow-hidden"
+                  style={{ width: '39px', height: '39px', left: `${ml}px`, top: 0 }}
+                >
+                  <Image src={`/img/avatar-${i}.png`} alt={`Cliente ${i}`} fill className="object-cover" />
+                </div>
+              ))}
+            </div>
+            <span className="font-dm font-semibold text-brand-navy text-h2 mt-1">3.142+</span>
+            <span className="font-sans font-normal text-grafite text-sm text-center">nomes limpos</span>
+          </div>
+        </div>
+
+      </div>
+
+      {/* ══════════════════════════════════════════
+          DESKTOP LAYOUT (oculto abaixo de sm)
+      ══════════════════════════════════════════ */}
+      <div className="hidden sm:block container-ms h-full">
         <div className="grid grid-cols-2 h-full">
 
           {/* ── LEFT COLUMN ── */}
           <div className="relative z-10 flex flex-col justify-center gap-10 py-[8%]">
-            {/* TODO: gap-[40px] sem token DS — usando gap-8 (32px) */}
             <div className="flex flex-col gap-8">
               <h1
                 className="font-dm font-normal text-brand-navy text-display"
                 style={{ maxWidth: '34.375rem' }}
               >
-                Limpe seu nome em até 30 dias
+                Seu nome sujo está te custando mais do que você imagina
               </h1>
               <div className="flex flex-col gap-4" style={{ maxWidth: '550px' }}>
                 <p className="font-dm font-normal text-brand-navy text-h2">
-                  Mesmo sem quitar as suas dívidas
+                  Ter o nome limpo é um direito seu, que a gente faz valer.
                 </p>
                 <div className="font-sans font-normal text-grafite text-p">
                   <p>Via processo jurídico, com base no Art. 42 do CDC.</p>
@@ -134,16 +217,10 @@ export function Hero() {
 
             {/* CTAs */}
             <div className="flex items-center gap-4 flex-wrap">
-              <a
-                href="/checkout"
-                className="btn-primary"
-              >
+              <a href="/checkout" className="btn-primary">
                 Quero limpar meu nome agora <Image src="/icons/arrow-up-icon.svg" alt="" width={10} height={10} className="shrink-0" />
               </a>
-              <a
-                href="#como-funciona"
-                className="btn-secondary"
-              >
+              <a href="#como-funciona" className="btn-secondary">
                 Como Funciona <Image src="/icons/arrow-up-icon.svg" alt="" width={10} height={10} className="shrink-0" />
               </a>
             </div>
@@ -206,12 +283,8 @@ export function Hero() {
               <div className="relative" style={{ width: '51px', height: '51px' }}>
                 <Image src="/img/hero-card-grafico.png" alt="" fill className="object-contain" />
               </div>
-              <span
-                className="font-dm font-normal text-brand-navy text-center text-lg"
-              >97%</span>
-              <span
-                className="font-dm font-normal text-brand-navy text-center text-txt-xs"
-              >taxa de sucesso</span>
+              <span className="font-dm font-normal text-brand-navy text-center text-lg">97%</span>
+              <span className="font-dm font-normal text-brand-navy text-center text-txt-xs">taxa de sucesso</span>
             </div>
 
             {/* Card 7 dias — entry 0.35s · float 3.5s · parallax depth -15/-12 */}
@@ -229,12 +302,8 @@ export function Hero() {
                 <Image src="/img/hero-card-calendar-bg.png" alt="" fill className="object-contain" />
               </div>
               <div className="flex flex-col gap-[2px]">
-                <span
-                  className="font-dm font-normal text-brand-navy whitespace-nowrap text-lg"
-                >7 dias</span>
-                <span
-                  className="font-dm font-normal text-brand-navy whitespace-nowrap text-txt-xs"
-                >Processo iniciado</span>
+                <span className="font-dm font-normal text-brand-navy whitespace-nowrap text-lg">7 dias</span>
+                <span className="font-dm font-normal text-brand-navy whitespace-nowrap text-txt-xs">Processo iniciado</span>
               </div>
             </div>
 
@@ -254,9 +323,7 @@ export function Hero() {
                   <span className="text-txt-xs" style={{ marginTop: '3px' }}>R$</span>
                   <span className="text-lg">595</span>
                 </div>
-                <span
-                  className="text-white font-dm font-normal text-txt-xs"
-                >para CPF à vista</span>
+                <span className="text-white font-dm font-normal text-txt-xs">para CPF à vista</span>
               </div>
               <div className="relative flex-none" style={{ width: '40px', height: '40px' }}>
                 <Image src="/img/hero-card-price.png" alt="" fill className="object-contain" />
@@ -267,13 +334,5 @@ export function Hero() {
         </div>
       </div>
     </section>
-  )
-}
-
-function ArrowRight() {
-  return (
-    <svg width="10" height="11" viewBox="0 0 10 11" fill="none" className="shrink-0">
-      <path d="M1 5.5H9M9 5.5L5.5 2M9 5.5L5.5 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
   )
 }
