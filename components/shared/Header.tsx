@@ -14,7 +14,6 @@ const navLinks = [
   { label: 'Nossos Clientes', href: '#depoimentos' },
   { label: 'Sobre Nós', href: '#sobre' },
   { label: 'FAQ', href: '#faq' },
-  { label: 'Preço', href: '#precos' },
 ]
 
 export function Header() {
@@ -59,15 +58,6 @@ export function Header() {
           ))}
         </nav>
 
-        {/* Phone CTA */}
-        <a
-          href="tel:+5515974058014"
-          className={cn('hidden lg:flex items-center gap-2 text-brand-navy text-lg hover:text-brand-orange transition-colors', hideNav && '!hidden')}
-        >
-          <Image src="/icons/whatsapp-icon.svg" alt="" width={28} height={28} className="shrink-0" />
-          15 97405-8014
-        </a>
-
         {/* Voltar — páginas legais */}
         {isLegal && (
           <a href="/" className="flex items-center gap-1 text-sm text-brand-navy hover:text-brand-orange transition-colors">
@@ -105,13 +95,6 @@ export function Header() {
               {link.label}
             </a>
           ))}
-          <a
-            href="tel:+5515974058014"
-            className="mt-3 flex items-center gap-2 text-brand-navy text-sm px-3 py-2"
-          >
-            <Image src="/icons/whatsapp-icon.svg" alt="" width={20} height={20} className="shrink-0" />
-            15 97405-8014
-          </a>
           <a
             href={WHATSAPP_GERAL}
             target="_blank"

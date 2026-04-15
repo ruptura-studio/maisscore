@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { WHATSAPP_COMPRAR } from '@/lib/config'
 
 /**
  * Hero section — Figma pixel-perfect (1920×1000px base).

@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from 'react'
 import {
   Accordion,
   AccordionContent,
@@ -39,7 +40,7 @@ const FAQ_DIREITA = [
   {
     pergunta: 'Quanto custa e quais são as formas de pagamento?',
     resposta:
-      'O serviço para CPF custa R$ 595,00 e para CNPJ R$ 795,00. Aceitamos PIX à vista ou parcelamento em 2× no cartão de crédito. Não há taxas ocultas nem cobranças adicionais durante o processo.',
+      'O serviço custa:\nCPF - R$ 595,00\nCNPJ - R$ 697,00\n\nFormas de pagamento:\nPIX à vista\nCartão de crédito em até 3x\n\nNão há taxas ocultas nem cobranças adicionais durante o processo.',
   },
   {
     pergunta: 'Existe garantia se não funcionar?',
@@ -64,6 +65,8 @@ const FAQ_DIREITA = [
 ]
 
 export function FAQ() {
+  const [openItem, setOpenItem] = useState<string>('')
+
   return (
     <section className="w-full bg-white py-10 sm:py-24">
       <div className="container-ms">
@@ -83,14 +86,16 @@ export function FAQ() {
           <Accordion
             type="single"
             collapsible
+            value={openItem.startsWith('esq-') ? openItem : ''}
+            onValueChange={(val) => setOpenItem(val || '')}
             className="w-full rounded-lg border border-brand-border bg-white divide-y divide-brand-border"
           >
             {FAQ_ESQUERDA.map((item, i) => (
               <AccordionItem key={i} value={`esq-${i}`} className="border-0">
-                <AccordionTrigger className="px-5 py-4 text-left font-dm text-sm text-brand-navy/60 hover:no-underline hover:text-brand-orange [&[data-state=open]]:text-brand-navy">
+                <AccordionTrigger className="px-5 py-4 text-left font-dm text-sm text-brand-navy/60 hover:no-underline hover:text-brand-orange [&[data-state=open]]:text-brand-orange">
                   {item.pergunta}
                 </AccordionTrigger>
-                <AccordionContent className="px-5 pb-4 font-dm text-p text-foreground-alt">
+                <AccordionContent className="px-5 pb-4 font-dm text-p text-foreground-alt whitespace-pre-line">
                   {item.resposta}
                 </AccordionContent>
               </AccordionItem>
@@ -101,14 +106,16 @@ export function FAQ() {
           <Accordion
             type="single"
             collapsible
+            value={openItem.startsWith('dir-') ? openItem : ''}
+            onValueChange={(val) => setOpenItem(val || '')}
             className="w-full rounded-lg border border-brand-border bg-white divide-y divide-brand-border"
           >
             {FAQ_DIREITA.map((item, i) => (
               <AccordionItem key={i} value={`dir-${i}`} className="border-0">
-                <AccordionTrigger className="px-5 py-4 text-left font-dm text-sm text-brand-navy/60 hover:no-underline hover:text-brand-orange [&[data-state=open]]:text-brand-navy">
+                <AccordionTrigger className="px-5 py-4 text-left font-dm text-sm text-brand-navy/60 hover:no-underline hover:text-brand-orange [&[data-state=open]]:text-brand-orange">
                   {item.pergunta}
                 </AccordionTrigger>
-                <AccordionContent className="px-5 pb-4 font-dm text-p text-foreground-alt">
+                <AccordionContent className="px-5 pb-4 font-dm text-p text-foreground-alt whitespace-pre-line">
                   {item.resposta}
                 </AccordionContent>
               </AccordionItem>
