@@ -91,10 +91,10 @@ export function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full overflow-hidden bg-[#DDDDDD] sm:h-[1000px] [@media(orientation:landscape)]:h-[calc(100dvh-var(--header-height))]"
+      className="relative w-full overflow-hidden bg-[#DDDDDD] no-touch:h-[1000px] touch:[@media(orientation:landscape)]:h-[calc(100dvh-var(--header-height))]"
     >
       {/* Background — desktop only */}
-      <div className="hidden sm:block absolute inset-0 pointer-events-none z-0">
+      <div className="hidden no-touch:block absolute inset-0 pointer-events-none z-0">
         <Image
           src="/img/hero-bg-pattern.png"
           alt=""
@@ -108,7 +108,7 @@ export function Hero() {
       {/* ══════════════════════════════════════════
           MOBILE LAYOUT (oculto em sm+)
       ══════════════════════════════════════════ */}
-      <div className="sm:hidden flex flex-col h-full">
+      <div className="touch:flex no-touch:hidden flex-col h-full">
 
         {/* Imagem + cards sobrepostos */}
         <div className="relative w-full flex-1 flex justify-center" style={{ backgroundColor: '#DDDDDD' }}>
@@ -191,7 +191,7 @@ export function Hero() {
       {/* ══════════════════════════════════════════
           DESKTOP LAYOUT (oculto abaixo de sm)
       ══════════════════════════════════════════ */}
-      <div className="hidden sm:block container-ms h-full">
+      <div className="hidden no-touch:block container-ms h-full">
         <div className="grid grid-cols-2 h-full">
 
           {/* ── LEFT COLUMN ── */}

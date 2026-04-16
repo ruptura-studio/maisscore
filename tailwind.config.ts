@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss'
+import plugin from 'tailwindcss/plugin'
 
 const config: Config = {
   darkMode: ['class'],
@@ -189,7 +190,14 @@ const config: Config = {
   		}
   	}
   },
-  plugins: [],
+  plugins: [
+    plugin(({ addVariant }) => {
+      // touch: aplica em dispositivos touch-first (smartphones/tablets)
+      addVariant('touch', '@media (pointer: coarse) and (hover: none)')
+      // no-touch: aplica em dispositivos com mouse/trackpad
+      addVariant('no-touch', '@media (pointer: fine) and (hover: hover)')
+    }),
+  ],
 }
 
 export default config
