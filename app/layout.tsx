@@ -15,9 +15,9 @@ import { WhatsappFloat } from '@/components/shared/WhatsappFloat'
 import { GridOverlay } from '@/components/dev/GridOverlay'
 
 export const metadata: Metadata = {
-  title: 'Mais Score — Regularize seu CPF em até 15 dias úteis',
+  title: 'Mais Score - Limpa Nome',
   description:
-    'Já recuperamos a liberdade financeira de 1.142 famílias endividadas. Remova restrições no Serasa e SPC via processo jurídico próprio. Taxa de sucesso de 97%.',
+    'Remova as restrições de seu CPF ou CNPJ em até 30 dias úteis.',
   keywords: [
     'limpa nome',
     'regularizar CPF',
@@ -28,13 +28,14 @@ export const metadata: Metadata = {
     'Mais Score',
   ],
   openGraph: {
-    title: 'Mais Score — Recupere sua liberdade financeira',
+    title: 'Mais Score - Limpa Nome',
     description:
-      'Regularize seu CPF em até 15 dias úteis com 97% de taxa de sucesso. Mais de 1.142 famílias atendidas.',
+      'Remova as restrições de seu CPF ou CNPJ em até 30 dias úteis.',
     url: 'https://maisscore.com.br',
     siteName: 'Mais Score',
     locale: 'pt_BR',
     type: 'website',
+    images: [{ url: 'https://maisscore.com.br/img/open-graph-preview.png', width: 1200, height: 630 }],
   },
   robots: {
     index: true,
