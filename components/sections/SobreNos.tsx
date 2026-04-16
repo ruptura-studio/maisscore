@@ -59,7 +59,7 @@ export function SobreNos() {
       </section>
 
       {/* Seção 2 — Nossa História (4 cards) */}
-      <section className="w-full border-b border-brand-navy/10 bg-white pb-10 sm:pb-28 pt-0">
+      <section className="w-full border-b border-brand-navy/10 bg-white pb-10 sm:pb-28 pt-8 sm:pt-0">
         <div className="container-ms">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
             {INFOBOXES.map((item, i) => (

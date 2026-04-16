@@ -36,7 +36,7 @@ export function BeneficiosBar() {
             <div key={feature.title} className="flex items-center gap-4">
               <Icon name={feature.icon} size={40} className="shrink-0" />
               <div className="flex flex-col gap-0">
-                <span className="font-dm text-lg sm:text-sm font-bold text-brand-navy">
+                <span className="font-dm text-sm sm:text-base font-bold text-brand-navy">
                   {feature.title}
                 </span>
                 <span className="font-dm text-sm sm:text-p text-grafite">

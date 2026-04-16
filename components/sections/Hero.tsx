@@ -201,28 +201,13 @@ export function Hero() {
                 className="font-dm font-normal text-brand-navy text-display"
                 style={{ maxWidth: '34.375rem' }}
               >
-                Seu nome sujo está te custando mais do que você imagina
+                Seu nome sujo está te custando muito mais do que você imagina!
               </h1>
-              <div className="flex flex-col gap-4" style={{ maxWidth: '550px' }}>
-                <p className="font-dm font-normal text-brand-navy text-h2">
-                  Ter o nome limpo é um direito seu, que a gente faz valer.
-                </p>
-                <div className="font-sans font-normal text-grafite text-p">
-                  <p>Via processo jurídico, com base no Art. 42 do CDC.</p>
-                  <p>97% de sucesso. Resultado garantido ou seu dinheiro de volta.</p>
-                </div>
-              </div>
+              <p className="font-dm font-normal text-brand-navy text-h2" style={{ maxWidth: '550px' }}>
+                Ter o nome limpo é um direito seu, que a gente faz valer.
+              </p>
             </div>
 
-            {/* CTAs */}
-            <div className="flex items-center gap-4 flex-wrap">
-              <a href="/checkout" className="btn-primary">
-                Quero limpar meu nome agora <Image src="/icons/arrow-up-icon.svg" alt="" width={10} height={10} className="shrink-0" />
-              </a>
-              <a href="#como-funciona" className="btn-secondary">
-                Como Funciona <Image src="/icons/arrow-up-icon.svg" alt="" width={10} height={10} className="shrink-0" />
-              </a>
-            </div>
 
             {/* Social proof */}
             <div className="flex items-center gap-0">
@@ -248,7 +233,7 @@ export function Hero() {
                   3.142+
                 </span>
                 <span className="font-sans font-normal text-grafite whitespace-nowrap text-p">
-                  famílias com o nome limpo
+                  nomes limpos
                 </span>
               </div>
             </div>

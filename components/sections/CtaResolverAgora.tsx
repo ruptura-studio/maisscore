@@ -29,21 +29,6 @@ export function CtaResolverAgora() {
           <blockquote className="font-dm text-white text-[14px] leading-[16px] sm:text-h2">
             "Enquanto você espera, seu CPF continua bloqueando crédito, emprego e oportunidades."
           </blockquote>
-
-          <p className="hidden sm:block font-sans text-white/75 text-p">
-            Cada dia com o nome sujo é um dia pagando mais caro: em juros, em oportunidades
-            perdidas, em dependência. O problema não se resolve sozinho.
-          </p>
-
-          <div className="hidden sm:block">
-            <a
-              href="/checkout"
-              className="btn-primary"
-            >
-              Resolver Agora
-              <Image src="/icons/arrow-up-icon.svg" alt="" width={10} height={10} className="shrink-0" />
-            </a>
-          </div>
         </div>
       </div>
     </section>
