@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import { DM_Sans } from 'next/font/google'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 
 const dmSans = DM_Sans({
@@ -64,6 +65,7 @@ export default function RootLayout({
         <Footer />
         <WhatsappFloat />
         {process.env.NODE_ENV === 'development' && <GridOverlay />}
+        <SpeedInsights />
       </body>
     </html>
   )
