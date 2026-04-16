@@ -17,7 +17,7 @@ export default function HomePage() {
       <Pesquisa />
       <div id="como-funciona"><ComoFunciona /></div>
       <AgoraVocePode />
-      <div id="depoimentos"><Depoimentos /></div>
+      <div id="depoimentos" style={{ scrollMarginTop: 'calc(var(--header-height) - 50vh)' }}><Depoimentos /></div>
       <div id="sobre"><SobreNos /></div>
       <div id="precos"><Precos /></div>
       <div id="faq"><FAQ /></div>

@@ -11,7 +11,7 @@
 
   :root {
     /* === LAYOUT === */
-    --header-height: 122px;
+    --header-height: 320px; /* mobile: só a main nav */
 
     /* === TEXT COLORS (Figma: TEXT_*) === */
     --text-default: 0 0% 28%; /* #484848 — corpo de texto padrão */
@@ -143,6 +143,12 @@
   html {
     scroll-behavior: smooth;
     scroll-padding-top: var(--header-height);
+  }
+
+  @media (min-width: 1024px) {
+    :root {
+      --header-height: 122px; /* desktop: main nav + top bar */
+    }
   }
 
   body {
