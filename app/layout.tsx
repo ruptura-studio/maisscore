@@ -14,6 +14,11 @@ import { Footer } from '@/components/shared/Footer'
 import { WhatsappFloat } from '@/components/shared/WhatsappFloat'
 import { GridOverlay } from '@/components/dev/GridOverlay'
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+}
+
 export const metadata: Metadata = {
   title: 'Mais Score - Limpa Nome',
   description:
