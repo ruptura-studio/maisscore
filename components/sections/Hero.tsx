@@ -91,7 +91,7 @@ export function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative w-full overflow-hidden sm:h-[1000px] [@media(orientation:landscape)]:h-[calc(100dvh-var(--header-height))]"
+      className="relative w-full overflow-hidden bg-[#DDDDDD] sm:h-[1000px] [@media(orientation:landscape)]:h-[calc(100dvh-var(--header-height))]"
     >
       {/* Background — desktop only */}
       <div className="hidden sm:block absolute inset-0 pointer-events-none z-0">
