@@ -11,7 +11,7 @@
 
   :root {
     /* === LAYOUT === */
-    --header-height: 320px; /* mobile: só a main nav */
+    --header-height: 280px; /* mobile: só a main nav */
 
     /* === TEXT COLORS (Figma: TEXT_*) === */
     --text-default: 0 0% 28%; /* #484848 — corpo de texto padrão */
