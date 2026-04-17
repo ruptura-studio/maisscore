@@ -82,6 +82,7 @@ const CARDS = [
     title: 'Crédito de emergência',
     description: 'Ter seu empréstimo de emergência sem humilhação ou negativa.',
     mockup: <MockupCredito />,
+    hideMobile: true,
   },
   {
     title: 'Sua empresa crescendo',
@@ -110,7 +111,7 @@ export function AgoraVocePode() {
           {CARDS.map((card, i) => (
             <div
               key={i}
-              className={`flex flex-col ${'gap' in card ? card.gap : 'gap-3'} overflow-hidden rounded-lg bg-white/60 ${'noPb' in card && card.noPb ? 'px-4 pb-0 pt-4' : 'p-4'}`}
+              className={`flex flex-col ${'gap' in card ? card.gap : 'gap-3'} overflow-hidden rounded-lg bg-white/60 ${'noPb' in card && card.noPb ? 'px-4 pb-0 pt-4' : 'p-4'} ${'hideMobile' in card && card.hideMobile ? 'touch:hidden' : ''}`}
             >
               <div className="flex flex-col gap-2">
                 <h3 className="font-dm text-subtitle text-brand-navy">
