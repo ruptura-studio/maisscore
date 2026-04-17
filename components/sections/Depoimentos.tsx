@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { Star } from 'lucide-react'
 
@@ -69,6 +69,13 @@ function TestimonialCard({ quote, name, avatar }: TestimonialProps) {
 
 export function Depoimentos() {
   const [active, setActive] = useState(0)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActive(i => (i + 1) % TESTIMONIALS.length)
+    }, 4000)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <section className="w-full bg-neutral-100 py-10 sm:py-24">
