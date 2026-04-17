@@ -2,15 +2,14 @@ import Image from 'next/image'
 
 export function Precos() {
   return (
-    <section className="relative w-full overflow-hidden bg-neutral-200">
+    <section className="relative w-full overflow-hidden bg-white">
+      <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-neutral-200 pointer-events-none" />
 
-      <div className="container-ms relative z-10 pt-10 no-touch:sm:pt-24">
-        {/* Layout: coluna esquerda (texto + imagem) | coluna direita (cards) */}
-        <div className="relative flex flex-col gap-0 no-touch:lg:flex-row no-touch:lg:items-start no-touch:lg:gap-14">
+      <div className="container-ms relative z-10 pt-2.5 no-touch:sm:pt-6">
+        <div className="relative flex flex-col gap-0 no-touch:lg:flex-row no-touch:lg:items-end no-touch:lg:justify-between">
 
           {/* Coluna esquerda: texto */}
-          <div className="flex shrink-0 flex-col gap-8 mb-8 no-touch:lg:mb-0 no-touch:lg:max-w-[240px] no-touch:xl:max-w-[288px]">
-            {/* Bloco de texto */}
+          <div className="flex shrink-0 flex-col gap-8 mb-8 no-touch:lg:mb-0 no-touch:lg:max-w-[400px] no-touch:lg:pb-16">
             <div className="flex flex-col gap-4">
               <h2 className="font-dm text-h2 text-brand-navy">
                 Quanto vale voltar a ter acesso ao crédito?
@@ -33,20 +32,17 @@ export function Precos() {
             />
           </div>
 
-          {/* Imagem casal — desktop */}
-          <div className="pointer-events-none absolute bottom-0 left-0 touch:hidden no-touch:block">
+          {/* Imagem casal — desktop (coluna direita, ancorada no fundo) */}
+          <div className="touch:hidden no-touch:flex no-touch:items-end no-touch:justify-end no-touch:flex-1">
             <Image
               src="/img/casal.png"
               alt="Casal comemorando a regularização do CPF"
               width={525}
               height={739}
-              className="w-full max-w-[248px] object-contain"
+              className="object-contain max-h-[420px] w-auto"
             />
           </div>
 
-          {/* Coluna direita: cards de preço + garantia */}
-          <div className="flex flex-1 flex-col gap-8">
-          </div>
         </div>
       </div>
     </section>

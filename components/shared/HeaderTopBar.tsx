@@ -20,7 +20,7 @@ export function HeaderTopBar() {
         {/* Right: social */}
         <div className="flex items-center justify-end gap-2.5 text-txt-sm">
           <a
-            href="https://instagram.com/maisscore"
+            href="https://www.instagram.com/maisscore.br/"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1 text-disabled hover:text-brand-orange transition-colors"
