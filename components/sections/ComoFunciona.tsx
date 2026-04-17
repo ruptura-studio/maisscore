@@ -38,7 +38,7 @@ const STEPS = [
 export function ComoFunciona() {
   return (
     <section className="w-full bg-neutral-100 py-10 sm:py-24">
-      <div className="container-ms flex flex-col items-center gap-8">
+      <div className="container-ms flex flex-col items-center gap-8 xl:px-[290px]">
 
         {/* Title */}
         <div className="flex flex-col items-center gap-6">
