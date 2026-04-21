@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 const sections = [
   {
     title: '1. Quem somos',
-    content: `A <strong>Mais Score</strong> é uma marca da <strong>Ruptura Comércio Digital Ltda.</strong>, inscrita no CNPJ 64.945.712/0001-66, com sede na Alameda Rio Negro, 503, Alphaville, Barueri-SP. Somos responsáveis pelo tratamento dos seus dados pessoais conforme descrito nesta Política.`,
+    content: `A <strong>Mais Score</strong> é uma marca da <strong>Ruptura Comércio Digital Ltda.</strong>, inscrita no CNPJ 64.945.712/0001-66. Somos responsáveis pelo tratamento dos seus dados pessoais conforme descrito nesta Política.`,
   },
   {
     title: '2. Dados que coletamos',
@@ -100,7 +100,6 @@ const sections = [
     <ul>
       <li><strong>E-mail:</strong> privacidade@maisscore.com.br</li>
       <li><strong>WhatsApp:</strong> (15) 97405-8014</li>
-      <li><strong>Endereço:</strong> Alameda Rio Negro, 503, Alphaville, Barueri-SP</li>
     </ul>
     Você também pode registrar reclamações junto à <strong>ANPD</strong> (Autoridade Nacional de Proteção de Dados) em <a href="https://www.gov.br/anpd" target="_blank" rel="noopener noreferrer" class="text-brand-orange hover:underline">gov.br/anpd</a>.`,
   },

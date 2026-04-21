@@ -78,7 +78,7 @@ const sections = [
   },
   {
     title: '10. Rescisão e Cancelamento',
-    content: `O usuário pode solicitar o cancelamento do serviço a qualquer momento pelo WhatsApp (15) 97405-8014 ou pelo e-mail contato@maisscore.com.br. O direito de arrependimento, conforme o Código de Defesa do Consumidor (Art. 49), pode ser exercido em até <strong>7 dias corridos</strong> após a contratação, com reembolso integral. Após esse prazo, aplicam-se as condições da Política de Reembolso.`,
+    content: `O usuário pode solicitar o cancelamento do serviço a qualquer momento pelo WhatsApp (15) 97405-8014 ou pelo e-mail contato@maisscore.com.br. O direito de arrependimento, conforme o Código de Defesa do Consumidor (Art. 49), pode ser exercido em até <strong>7 dias úteis</strong> após a contratação, com reembolso integral. Após esse prazo, aplicam-se as condições da Política de Reembolso.`,
   },
   {
     title: '11. Alterações nos Termos',
@@ -86,7 +86,7 @@ const sections = [
   },
   {
     title: '12. Lei Aplicável e Foro',
-    content: `Estes Termos são regidos pelas leis da República Federativa do Brasil. Fica eleito o foro da Comarca de Barueri-SP para dirimir quaisquer controvérsias decorrentes deste instrumento, com renúncia a qualquer outro, por mais privilegiado que seja.`,
+    content: `Estes Termos são regidos pelas leis da República Federativa do Brasil. Fica eleito o foro da Comarca de Itapetininga-SP para dirimir quaisquer controvérsias decorrentes deste instrumento, com renúncia a qualquer outro, por mais privilegiado que seja.`,
   },
   {
     title: '13. Contato',
@@ -94,7 +94,6 @@ const sections = [
     <ul>
       <li><strong>E-mail:</strong> contato@maisscore.com.br</li>
       <li><strong>WhatsApp:</strong> (15) 97405-8014</li>
-      <li><strong>Endereço:</strong> Alameda Rio Negro, 503, Alphaville, Barueri-SP</li>
     </ul>`,
   },
 ]

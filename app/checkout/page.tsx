@@ -36,8 +36,8 @@ const PRODUCTS = {
     slug: 'limpa-nome-cnpj' as const,
     label: 'Limpar CNPJ',
     icon: Building2,
-    price: 'R$ 795,00',
-    priceInCents: 79500,
+    price: 'R$ 697,00',
+    priceInCents: 69700,
     maxInstallments: 3,
     documentType: 'CNPJ' as const,
     documentLabel: 'CNPJ',
@@ -56,14 +56,14 @@ const TERMOS_SECTIONS = [
   { title: '7. Taxa de Sucesso e Garantias', content: `A Mais Score possui taxa histórica de sucesso de <strong>97%</strong>. Nos casos em que não seja possível obter a regularização, o cliente será comunicado com a devida justificativa. As condições de reembolso, quando aplicáveis, estão descritas na Política de Reembolso.` },
   { title: '8. Propriedade Intelectual', content: `Todo o conteúdo disponível no site maisscore.com.br — incluindo textos, imagens, logotipos, layout e código-fonte — é de propriedade exclusiva da Ruptura Comércio Digital Ltda. e está protegido pela legislação brasileira de direitos autorais.` },
   { title: '9. Limitação de Responsabilidade', content: `A Mais Score não se responsabiliza por:\n    <ul>\n      <li>Resultados adversos decorrentes de informações incorretas fornecidas pelo cliente.</li>\n      <li>Atrasos causados por demoras nos sistemas dos órgãos de proteção ao crédito.</li>\n      <li>Danos indiretos, lucros cessantes ou perdas consequenciais de qualquer natureza.</li>\n    </ul>` },
-  { title: '10. Rescisão e Cancelamento', content: `O usuário pode solicitar o cancelamento do serviço a qualquer momento pelo WhatsApp (15) 97405-8014 ou pelo e-mail contato@maisscore.com.br. O direito de arrependimento, conforme o Código de Defesa do Consumidor (Art. 49), pode ser exercido em até <strong>7 dias corridos</strong> após a contratação, com reembolso integral.` },
+  { title: '10. Rescisão e Cancelamento', content: `O usuário pode solicitar o cancelamento do serviço a qualquer momento pelo WhatsApp (15) 97405-8014 ou pelo e-mail contato@maisscore.com.br. O direito de arrependimento, conforme o Código de Defesa do Consumidor (Art. 49), pode ser exercido em até <strong>7 dias úteis</strong> após a contratação, com reembolso integral.` },
   { title: '11. Alterações nos Termos', content: `A Mais Score pode atualizar estes Termos a qualquer momento. Alterações relevantes serão comunicadas por e-mail ou por aviso no site.` },
-  { title: '12. Lei Aplicável e Foro', content: `Estes Termos são regidos pelas leis da República Federativa do Brasil. Fica eleito o foro da Comarca de Barueri-SP para dirimir quaisquer controvérsias.` },
-  { title: '13. Contato', content: `<ul><li><strong>E-mail:</strong> contato@maisscore.com.br</li><li><strong>WhatsApp:</strong> (15) 97405-8014</li><li><strong>Endereço:</strong> Alameda Rio Negro, 503, Alphaville, Barueri-SP</li></ul>` },
+  { title: '12. Lei Aplicável e Foro', content: `Estes Termos são regidos pelas leis da República Federativa do Brasil. Fica eleito o foro da Comarca de Itapetininga-SP para dirimir quaisquer controvérsias.` },
+  { title: '13. Contato', content: `<ul><li><strong>E-mail:</strong> contato@maisscore.com.br</li><li><strong>WhatsApp:</strong> (15) 97405-8014</li></ul>` },
 ]
 
 const PRIVACIDADE_SECTIONS = [
-  { title: '1. Quem somos', content: `A <strong>Mais Score</strong> é uma marca da <strong>Ruptura Comércio Digital Ltda.</strong>, inscrita no CNPJ 64.945.712/0001-66, com sede na Alameda Rio Negro, 503, Alphaville, Barueri-SP.` },
+  { title: '1. Quem somos', content: `A <strong>Mais Score</strong> é uma marca da <strong>Ruptura Comércio Digital Ltda.</strong>, inscrita no CNPJ 64.945.712/0001-66.` },
   { title: '2. Dados que coletamos', content: `Coletamos apenas os dados necessários para a prestação dos nossos serviços:\n    <ul>\n      <li><strong>Dados de identificação:</strong> nome completo, CPF, data de nascimento e e-mail.</li>\n      <li><strong>Dados de contato:</strong> número de telefone (WhatsApp) e endereço.</li>\n      <li><strong>Dados de navegação:</strong> endereço IP, tipo de navegador, páginas visitadas e tempo de sessão.</li>\n      <li><strong>Dados de pagamento:</strong> processados por gateways certificados (Asaas); não armazenamos dados de cartão em nossos servidores.</li>\n    </ul>` },
   { title: '3. Como usamos seus dados', content: `Utilizamos seus dados para:\n    <ul>\n      <li>Prestar o serviço de regularização de CPF e score de crédito contratado.</li>\n      <li>Comunicar atualizações sobre o andamento do seu processo via WhatsApp e e-mail.</li>\n      <li>Processar pagamentos e emitir documentos fiscais.</li>\n      <li>Cumprir obrigações legais e regulatórias.</li>\n    </ul>` },
   { title: '4. Base legal para o tratamento', content: `Tratamos seus dados com base nas hipóteses legais previstas na <strong>LGPD (Lei 13.709/2018)</strong>: execução de contrato, cumprimento de obrigação legal, legítimo interesse e consentimento.` },
@@ -73,7 +73,7 @@ const PRIVACIDADE_SECTIONS = [
   { title: '8. Seus direitos como titular', content: `Conforme a LGPD, você tem direito a acesso, correção, exclusão, portabilidade, revogação do consentimento e oposição. Para exercer seus direitos: <strong>privacidade@maisscore.com.br</strong>. Respondemos em até 15 dias úteis.` },
   { title: '9. Segurança dos dados', content: `Adotamos criptografia em trânsito (TLS), controle de acesso por perfil e monitoramento contínuo de incidentes.` },
   { title: '10. Alterações nesta Política', content: `Podemos atualizar esta Política periodicamente, com notificação por e-mail ou aviso no site.` },
-  { title: '11. Contato e Encarregado (DPO)', content: `<ul><li><strong>E-mail:</strong> privacidade@maisscore.com.br</li><li><strong>WhatsApp:</strong> (15) 97405-8014</li><li><strong>Endereço:</strong> Alameda Rio Negro, 503, Alphaville, Barueri-SP</li></ul>` },
+  { title: '11. Contato e Encarregado (DPO)', content: `<ul><li><strong>E-mail:</strong> privacidade@maisscore.com.br</li><li><strong>WhatsApp:</strong> (15) 97405-8014</li></ul>` },
 ]
 
 // ── Formatters ──────────────────────────────────────────────────────────────

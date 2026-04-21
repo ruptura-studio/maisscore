@@ -16,8 +16,8 @@ async function main() {
 
   await prisma.product.upsert({
     where: { slug: 'limpa-nome-cnpj' },
-    update: { name: 'Limpa Nome CNPJ', price: 79500 },
-    create: { slug: 'limpa-nome-cnpj', name: 'Limpa Nome CNPJ', price: 79500, active: true },
+    update: { name: 'Limpa Nome CNPJ', price: 69700 },
+    create: { slug: 'limpa-nome-cnpj', name: 'Limpa Nome CNPJ', price: 69700, active: true },
   })
 
   await prisma.product.upsert({
