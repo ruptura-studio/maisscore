@@ -99,7 +99,7 @@ const sections = [
     content: `Para dúvidas, solicitações ou reclamações relacionadas à privacidade:
     <ul>
       <li><strong>E-mail:</strong> privacidade@maisscore.com.br</li>
-      <li><strong>WhatsApp:</strong> (15) 97405-8014</li>
+      <li><strong>WhatsApp:</strong> (15) 99237-7755</li>
     </ul>
     Você também pode registrar reclamações junto à <strong>ANPD</strong> (Autoridade Nacional de Proteção de Dados) em <a href="https://www.gov.br/anpd" target="_blank" rel="noopener noreferrer" class="text-brand-orange hover:underline">gov.br/anpd</a>.`,
   },

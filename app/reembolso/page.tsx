@@ -56,7 +56,7 @@ const sections = [
     title: '6. Como Solicitar o Reembolso',
     content: `Para solicitar o cancelamento ou reembolso, entre em contato com nossa equipe pelos canais abaixo:
     <ul>
-      <li><strong>WhatsApp:</strong> (15) 97405-8014 — atendimento de segunda a sexta, das 9h às 18h</li>
+      <li><strong>WhatsApp:</strong> (15) 99237-7755 — atendimento de segunda a sexta, das 9h às 18h</li>
       <li><strong>E-mail:</strong> contato@maisscore.com.br</li>
     </ul>
     Informe seu nome completo, CPF e o motivo do cancelamento. Nossa equipe retornará em até <strong>1 dia útil</strong> para confirmar o pedido e orientar sobre os próximos passos.`,

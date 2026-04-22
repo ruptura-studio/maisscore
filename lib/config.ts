@@ -1,4 +1,4 @@
-const WHATSAPP_PHONE = '5515974058014'
+const WHATSAPP_PHONE = '5515992377755'
 const WHATSAPP_BASE = `https://wa.me/${WHATSAPP_PHONE}`
 
 export const WHATSAPP_GERAL = `${WHATSAPP_BASE}?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20o%20servi%C3%A7o%20de%20remo%C3%A7%C3%A3o%20de%20restri%C3%A7%C3%B5es.`

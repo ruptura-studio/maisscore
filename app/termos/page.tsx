@@ -78,7 +78,7 @@ const sections = [
   },
   {
     title: '10. Rescisão e Cancelamento',
-    content: `O usuário pode solicitar o cancelamento do serviço a qualquer momento pelo WhatsApp (15) 97405-8014 ou pelo e-mail contato@maisscore.com.br. O direito de arrependimento, conforme o Código de Defesa do Consumidor (Art. 49), pode ser exercido em até <strong>7 dias úteis</strong> após a contratação, com reembolso integral. Após esse prazo, aplicam-se as condições da Política de Reembolso.`,
+    content: `O usuário pode solicitar o cancelamento do serviço a qualquer momento pelo WhatsApp (15) 99237-7755 ou pelo e-mail contato@maisscore.com.br. O direito de arrependimento, conforme o Código de Defesa do Consumidor (Art. 49), pode ser exercido em até <strong>7 dias úteis</strong> após a contratação, com reembolso integral. Após esse prazo, aplicam-se as condições da Política de Reembolso.`,
   },
   {
     title: '11. Alterações nos Termos',
@@ -93,7 +93,7 @@ const sections = [
     content: `Para dúvidas ou solicitações relacionadas a estes Termos:
     <ul>
       <li><strong>E-mail:</strong> contato@maisscore.com.br</li>
-      <li><strong>WhatsApp:</strong> (15) 97405-8014</li>
+      <li><strong>WhatsApp:</strong> (15) 99237-7755</li>
     </ul>`,
   },
 ]

@@ -10,7 +10,7 @@ const navLinks = [
 ]
 
 const contactLinks = [
-  { label: '15 97405-8014', href: 'https://wa.me/5515974058014', external: true },
+  { label: '(15) 99237-7755', href: 'https://wa.me/5515992377755', external: true },
   { label: 'contato@maisscore.com.br', href: 'mailto:contato@maisscore.com.br', external: false },
   { label: 'Instagram: @maisscore.br', href: 'https://www.instagram.com/maisscore.br/', external: true },
 ]
