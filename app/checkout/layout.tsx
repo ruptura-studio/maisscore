@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 const checkoutDescription =
-  'Clique aqui, selecione CPF ou CNPJ. PIX ou 3x no Cartão de Crédito.'
+  'Clique aqui, selecione CPF ou CNPJ.\nPIX ou 3x no Cartão de Crédito.'
 
 export const metadata: Metadata = {
   title: 'Página de Pagamento',
