@@ -9,6 +9,7 @@ import { SobreNos } from '@/components/sections/SobreNos'
 import { Precos } from '@/components/sections/Precos'
 import { FAQ } from '@/components/sections/FAQ'
 import { CtaWhatsapp } from '@/components/sections/CtaWhatsapp'
+import { UltimasDoBlog } from '@/components/sections/UltimasDoBlog'
 export default function HomePage() {
   return (
     <>
@@ -21,6 +22,7 @@ export default function HomePage() {
       <div id="sobre"><SobreNos /></div>
       <div id="precos"><Precos /></div>
       <div id="faq"><FAQ /></div>
+      <UltimasDoBlog />
       <CtaWhatsapp />
       <BeneficiosBar />
     </>
