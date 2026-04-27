@@ -1,5 +1,6 @@
 import { HeaderTopBar } from '@/components/shared/HeaderTopBar'
 import { Header } from '@/components/shared/Header'
+import { HeaderSimple } from '@/components/shared/HeaderSimple'
 
 function CodeBlock({ code }: { code: string }) {
   return (
@@ -61,6 +62,25 @@ export default function HeaderNavPage() {
         code={`import { HeaderTopBar } from '@/components/shared/HeaderTopBar'
 
 <HeaderTopBar />`}
+      />
+
+      {/* HeaderSimple */}
+      <div className="sg-prose">
+        <h2 className="text-subtitle font-medium text-brand-navy mb-4 mt-10 pb-2 border-b border-brand-border">
+          HeaderSimple
+        </h2>
+        <p className="text-sm text-neutral-400 mb-4">
+          Header minimalista — logo à esquerda e links de Instagram e WhatsApp à direita.
+          Indicado para páginas sem navegação principal (ex: checkout, obrigado, campanhas).
+        </p>
+      </div>
+      <div className="preview-full border border-brand-border rounded-lg overflow-hidden mb-4">
+        <HeaderSimple />
+      </div>
+      <CodeBlock
+        code={`import { HeaderSimple } from '@/components/shared/HeaderSimple'
+
+<HeaderSimple />`}
       />
     </div>
   )
