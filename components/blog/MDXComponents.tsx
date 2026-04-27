@@ -98,7 +98,7 @@ export function getMDXComponents(): MDXComponents {
     ),
     hr: () => <hr className="border-brand-border my-8" />,
     table: ({ children }) => (
-      <div className="overflow-x-auto my-6">
+      <div className="overflow-x-auto mt-6 mb-8">
         <table className="w-full border-collapse text-para-sm">{children}</table>
       </div>
     ),
