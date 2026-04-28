@@ -65,17 +65,28 @@ export async function POST(req: NextRequest) {
     })
 
     // 3. Disparar webhook n8n (fire and forget — não bloqueia a resposta)
-    if (process.env.N8N_WEBHOOK_LEADS) {
-      fetch(process.env.N8N_WEBHOOK_LEADS, {
+    const n8nWebhookUrl = process.env.N8N_WEBHOOK_CRM_SYNC ?? process.env.N8N_WEBHOOK_LEADS
+
+    if (n8nWebhookUrl) {
+      fetch(n8nWebhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          event: 'lead_created',
+          supabaseLeadId: lead.id,
           leadId: lead.id,
           name,
           phone,
           email,
           channel,
           trafficTemperature,
+          status: lead.status,
+          stage: lead.stage,
+          utmSource,
+          utmMedium,
+          utmCampaign,
+          utmContent,
+          utmTerm,
         }),
       }).catch(() => {}) // n8n pode estar offline — não bloquear
     }

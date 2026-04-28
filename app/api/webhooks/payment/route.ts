@@ -53,12 +53,15 @@ export async function POST(req: NextRequest) {
     ])
 
     // Dispara n8n (fire and forget)
-    if (process.env.N8N_WEBHOOK_PAYMENT_CONFIRMED) {
-      fetch(process.env.N8N_WEBHOOK_PAYMENT_CONFIRMED, {
+    const n8nWebhookUrl = process.env.N8N_WEBHOOK_CRM_SYNC ?? process.env.N8N_WEBHOOK_PAYMENT_CONFIRMED
+
+    if (n8nWebhookUrl) {
+      fetch(n8nWebhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           event: 'payment_confirmed',
+          supabaseLeadId: payment.order.leadId,
           orderId: payment.orderId,
           leadId: payment.order.leadId,
           leadName: payment.order.lead.name,
@@ -68,6 +71,9 @@ export async function POST(req: NextRequest) {
           documentType: payment.order.documentType,
           amount: payment.amount,
           method: payment.method,
+          status: payment.status,
+          stage: 'payment_confirmed',
+          trafficTemperature: payment.order.lead.trafficTemperature,
         }),
       }).catch(() => {})
     }

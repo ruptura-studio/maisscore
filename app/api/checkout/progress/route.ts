@@ -45,18 +45,22 @@ export async function POST(req: NextRequest) {
     })
 
     // Dispara webhook n8n conforme step
-    const webhookUrl =
-      step === 1
-        ? process.env.WEBHOOK_STEP1_URL
-        : step === 2
-          ? process.env.WEBHOOK_STEP2_URL
-          : null
+    const n8nWebhookUrl = process.env.N8N_WEBHOOK_CRM_SYNC
+      ?? (
+        step === 1
+          ? process.env.WEBHOOK_STEP1_URL
+          : step === 2
+            ? process.env.WEBHOOK_STEP2_URL
+            : null
+      )
 
-    if (webhookUrl) {
-      fetch(webhookUrl, {
+    if (n8nWebhookUrl) {
+      fetch(n8nWebhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          event: step === 1 ? 'checkout_started' : 'checkout_submitted',
+          supabaseLeadId: lead.id,
           leadId: lead.id,
           step,
           name: lead.name,
@@ -66,6 +70,8 @@ export async function POST(req: NextRequest) {
           companyName: lead.companyName,
           productSlug,
           paymentMethod,
+          status: lead.status,
+          stage: lead.checkoutStep === 2 ? 'checkout_submitted' : 'checkout_started',
         }),
       }).catch(() => {}) // fire-and-forget
     }
