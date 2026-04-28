@@ -54,7 +54,7 @@ export default async function PostPage({ params }: Props) {
   return (
     <>
       <JsonLd frontmatter={frontmatter} slug={slug} />
-      <main className="max-w-3xl mx-auto px-4 py-16">
+      <main className="container-ms py-16">
         <PostHeader frontmatter={frontmatter} />
         <article className="mt-10 prose-none">
           <MDXRemote source={content} components={getMDXComponents()} />
