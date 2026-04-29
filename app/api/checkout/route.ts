@@ -24,6 +24,13 @@ export async function POST(req: NextRequest) {
       document,
       documentType,
       razaoSocial,
+      birthDate,
+      addressStreet,
+      addressNeighborhood,
+      addressCity,
+      addressState,
+      addressZip,
+      addressComplement,
       productSlug,
       paymentMethod,
       installments,
@@ -57,6 +64,14 @@ export async function POST(req: NextRequest) {
         companyName: razaoSocial,
         leadType,
         checkoutStep: paymentMethod === 'PIX' ? 2 : 3,
+        birthDate: birthDate ? new Date(birthDate) : undefined,
+        addressStreet,
+        addressNumber,
+        addressComplement,
+        addressNeighborhood,
+        addressCity,
+        addressState,
+        addressZip,
       },
       update: {
         name,
@@ -67,6 +82,14 @@ export async function POST(req: NextRequest) {
         companyName: razaoSocial,
         leadType,
         checkoutStep: paymentMethod === 'PIX' ? 2 : 3,
+        birthDate: birthDate ? new Date(birthDate) : undefined,
+        addressStreet,
+        addressNumber,
+        addressComplement,
+        addressNeighborhood,
+        addressCity,
+        addressState,
+        addressZip,
       },
     })
 
@@ -118,13 +141,13 @@ export async function POST(req: NextRequest) {
               email,
               cpfCnpj: holderCpfCnpj,
               phone: holderPhone,
-              postalCode: postalCode ?? '',
+              postalCode: postalCode ?? addressZip ?? '',
               addressNumber: addressNumber ?? '',
-              complement,
+              complement: complement ?? addressComplement,
             },
           }
         : {}),
-    })
+      })
 
     // 6. Para PIX, buscar QR code
     let pixQrCode: string | null = null
