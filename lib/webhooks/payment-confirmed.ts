@@ -49,7 +49,15 @@ export async function handlePaymentConfirmedWebhook(
     return Response.json({ received: true })
   }
 
-  if (payment.status === 'confirmed') {
+  const existingPaymentEvent = await prisma.leadEvent.findFirst({
+    where: {
+      leadId: payment.order.leadId,
+      type: 'pagamento_confirmado',
+      value: { contains: payment.asaasId },
+    },
+  })
+
+  if (payment.status === 'confirmed' && existingPaymentEvent) {
     return Response.json({ received: true })
   }
 
@@ -57,10 +65,12 @@ export async function handlePaymentConfirmedWebhook(
   const acquisition = payment.order.product?.slug ?? (payment.order.documentType === 'CNPJ' ? 'limpa-nome-cnpj' : 'limpa-nome-cpf')
 
   await prisma.$transaction(async (tx: any) => {
-    await tx.payment.update({
-      where: { id: payment.id },
-      data: { status: 'confirmed', confirmedAt },
-    })
+    if (payment.status !== 'confirmed') {
+      await tx.payment.update({
+        where: { id: payment.id },
+        data: { status: 'confirmed', confirmedAt },
+      })
+    }
 
     await tx.order.update({
       where: { id: payment.orderId },
@@ -91,142 +101,174 @@ export async function handlePaymentConfirmedWebhook(
       },
     })
 
-    await tx.leadEvent.create({
-      data: {
-        leadId: payment.order.leadId,
-        type: 'pagamento_confirmado',
-        value: JSON.stringify({
-          asaasPaymentId: payment.asaasId,
-          orderId: payment.orderId,
-          amount: payment.amount,
-          method: payment.method,
-          confirmedAt: confirmedAt.toISOString(),
-        }),
-      },
-    })
+    if (!existingPaymentEvent) {
+      await tx.leadEvent.create({
+        data: {
+          leadId: payment.order.leadId,
+          type: 'pagamento_confirmado',
+          value: JSON.stringify({
+            asaasPaymentId: payment.asaasId,
+            orderId: payment.orderId,
+            amount: payment.amount,
+            method: payment.method,
+            confirmedAt: confirmedAt.toISOString(),
+          }),
+        },
+      })
+    }
   })
 
-  const n8nWebhookUrl = env.N8N_WEBHOOK_PAYMENT_CONFIRMED ?? env.N8N_WEBHOOK_CRM_SYNC
+  const paymentConfirmedPayload = {
+    event: 'payment_confirmed',
+    supabaseLeadId: payment.order.leadId,
+    orderId: payment.orderId,
+    leadId: payment.order.leadId,
+    leadName: payment.order.lead.name,
+    leadPhone: payment.order.lead.phone,
+    leadEmail: payment.order.lead.email,
+    document: payment.order.document,
+    documentType: payment.order.documentType,
+    birthDate: payment.order.lead.birthDate?.toISOString?.() ?? null,
+    addressStreet: payment.order.lead.addressStreet ?? null,
+    addressNumber: payment.order.lead.addressNumber ?? null,
+    addressComplement: payment.order.lead.addressComplement ?? null,
+    addressNeighborhood: payment.order.lead.addressNeighborhood ?? null,
+    addressCity: payment.order.lead.addressCity ?? null,
+    addressState: payment.order.lead.addressState ?? null,
+    addressZip: payment.order.lead.addressZip ?? null,
+    civilStatus: payment.order.lead.civilStatus ?? null,
+    profession: payment.order.lead.profession ?? null,
+    identityDocument: payment.order.lead.identityDocument ?? null,
+    responsibleName: payment.order.lead.responsibleName ?? null,
+    responsibleCpf: payment.order.lead.responsibleCpf ?? null,
+    amount: payment.amount,
+    method: payment.method,
+    status: 'confirmed',
+    stage: 'payment_confirmed',
+    paymentStatus: 'confirmed',
+    paymentConfirmedAt: confirmedAt.toISOString(),
+    acquisition,
+    asaasPaymentId: payment.asaasId,
+    trafficTemperature: payment.order.lead.trafficTemperature,
+    lead: {
+      id: payment.order.lead.id,
+      name: payment.order.lead.name,
+      phone: payment.order.lead.phone,
+      email: payment.order.lead.email,
+      birthDate: payment.order.lead.birthDate?.toISOString?.() ?? null,
+      addressStreet: payment.order.lead.addressStreet ?? null,
+      addressNumber: payment.order.lead.addressNumber ?? null,
+      addressComplement: payment.order.lead.addressComplement ?? null,
+      addressNeighborhood: payment.order.lead.addressNeighborhood ?? null,
+      addressCity: payment.order.lead.addressCity ?? null,
+      addressState: payment.order.lead.addressState ?? null,
+      addressZip: payment.order.lead.addressZip ?? null,
+      civilStatus: payment.order.lead.civilStatus ?? null,
+      profession: payment.order.lead.profession ?? null,
+      identityDocument: payment.order.lead.identityDocument ?? null,
+      responsibleName: payment.order.lead.responsibleName ?? null,
+      responsibleCpf: payment.order.lead.responsibleCpf ?? null,
+      status: payment.order.lead.status,
+      stage: payment.order.lead.stage,
+      trafficTemperature: payment.order.lead.trafficTemperature,
+      isClient: true,
+      acquisition,
+      acquisitionValue: payment.amount,
+      convertedAt: confirmedAt.toISOString(),
+    },
+    order: {
+      id: payment.order.id,
+      leadId: payment.order.leadId,
+      productId: payment.order.productId,
+      document: payment.order.document,
+      documentType: payment.order.documentType,
+      status: 'pago',
+      pricePaid: payment.order.pricePaid,
+    },
+    payment: {
+      id: payment.id,
+      asaasId: payment.asaasId,
+      method: payment.method,
+      status: 'confirmed',
+      amount: payment.amount,
+      confirmedAt: confirmedAt.toISOString(),
+    },
+    product: payment.order.product
+      ? {
+          id: payment.order.product.id,
+          slug: payment.order.product.slug,
+          name: payment.order.product.name,
+          price: payment.order.product.price,
+        }
+      : null,
+    process: payment.order.process
+      ? {
+          status: payment.order.process.status,
+          stage: payment.order.process.stage,
+          startedAt: payment.order.process.startedAt?.toISOString?.() ?? null,
+          cleanedAt: payment.order.process.cleanedAt?.toISOString?.() ?? null,
+          proofUrl: payment.order.process.proofUrl ?? null,
+        }
+      : null,
+    onboardingDocuments: payment.order.onboardingDocuments.map((item: any) => ({
+      id: item.id,
+      itemKey: item.itemKey,
+      label: item.label,
+      status: item.status,
+      storagePath: item.storagePath,
+      fileUrl: item.fileUrl,
+      receivedAt: item.receivedAt?.toISOString?.() ?? null,
+    })),
+  }
+
+  const n8nWebhookUrl =
+    env.N8N_WEBHOOK_PAYMENT_CONFIRMED?.trim() ||
+    'https://auto.maisscore.com.br/webhook/ms-onboarding-mvp'
 
   if (n8nWebhookUrl) {
-    void fetchImpl(n8nWebhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        event: 'payment_confirmed',
-        supabaseLeadId: payment.order.leadId,
-        orderId: payment.orderId,
-        leadId: payment.order.leadId,
-        leadName: payment.order.lead.name,
-        leadPhone: payment.order.lead.phone,
-        leadEmail: payment.order.lead.email,
-        document: payment.order.document,
-        documentType: payment.order.documentType,
-        birthDate: payment.order.lead.birthDate?.toISOString?.() ?? null,
-        addressStreet: payment.order.lead.addressStreet ?? null,
-        addressNumber: payment.order.lead.addressNumber ?? null,
-        addressComplement: payment.order.lead.addressComplement ?? null,
-        addressNeighborhood: payment.order.lead.addressNeighborhood ?? null,
-        addressCity: payment.order.lead.addressCity ?? null,
-        addressState: payment.order.lead.addressState ?? null,
-        addressZip: payment.order.lead.addressZip ?? null,
-        civilStatus: payment.order.lead.civilStatus ?? null,
-        profession: payment.order.lead.profession ?? null,
-        identityDocument: payment.order.lead.identityDocument ?? null,
-        responsibleName: payment.order.lead.responsibleName ?? null,
-        responsibleCpf: payment.order.lead.responsibleCpf ?? null,
-        amount: payment.amount,
-        method: payment.method,
-        status: 'confirmed',
-        stage: 'payment_confirmed',
-        paymentStatus: 'confirmed',
-        paymentConfirmedAt: confirmedAt.toISOString(),
-        acquisition,
-        trafficTemperature: payment.order.lead.trafficTemperature,
-        lead: {
-          id: payment.order.lead.id,
-          name: payment.order.lead.name,
-          phone: payment.order.lead.phone,
-          email: payment.order.lead.email,
-          birthDate: payment.order.lead.birthDate?.toISOString?.() ?? null,
-          addressStreet: payment.order.lead.addressStreet ?? null,
-          addressNumber: payment.order.lead.addressNumber ?? null,
-          addressComplement: payment.order.lead.addressComplement ?? null,
-          addressNeighborhood: payment.order.lead.addressNeighborhood ?? null,
-          addressCity: payment.order.lead.addressCity ?? null,
-          addressState: payment.order.lead.addressState ?? null,
-          addressZip: payment.order.lead.addressZip ?? null,
-          civilStatus: payment.order.lead.civilStatus ?? null,
-          profession: payment.order.lead.profession ?? null,
-          identityDocument: payment.order.lead.identityDocument ?? null,
-          responsibleName: payment.order.lead.responsibleName ?? null,
-          responsibleCpf: payment.order.lead.responsibleCpf ?? null,
-          status: payment.order.lead.status,
-          stage: payment.order.lead.stage,
-          trafficTemperature: payment.order.lead.trafficTemperature,
-          isClient: true,
-          acquisition,
-          acquisitionValue: payment.amount,
-          convertedAt: confirmedAt.toISOString(),
-        },
-        order: {
-          id: payment.order.id,
-          leadId: payment.order.leadId,
-          productId: payment.order.productId,
-          document: payment.order.document,
-          documentType: payment.order.documentType,
-          status: 'pago',
-          pricePaid: payment.order.pricePaid,
-        },
-        payment: {
-          id: payment.id,
-          asaasId: payment.asaasId,
-          method: payment.method,
-          status: 'confirmed',
-          amount: payment.amount,
-          confirmedAt: confirmedAt.toISOString(),
-        },
-        product: payment.order.product
-          ? {
-              id: payment.order.product.id,
-              slug: payment.order.product.slug,
-              name: payment.order.product.name,
-              price: payment.order.product.price,
-            }
-          : null,
-        process: payment.order.process
-          ? {
-              status: payment.order.process.status,
-              stage: payment.order.process.stage,
-              startedAt: payment.order.process.startedAt?.toISOString?.() ?? null,
-              cleanedAt: payment.order.process.cleanedAt?.toISOString?.() ?? null,
-              proofUrl: payment.order.process.proofUrl ?? null,
-            }
-          : null,
-        onboardingDocuments: payment.order.onboardingDocuments.map((item: any) => ({
-          id: item.id,
-          itemKey: item.itemKey,
-          label: item.label,
-          status: item.status,
-          storagePath: item.storagePath,
-          fileUrl: item.fileUrl,
-          receivedAt: item.receivedAt?.toISOString?.() ?? null,
-        })),
-      }),
-    })
-      .then(async (response) => {
-        if (!response.ok) {
-          const body = await response.text().catch(() => '')
-          logger.warn?.('[webhook/payment] n8n webhook returned non-2xx:', {
-            url: n8nWebhookUrl,
-            status: response.status,
-            body,
-          })
-        }
+    try {
+      const response = await fetchImpl(n8nWebhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(paymentConfirmedPayload),
       })
-      .catch((error) => {
-        logger.error?.('[webhook/payment] n8n webhook error:', error)
+
+      if (!response.ok) {
+        const body = await response.text().catch(() => '')
+        logger.warn?.('[webhook/payment] n8n webhook returned non-2xx:', {
+          url: n8nWebhookUrl,
+          status: response.status,
+          body,
+        })
+      }
+    } catch (error) {
+      logger.error?.('[webhook/payment] n8n webhook error:', error)
+    }
+  }
+
+  const crmSyncWebhookUrl =
+    env.N8N_WEBHOOK_CRM_SYNC?.trim() ||
+    'https://auto.maisscore.com.br/webhook/crm-entrada-sincronizacao'
+
+  if (crmSyncWebhookUrl) {
+    try {
+      const response = await fetchImpl(crmSyncWebhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(paymentConfirmedPayload),
       })
+
+      if (!response.ok) {
+        const body = await response.text().catch(() => '')
+        logger.warn?.('[webhook/payment] crm sync webhook returned non-2xx:', {
+          url: crmSyncWebhookUrl,
+          status: response.status,
+          body,
+        })
+      }
+    } catch (error) {
+      logger.error?.('[webhook/payment] crm sync webhook error:', error)
+    }
   }
 
   return Response.json({ received: true })
