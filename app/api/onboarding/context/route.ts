@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/db'
+import { getOnboardingWebhookToken } from '@/lib/config'
 
 function toIso(value: Date | null | undefined) {
   return value?.toISOString?.() ?? null
@@ -101,12 +102,17 @@ function normalizePayload(record: any) {
 
 export async function POST(req: NextRequest) {
   try {
-    const expectedToken = process.env.ONBOARDING_WEBHOOK_TOKEN?.trim()
-    if (expectedToken) {
-      const providedToken = req.headers.get('x-onboarding-access-token')?.trim()
-      if (!providedToken || providedToken !== expectedToken) {
-        return Response.json({ success: false, error: 'Unauthorized' }, { status: 401 })
-      }
+    const expectedToken = getOnboardingWebhookToken()
+    if (!expectedToken) {
+      return Response.json(
+        { success: false, error: 'ONBOARDING_WEBHOOK_TOKEN não configurada' },
+        { status: 500 },
+      )
+    }
+
+    const providedToken = req.headers.get('x-onboarding-access-token')?.trim()
+    if (!providedToken || providedToken !== expectedToken) {
+      return Response.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
 
     const body = await req.json()
@@ -156,4 +162,3 @@ export async function POST(req: NextRequest) {
     return Response.json({ success: false, error: 'Erro interno.' }, { status: 500 })
   }
 }
-

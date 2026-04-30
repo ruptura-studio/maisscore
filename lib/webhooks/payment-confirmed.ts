@@ -58,7 +58,15 @@ export async function handlePaymentConfirmedWebhook(
     },
   })
 
-  if (existingOnboardingDispatch) {
+  const existingCrmSyncDispatch = await prisma.leadEvent.findFirst({
+    where: {
+      leadId: payment.order.leadId,
+      type: 'crm_sync_webhook_dispatched',
+      value: { contains: payment.orderId },
+    },
+  })
+
+  if (existingOnboardingDispatch && existingCrmSyncDispatch) {
     return Response.json({ received: true, deduplicated: true })
   }
 
@@ -69,10 +77,6 @@ export async function handlePaymentConfirmedWebhook(
       value: { contains: payment.asaasId },
     },
   })
-
-  if (payment.status === 'confirmed' && existingPaymentEvent) {
-    return Response.json({ received: true })
-  }
 
   const confirmedAt = now()
   const acquisition = payment.order.product?.slug ?? (payment.order.documentType === 'CNPJ' ? 'limpa-nome-cnpj' : 'limpa-nome-cpf')
@@ -238,7 +242,7 @@ export async function handlePaymentConfirmedWebhook(
     env.N8N_WEBHOOK_PAYMENT_CONFIRMED?.trim() ||
     'https://auto.maisscore.com.br/webhook/ms-onboarding-mvp'
 
-  if (n8nWebhookUrl) {
+  if (n8nWebhookUrl && !existingOnboardingDispatch) {
     try {
       const response = await fetchImpl(n8nWebhookUrl, {
         method: 'POST',
@@ -253,9 +257,52 @@ export async function handlePaymentConfirmedWebhook(
           status: response.status,
           body,
         })
+        await prisma.leadEvent.create({
+          data: {
+            leadId: payment.order.leadId,
+            type: 'onboarding_webhook_failed',
+            value: JSON.stringify({
+              asaasPaymentId: payment.asaasId,
+              orderId: payment.orderId,
+              event,
+              url: n8nWebhookUrl,
+              status: response.status,
+              body,
+              failedAt: now().toISOString(),
+            }),
+          },
+        })
+      } else {
+        await prisma.leadEvent.create({
+          data: {
+            leadId: payment.order.leadId,
+            type: 'onboarding_webhook_dispatched',
+            value: JSON.stringify({
+              asaasPaymentId: payment.asaasId,
+              orderId: payment.orderId,
+              event,
+              url: n8nWebhookUrl,
+              dispatchedAt: now().toISOString(),
+            }),
+          },
+        })
       }
     } catch (error) {
       logger.error?.('[webhook/payment] n8n webhook error:', error)
+      await prisma.leadEvent.create({
+        data: {
+          leadId: payment.order.leadId,
+          type: 'onboarding_webhook_failed',
+          value: JSON.stringify({
+            asaasPaymentId: payment.asaasId,
+            orderId: payment.orderId,
+            event,
+            url: n8nWebhookUrl,
+            error: String(error),
+            failedAt: now().toISOString(),
+          }),
+        },
+      })
     }
   }
 
@@ -263,7 +310,7 @@ export async function handlePaymentConfirmedWebhook(
     env.N8N_WEBHOOK_CRM_SYNC?.trim() ||
     'https://auto.maisscore.com.br/webhook/crm-entrada-sincronizacao'
 
-  if (crmSyncWebhookUrl) {
+  if (crmSyncWebhookUrl && !existingCrmSyncDispatch) {
     try {
       const response = await fetchImpl(crmSyncWebhookUrl, {
         method: 'POST',
@@ -278,26 +325,54 @@ export async function handlePaymentConfirmedWebhook(
           status: response.status,
           body,
         })
+        await prisma.leadEvent.create({
+          data: {
+            leadId: payment.order.leadId,
+            type: 'crm_sync_webhook_failed',
+            value: JSON.stringify({
+              asaasPaymentId: payment.asaasId,
+              orderId: payment.orderId,
+              event,
+              url: crmSyncWebhookUrl,
+              status: response.status,
+              body,
+              failedAt: now().toISOString(),
+            }),
+          },
+        })
+      } else {
+        await prisma.leadEvent.create({
+          data: {
+            leadId: payment.order.leadId,
+            type: 'crm_sync_webhook_dispatched',
+            value: JSON.stringify({
+              asaasPaymentId: payment.asaasId,
+              orderId: payment.orderId,
+              event,
+              url: crmSyncWebhookUrl,
+              dispatchedAt: now().toISOString(),
+            }),
+          },
+        })
       }
     } catch (error) {
       logger.error?.('[webhook/payment] crm sync webhook error:', error)
+      await prisma.leadEvent.create({
+        data: {
+          leadId: payment.order.leadId,
+          type: 'crm_sync_webhook_failed',
+          value: JSON.stringify({
+            asaasPaymentId: payment.asaasId,
+            orderId: payment.orderId,
+            event,
+            url: crmSyncWebhookUrl,
+            error: String(error),
+            failedAt: now().toISOString(),
+          }),
+        },
+      })
     }
   }
-
-  await prisma.leadEvent.create({
-    data: {
-      leadId: payment.order.leadId,
-      type: 'onboarding_webhook_dispatched',
-      value: JSON.stringify({
-        asaasPaymentId: payment.asaasId,
-        orderId: payment.orderId,
-        event,
-        n8nWebhookUrl,
-        crmSyncWebhookUrl,
-        dispatchedAt: now().toISOString(),
-      }),
-    },
-  })
 
   return Response.json({ received: true })
 }

@@ -45,6 +45,10 @@ export interface AsaasPixQrCode {
   expirationDate: string
 }
 
+export function normalizeCpfCnpj(value: string): string {
+  return value.replace(/\D/g, '')
+}
+
 // ── Customers ──────────────────────────────────────────────────────────────
 
 export async function findOrCreateCustomer(params: {
@@ -54,15 +58,17 @@ export async function findOrCreateCustomer(params: {
   cpfCnpj: string
   companyName?: string
 }): Promise<AsaasCustomer> {
+  const normalizedCpfCnpj = normalizeCpfCnpj(params.cpfCnpj)
+
   // Busca cliente existente pelo CPF/CNPJ
   const search = await asaasFetch<{ data: AsaasCustomer[] }>(
-    `/customers?cpfCnpj=${params.cpfCnpj}`
+    `/customers?cpfCnpj=${normalizedCpfCnpj}`
   )
 
   if (search.data.length > 0) return search.data[0]
 
   // Cria novo cliente
-  const personType = params.cpfCnpj.length === 11 ? 'FISICA' : 'JURIDICA'
+  const personType = normalizedCpfCnpj.length === 11 ? 'FISICA' : 'JURIDICA'
 
   return asaasFetch<AsaasCustomer>('/customers', {
     method: 'POST',
@@ -70,7 +76,7 @@ export async function findOrCreateCustomer(params: {
       name: params.name,
       email: params.email,
       mobilePhone: params.phone,
-      cpfCnpj: params.cpfCnpj,
+      cpfCnpj: normalizedCpfCnpj,
       personType,
       ...(params.companyName ? { company: params.companyName } : {}),
       notificationDisabled: true,
