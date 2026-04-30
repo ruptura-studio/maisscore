@@ -93,6 +93,60 @@ export async function POST(req: NextRequest) {
       },
     })
 
+    const cutoff = new Date(Date.now() - 10 * 60 * 1000)
+    const existingOrder = await prisma.order.findFirst({
+      where: {
+        leadId: lead.id,
+        productId: product.id,
+        status: { in: ['pendente', 'pago'] },
+        createdAt: { gte: cutoff },
+      },
+      include: {
+        payment: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
+
+    if (existingOrder) {
+      const existingPayment = existingOrder.payment
+      const hasActiveCharge =
+        existingPayment && ['pending', 'confirmed'].includes(existingPayment.status)
+
+      let pixQrCode: string | null = null
+      let pixPayload: string | null = existingPayment?.pixKey ?? null
+      let pixExpiresAt: Date | null = existingPayment?.pixExpiresAt ?? null
+
+      if (
+        hasActiveCharge &&
+        existingPayment.method === 'PIX' &&
+        existingPayment.asaasId &&
+        (!pixPayload || !pixExpiresAt)
+      ) {
+        try {
+          const qr = await getPixQrCode(existingPayment.asaasId)
+          pixQrCode = qr.encodedImage
+          pixPayload = qr.payload
+          pixExpiresAt = new Date(qr.expirationDate)
+        } catch {
+          // Mantem retorno sem QR caso o Asaas falhe nesta leitura.
+        }
+      }
+
+      return Response.json({
+        success: true,
+        data: {
+          orderId: existingOrder.id,
+          method: (existingPayment?.method ?? paymentMethod) as 'PIX' | 'CREDIT_CARD',
+          pixQrCode,
+          pixPayload,
+          pixExpiresAt,
+          invoiceUrl: null,
+        },
+      })
+    }
+
     // 4. Criar order
     const order = await prisma.order.create({
       data: {

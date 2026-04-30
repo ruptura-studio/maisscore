@@ -517,6 +517,7 @@ function CheckoutContent() {
   // ── Submit (PIX: step 2, Cartão: step 3) ──────────────────────────────────
 
   async function handleSubmit() {
+    if (loading) return
     setServerError('')
     setLoading(true)
     try {
@@ -783,9 +784,10 @@ function CheckoutContent() {
                 type="button"
                 onClick={() => {
                   if (!allPixTerms) { setShowValidationAlert(true); return }
-                  if (!loading) handleSubmit()
+                  handleSubmit()
                 }}
-                className="btn-secondary w-full !rounded-md h-11"
+                disabled={loading}
+                className="btn-secondary w-full !rounded-md h-11 disabled:opacity-50"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
