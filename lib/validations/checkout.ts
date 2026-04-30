@@ -59,7 +59,7 @@ export const checkoutSchema = z
         number: z.string().regex(/^\d{16}$/, 'Número do cartão inválido'),
         expiryMonth: z.string().regex(/^\d{2}$/, 'Mês inválido'),
         expiryYear: z.string().regex(/^\d{4}$/, 'Ano inválido'),
-        ccv: z.string().regex(/^\d{3}$/, 'CVV inválido'),
+        ccv: z.string().regex(/^\d{3,4}$/, 'CVV inválido'),
       })
       .optional(),
     // Titular do cartão diferente do comprador

@@ -441,7 +441,7 @@ function CheckoutContent() {
     if (card.number.replace(/\s/g, '').length !== 16) e.cardNumber = 'Número do cartão inválido'
     if (!card.month) e.cardMonth = 'Selecione o mês'
     if (!card.year) e.cardYear = 'Selecione o ano'
-    if (card.cvv.length !== 3) e.cardCvv = 'CVV inválido'
+    if (card.cvv.length < 3 || card.cvv.length > 4) e.cardCvv = 'CVV inválido'
     if (address.cep.replace(/\D/g, '').length !== 8) e.cep = 'CEP inválido'
     if (!address.number.trim()) e.number = 'Número obrigatório'
     if (showCardHolderFields) {
@@ -602,7 +602,8 @@ function CheckoutContent() {
     card.number.replace(/\s/g, '').length === 16 &&
     !!card.month &&
     !!card.year &&
-    card.cvv.length === 3 &&
+    card.cvv.length >= 3 &&
+    card.cvv.length <= 4 &&
     address.cep.replace(/\D/g, '').length === 8 &&
     address.number.trim().length > 0 &&
     (!showCardHolderFields || (
@@ -869,7 +870,7 @@ function CheckoutContent() {
                         onChange={(e) =>
                           setCard((c) => ({
                             ...c,
-                            cvv: e.target.value.replace(/\D/g, '').slice(0, 3),
+                            cvv: e.target.value.replace(/\D/g, '').slice(0, 4),
                           }))
                         }
                         placeholder="CVV"
