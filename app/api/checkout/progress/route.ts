@@ -14,7 +14,30 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const { step, name, email, phone, document, documentType, razaoSocial, productSlug, paymentMethod } = parsed.data
+    const {
+      step,
+      name,
+      email,
+      phone,
+      document,
+      documentType,
+      razaoSocial,
+      birthDate,
+      addressStreet,
+      addressNumber,
+      addressComplement,
+      addressNeighborhood,
+      addressCity,
+      addressState,
+      addressZip,
+      civilStatus,
+      profession,
+      identityDocument,
+      responsibleName,
+      responsibleCpf,
+      productSlug,
+      paymentMethod,
+    } = parsed.data
 
     if (!phone) {
       return Response.json({ success: false, error: 'Telefone obrigatório.' }, { status: 400 })
@@ -39,6 +62,19 @@ export async function POST(req: NextRequest) {
         ...(email ? { email } : {}),
         ...(razaoSocial !== undefined ? { companyName: razaoSocial } : {}),
         ...(documentType ? { leadType } : {}),
+        ...(birthDate ? { birthDate: new Date(birthDate) } : {}),
+        ...(addressStreet !== undefined ? { addressStreet } : {}),
+        ...(addressNumber !== undefined ? { addressNumber } : {}),
+        ...(addressComplement !== undefined ? { addressComplement } : {}),
+        ...(addressNeighborhood !== undefined ? { addressNeighborhood } : {}),
+        ...(addressCity !== undefined ? { addressCity } : {}),
+        ...(addressState !== undefined ? { addressState } : {}),
+        ...(addressZip !== undefined ? { addressZip } : {}),
+        ...(civilStatus !== undefined ? { civilStatus } : {}),
+        ...(profession !== undefined ? { profession } : {}),
+        ...(identityDocument !== undefined ? { identityDocument } : {}),
+        ...(responsibleName !== undefined ? { responsibleName } : {}),
+        ...(responsibleCpf !== undefined ? { responsibleCpf } : {}),
         checkoutStep: step,
         status: 'checkout_iniciado',
       },

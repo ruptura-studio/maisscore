@@ -109,6 +109,11 @@ function formatCnpj(value: string) {
     .replace(/(\d{4})(\d{1,2})$/, '$1-$2')
 }
 
+function formatCpfCnpj(value: string) {
+  const digits = value.replace(/\D/g, '')
+  return digits.length <= 11 ? formatCpf(digits) : formatCnpj(digits)
+}
+
 function formatPhone(value: string) {
   const d = value.replace(/\D/g, '').slice(0, 11)
   if (d.length <= 10) return d.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3').replace(/-$/, '')
@@ -335,6 +340,8 @@ function CheckoutContent() {
     ? (dbPrices[PRODUCTS[selectedProduct].slug] ?? PRODUCTS[selectedProduct].priceInCents)
     : 0
   const installmentOptions = product ? getInstallmentOptions(productPrice, product.maxInstallments) : []
+  const requiresCardHolderInfo = selectedProduct === 'cnpj' && paymentMethod === 'CREDIT_CARD'
+  const showCardHolderFields = cardHolderDiffers || requiresCardHolderInfo
   const stepLabels =
     paymentMethod === 'PIX' ? ['Cadastro', 'Confirmação'] : ['Cadastro', 'Pagamento', 'Confirmação']
 
@@ -437,7 +444,7 @@ function CheckoutContent() {
     if (card.cvv.length !== 3) e.cardCvv = 'CVV inválido'
     if (address.cep.replace(/\D/g, '').length !== 8) e.cep = 'CEP inválido'
     if (!address.number.trim()) e.number = 'Número obrigatório'
-    if (cardHolderDiffers) {
+    if (showCardHolderFields) {
       if (cardHolder.name.trim().length < 2) e.holderName = 'Nome do titular obrigatório'
       const holderDoc = cardHolder.cpfCnpj.replace(/\D/g, '')
       if (holderDoc.length !== 11 && holderDoc.length !== 14) e.holderCpfCnpj = 'CPF ou CNPJ inválido'
@@ -485,6 +492,13 @@ function CheckoutContent() {
           phone: form.phone.replace(/\D/g, ''),
           paymentMethod: 'CREDIT_CARD',
           productSlug: product?.slug,
+          addressStreet: addressInfo?.logradouro || undefined,
+          addressNeighborhood: addressInfo?.bairro || undefined,
+          addressCity: addressInfo?.localidade || undefined,
+          addressState: addressInfo?.uf || undefined,
+          addressZip: address.cep.replace(/\D/g, '') || undefined,
+          addressNumber: address.number.trim() || undefined,
+          addressComplement: address.complement.trim() || undefined,
         }),
       }).catch(() => {})
       setStep(3)
@@ -516,6 +530,13 @@ function CheckoutContent() {
           document: form.document.replace(/\D/g, ''),
           documentType: product?.documentType,
           razaoSocial: form.companyName.trim() || undefined,
+          addressStreet: addressInfo?.logradouro || undefined,
+          addressNeighborhood: addressInfo?.bairro || undefined,
+          addressCity: addressInfo?.localidade || undefined,
+          addressState: addressInfo?.uf || undefined,
+          addressZip: address.cep.replace(/\D/g, '') || undefined,
+          addressNumber: address.number.trim() || undefined,
+          addressComplement: address.complement.trim() || undefined,
           productSlug: product?.slug,
           paymentMethod,
           installments: paymentMethod === 'CREDIT_CARD' ? installments : 1,
@@ -526,14 +547,14 @@ function CheckoutContent() {
                 addressNumber: address.number.trim(),
                 complement: address.complement.trim() || undefined,
                 creditCard: {
-                  holderName: cardHolderDiffers ? cardHolder.name.trim() : form.name.trim(),
+                  holderName: showCardHolderFields ? cardHolder.name.trim() : form.name.trim(),
                   number: card.number.replace(/\s/g, ''),
                   expiryMonth: card.month,
                   expiryYear: card.year,
                   ccv: card.cvv,
                 },
-                cardHolderDiffers,
-                ...(cardHolderDiffers
+                cardHolderDiffers: showCardHolderFields,
+                ...(showCardHolderFields
                   ? {
                       cardHolderInfo: {
                         name: cardHolder.name.trim(),
@@ -584,7 +605,7 @@ function CheckoutContent() {
     card.cvv.length === 3 &&
     address.cep.replace(/\D/g, '').length === 8 &&
     address.number.trim().length > 0 &&
-    (!cardHolderDiffers || (
+    (!showCardHolderFields || (
       cardHolder.name.trim().length >= 2 &&
       (cardHolder.cpfCnpj.replace(/\D/g, '').length === 11 || cardHolder.cpfCnpj.replace(/\D/g, '').length === 14) &&
       cardHolder.phone.replace(/\D/g, '').length >= 10
@@ -677,7 +698,7 @@ function CheckoutContent() {
                     </Field>
                   )}
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <Field label="Celular (WhatsApp)" error={errors.phone} required>
                       <input
                         type="tel"
@@ -697,11 +718,7 @@ function CheckoutContent() {
                         inputMode="numeric"
                         value={form.document}
                         onChange={(e) => {
-                          const formatted =
-                            selectedProduct === 'cpf'
-                              ? formatCpf(e.target.value)
-                              : formatCnpj(e.target.value)
-                          setForm((f) => ({ ...f, document: formatted }))
+                          setForm((f) => ({ ...f, document: formatCpfCnpj(e.target.value) }))
                         }}
                         placeholder={product?.documentPlaceholder ?? '000.000.000-00'}
                         maxLength={product?.documentMaxLength ?? 14}
@@ -879,22 +896,29 @@ function CheckoutContent() {
                   <hr className="border-brand-border" />
 
                   {/* Titular diferente */}
-                  <label className="flex cursor-pointer items-start gap-3">
-                    <input
-                      type="checkbox"
-                      checked={cardHolderDiffers}
-                      onChange={(e) => setCardHolderDiffers(e.target.checked)}
-                      className="mt-0.5 h-4 w-4 shrink-0 accent-brand-orange"
-                    />
-                    <span className="text-sm text-brand-navy">
-                      O nome impresso no cartão é diferente de{' '}
-                      <strong>{form.name || 'seu nome'}</strong>
-                    </span>
-                  </label>
+                  {!requiresCardHolderInfo && (
+                    <label className="flex cursor-pointer items-start gap-3">
+                      <input
+                        type="checkbox"
+                        checked={cardHolderDiffers}
+                        onChange={(e) => setCardHolderDiffers(e.target.checked)}
+                        className="mt-0.5 h-4 w-4 shrink-0 accent-brand-orange"
+                      />
+                      <span className="text-sm text-brand-navy">
+                        O nome impresso no cartão é diferente de{' '}
+                        <strong>{form.name || 'seu nome'}</strong>
+                      </span>
+                    </label>
+                  )}
 
-                  {cardHolderDiffers && (
+                  {showCardHolderFields && (
                     <div className="flex flex-col gap-4 rounded-lg border border-brand-border bg-neutral-50 p-4">
                       <h3 className="text-label font-semibold text-brand-navy">Dados do titular do cartão</h3>
+                      {requiresCardHolderInfo && (
+                        <p className="text-xs text-foreground-alt">
+                          Para compras no CNPJ com cartão de crédito, informe os dados do titular do cartão.
+                        </p>
+                      )}
                       <Field label="Nome no cartão" error={errors.holderName} required>
                         <input
                           type="text"
@@ -904,16 +928,16 @@ function CheckoutContent() {
                           className={inputCls(errors.holderName)}
                         />
                       </Field>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <Field label="CPF/CNPJ do titular" error={errors.holderCpfCnpj} required>
                           <input
                             type="text"
                             inputMode="numeric"
                             value={cardHolder.cpfCnpj}
                             onChange={(e) =>
-                              setCardHolder((h) => ({ ...h, cpfCnpj: e.target.value.replace(/\D/g, '').slice(0, 14) }))
+                              setCardHolder((h) => ({ ...h, cpfCnpj: formatCpfCnpj(e.target.value) }))
                             }
-                            placeholder="000.000.000-00"
+                            placeholder="CPF ou CNPJ"
                             className={inputCls(errors.holderCpfCnpj)}
                           />
                         </Field>
@@ -1042,7 +1066,7 @@ function CheckoutContent() {
                   <div className="border-t border-brand-border pt-3 text-sm">
                     <p className="text-foreground-alt">
                       <span className="font-medium text-brand-navy">Titular:</span>{' '}
-                      {cardHolderDiffers && cardHolder.name ? cardHolder.name : form.name}
+                      {showCardHolderFields && cardHolder.name ? cardHolder.name : form.name}
                     </p>
                     <p className="mt-0.5 text-foreground-alt">
                       <span className="font-medium text-brand-navy">{product?.documentLabel}:</span>{' '}
