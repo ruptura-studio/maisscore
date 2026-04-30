@@ -109,7 +109,7 @@ export async function handlePaymentConfirmedWebhook(
   const n8nWebhookUrl = env.N8N_WEBHOOK_PAYMENT_CONFIRMED ?? env.N8N_WEBHOOK_CRM_SYNC
 
   if (n8nWebhookUrl) {
-    fetchImpl(n8nWebhookUrl, {
+    void fetchImpl(n8nWebhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -213,7 +213,20 @@ export async function handlePaymentConfirmedWebhook(
           receivedAt: item.receivedAt?.toISOString?.() ?? null,
         })),
       }),
-    }).catch(() => {})
+    })
+      .then(async (response) => {
+        if (!response.ok) {
+          const body = await response.text().catch(() => '')
+          logger.warn?.('[webhook/payment] n8n webhook returned non-2xx:', {
+            url: n8nWebhookUrl,
+            status: response.status,
+            body,
+          })
+        }
+      })
+      .catch((error) => {
+        logger.error?.('[webhook/payment] n8n webhook error:', error)
+      })
   }
 
   return Response.json({ received: true })
