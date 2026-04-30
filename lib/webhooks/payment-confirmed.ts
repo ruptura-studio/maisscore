@@ -24,6 +24,7 @@ export async function handlePaymentConfirmedWebhook(
   const env = deps.env ?? process.env
   const now = deps.now ?? (() => new Date())
   const logger = deps.logger ?? console
+  const onboardingStartedStatus = 'onboarding_started'
 
   if (env.ASAAS_WEBHOOK_TOKEN && token !== env.ASAAS_WEBHOOK_TOKEN) {
     return Response.json({ received: false }, { status: 401 })
@@ -47,6 +48,18 @@ export async function handlePaymentConfirmedWebhook(
   if (!payment) {
     logger.warn?.('[webhook/payment] asaasId não encontrado:', asaasPayment.id)
     return Response.json({ received: true })
+  }
+
+  const existingOnboardingDispatch = await prisma.leadEvent.findFirst({
+    where: {
+      leadId: payment.order.leadId,
+      type: 'onboarding_webhook_dispatched',
+      value: { contains: payment.orderId },
+    },
+  })
+
+  if (existingOnboardingDispatch) {
+    return Response.json({ received: true, deduplicated: true })
   }
 
   const existingPaymentEvent = await prisma.leadEvent.findFirst({
@@ -92,7 +105,7 @@ export async function handlePaymentConfirmedWebhook(
       where: { id: payment.order.leadId },
       data: {
         isClient: true,
-        status: 'pago',
+        status: onboardingStartedStatus,
         stage: 'pagamento',
         acquisition,
         acquisitionValue: payment.amount,
@@ -168,7 +181,7 @@ export async function handlePaymentConfirmedWebhook(
       identityDocument: payment.order.lead.identityDocument ?? null,
       responsibleName: payment.order.lead.responsibleName ?? null,
       responsibleCpf: payment.order.lead.responsibleCpf ?? null,
-      status: payment.order.lead.status,
+      status: onboardingStartedStatus,
       stage: payment.order.lead.stage,
       trafficTemperature: payment.order.lead.trafficTemperature,
       isClient: true,
@@ -270,6 +283,21 @@ export async function handlePaymentConfirmedWebhook(
       logger.error?.('[webhook/payment] crm sync webhook error:', error)
     }
   }
+
+  await prisma.leadEvent.create({
+    data: {
+      leadId: payment.order.leadId,
+      type: 'onboarding_webhook_dispatched',
+      value: JSON.stringify({
+        asaasPaymentId: payment.asaasId,
+        orderId: payment.orderId,
+        event,
+        n8nWebhookUrl,
+        crmSyncWebhookUrl,
+        dispatchedAt: now().toISOString(),
+      }),
+    },
+  })
 
   return Response.json({ received: true })
 }
