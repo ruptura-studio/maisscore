@@ -40,6 +40,11 @@ export async function handlePaymentConfirmedWebhook(
     return Response.json({ received: true })
   }
 
+  const externalReference: string = asaasPayment.externalReference ?? ''
+  if (externalReference && !externalReference.startsWith('maisscore:')) {
+    return Response.json({ received: true, ignored: true, reason: 'externalReference_not_maisscore' })
+  }
+
   const payment = await prisma.payment.findUnique({
     where: { asaasId: asaasPayment.id },
     include: { order: { include: { lead: true, product: true, process: true, onboardingDocuments: true } } },
@@ -47,7 +52,7 @@ export async function handlePaymentConfirmedWebhook(
 
   if (!payment) {
     logger.warn?.('[webhook/payment] asaasId não encontrado:', asaasPayment.id)
-    return Response.json({ received: true })
+    return Response.json({ received: true, ignored: true, reason: 'payment_not_found' })
   }
 
   const existingOnboardingDispatch = await prisma.leadEvent.findFirst({

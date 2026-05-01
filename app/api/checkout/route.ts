@@ -193,7 +193,7 @@ export async function POST(req: NextRequest) {
       billingType: paymentMethod,
       value: valueInReais,
       description: product.name,
-      externalReference: order.id,
+      externalReference: `maisscore:${order.id}`,
       installmentCount: installments,
       remoteIp,
       ...(paymentMethod === 'CREDIT_CARD' && creditCard
