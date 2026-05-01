@@ -570,7 +570,11 @@ function CheckoutContent() {
       })
       const data = await res.json()
       if (!data.success) {
-        setServerError(data.error || 'Erro ao processar. Tente novamente.')
+        setServerError(
+          data.details
+            ? `${data.error || 'Erro ao processar.'} (${data.code || 'sem código'}: ${data.details})`
+            : data.error || 'Erro ao processar. Tente novamente.'
+        )
         return
       }
       setSubmitted(true)

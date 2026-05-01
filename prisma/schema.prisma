@@ -224,6 +224,26 @@ model CheckoutEvent {
   @@map("checkout_events")
 }
 
+model IntegrationError {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  source      String
+  code        String
+  message     String
+  details     Json?
+  leadId      String?  @map("lead_id") @db.Uuid
+  orderId     String?  @map("order_id") @db.Uuid
+  phone       String?
+  path        String?
+  method      String?
+  httpStatus  Int?     @map("http_status")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([source, code, createdAt])
+  @@index([leadId, createdAt])
+  @@index([orderId, createdAt])
+  @@map("integration_errors")
+}
+
 model MessageTemplate {
   id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   slug      String   @unique                  // ex: 'cora_greeting', 'fernanda_cold_start'
