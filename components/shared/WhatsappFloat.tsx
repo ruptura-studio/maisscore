@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { FaWhatsapp } from 'react-icons/fa'
-import { WHATSAPP_GERAL } from '@/lib/config'
+import { WHATSAPP_GERAL } from '@/lib/whatsapp'
 
 export function WhatsappFloat() {
   const [faded, setFaded] = useState(false)

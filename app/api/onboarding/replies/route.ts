@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/db'
-import { getOnboardingWebhookToken } from '@/lib/config'
+import { getOnboardingWebhookToken } from '@/lib/onboarding-auth'
 
 type AttachmentInput = {
   itemKey?: string
