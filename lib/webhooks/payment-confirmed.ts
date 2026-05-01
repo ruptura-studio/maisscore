@@ -14,6 +14,118 @@ type PaymentWebhookDeps = {
   logger?: Pick<Console, 'warn' | 'error'>
 }
 
+type ClaimResult =
+  | { status: 'ignored'; reason: string }
+  | { status: 'deduplicated' }
+  | { status: 'error'; reason: string }
+  | {
+      status: 'claimed'
+      payment: any
+      acquisition: string
+      existingOnboardingDispatch: boolean
+      existingCrmSyncDispatch: boolean
+    }
+
+async function writeLeadEvent(prisma: any, logger: Pick<Console, 'warn' | 'error'>, data: any, label: string) {
+  try {
+    await prisma.leadEvent.create({ data })
+  } catch (error) {
+    logger.error?.(`[webhook/payment] failed to persist ${label} leadEvent:`, error)
+  }
+}
+
+async function dispatchWebhook(
+  prisma: any,
+  fetchImpl: typeof fetch,
+  logger: Pick<Console, 'warn' | 'error'>,
+  params: {
+    url: string
+    payload: any
+    successType: string
+    failureType: string
+    leadId: string
+    orderId: string
+    asaasPaymentId: string
+    event: string
+    now: () => Date
+    label: string
+  },
+) {
+  const { url, payload, successType, failureType, leadId, orderId, asaasPaymentId, event, now, label } = params
+
+  try {
+    const response = await fetchImpl(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+
+    if (!response.ok) {
+      const responseBody = await response.text().catch(() => '')
+      logger.warn?.(`[webhook/payment] ${label} webhook returned non-2xx:`, {
+        url,
+        status: response.status,
+        body: responseBody,
+      })
+      await writeLeadEvent(
+        prisma,
+        logger,
+        {
+          leadId,
+          type: failureType,
+          value: JSON.stringify({
+            asaasPaymentId,
+            orderId,
+            event,
+            url,
+            status: response.status,
+            body: responseBody,
+            failedAt: now().toISOString(),
+          }),
+        },
+        `${label} failure`,
+      )
+      return
+    }
+
+    await writeLeadEvent(
+      prisma,
+      logger,
+      {
+        leadId,
+        type: successType,
+        value: JSON.stringify({
+          asaasPaymentId,
+          orderId,
+          event,
+          url,
+          dispatchedAt: now().toISOString(),
+        }),
+      },
+      `${label} success`,
+    )
+  } catch (error) {
+    logger.error?.(`[webhook/payment] ${label} webhook error:`, error)
+    await writeLeadEvent(
+      prisma,
+      logger,
+      {
+        leadId,
+        type: failureType,
+        value: JSON.stringify({
+          asaasPaymentId,
+          orderId,
+          event,
+          url,
+          error: String(error),
+          failedAt: now().toISOString(),
+        }),
+      },
+      `${label} failure`,
+    )
+  }
+}
+
 function buildPaymentConfirmedPayload(payment: any, acquisition: string, confirmedAt: Date) {
   return {
     event: 'payment_confirmed',
@@ -159,7 +271,7 @@ export async function handlePaymentConfirmedWebhook(
     env.N8N_WEBHOOK_CRM_SYNC?.trim() ||
     'https://auto.maisscore.com.br/webhook/crm-entrada-sincronizacao'
 
-  return await prisma.$transaction(async (tx: any) => {
+  const claimResult = await prisma.$transaction(async (tx: any): Promise<ClaimResult> => {
     await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${lockKey}))`
 
     const payment = await tx.payment.findUnique({
@@ -178,7 +290,12 @@ export async function handlePaymentConfirmedWebhook(
 
     if (!payment) {
       logger.warn?.('[webhook/payment] asaasId not found:', asaasPayment.id)
-      return Response.json({ received: true, ignored: true, reason: 'payment_not_found' })
+      return { status: 'ignored', reason: 'payment_not_found' }
+    }
+
+    if (payment.webhookProcessedAt) {
+      logger.warn?.('[webhook/payment] duplicate confirmation ignored before claim:', asaasPayment.id)
+      return { status: 'deduplicated' }
     }
 
     const processedMarker = await tx.payment.updateMany({
@@ -195,7 +312,17 @@ export async function handlePaymentConfirmedWebhook(
 
     if (processedMarker.count === 0) {
       logger.warn?.('[webhook/payment] duplicate confirmation ignored:', asaasPayment.id)
-      return Response.json({ received: true, deduplicated: true })
+      return { status: 'deduplicated' }
+    }
+
+    const claimedPayment = await tx.payment.findUnique({
+      where: { id: payment.id },
+      select: { webhookProcessedAt: true },
+    })
+
+    if (!claimedPayment?.webhookProcessedAt) {
+      logger.error?.('[webhook/payment] claim marker not persisted after update:', asaasPayment.id)
+      return { status: 'error', reason: 'claim_not_persisted' }
     }
 
     const existingOnboardingDispatch = await tx.leadEvent.findFirst({
@@ -215,7 +342,7 @@ export async function handlePaymentConfirmedWebhook(
     })
 
     if (existingOnboardingDispatch && existingCrmSyncDispatch) {
-      return Response.json({ received: true, deduplicated: true })
+      return { status: 'deduplicated' }
     }
 
     const existingPaymentEvent = await tx.leadEvent.findFirst({
@@ -275,136 +402,65 @@ export async function handlePaymentConfirmedWebhook(
       })
     }
 
-    const paymentConfirmedPayload = buildPaymentConfirmedPayload(payment, acquisition, confirmedAt)
-
-    if (n8nWebhookUrl && !existingOnboardingDispatch) {
-      try {
-        const response = await fetchImpl(n8nWebhookUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(paymentConfirmedPayload),
-        })
-
-        if (!response.ok) {
-          const responseBody = await response.text().catch(() => '')
-          logger.warn?.('[webhook/payment] n8n webhook returned non-2xx:', {
-            url: n8nWebhookUrl,
-            status: response.status,
-            body: responseBody,
-          })
-          await tx.leadEvent.create({
-            data: {
-              leadId: payment.order.leadId,
-              type: 'onboarding_webhook_failed',
-              value: JSON.stringify({
-                asaasPaymentId: payment.asaasId,
-                orderId: payment.orderId,
-                event,
-                url: n8nWebhookUrl,
-                status: response.status,
-                body: responseBody,
-                failedAt: now().toISOString(),
-              }),
-            },
-          })
-        } else {
-          await tx.leadEvent.create({
-            data: {
-              leadId: payment.order.leadId,
-              type: 'onboarding_webhook_dispatched',
-              value: JSON.stringify({
-                asaasPaymentId: payment.asaasId,
-                orderId: payment.orderId,
-                event,
-                url: n8nWebhookUrl,
-                dispatchedAt: now().toISOString(),
-              }),
-            },
-          })
-        }
-      } catch (error) {
-        logger.error?.('[webhook/payment] n8n webhook error:', error)
-        await tx.leadEvent.create({
-          data: {
-            leadId: payment.order.leadId,
-            type: 'onboarding_webhook_failed',
-            value: JSON.stringify({
-              asaasPaymentId: payment.asaasId,
-              orderId: payment.orderId,
-              event,
-              url: n8nWebhookUrl,
-              error: String(error),
-              failedAt: now().toISOString(),
-            }),
-          },
-        })
-      }
+    return {
+      status: 'claimed',
+      payment,
+      acquisition,
+      existingOnboardingDispatch: Boolean(existingOnboardingDispatch),
+      existingCrmSyncDispatch: Boolean(existingCrmSyncDispatch),
     }
-
-    if (crmSyncWebhookUrl && !existingCrmSyncDispatch) {
-      try {
-        const response = await fetchImpl(crmSyncWebhookUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(paymentConfirmedPayload),
-        })
-
-        if (!response.ok) {
-          const responseBody = await response.text().catch(() => '')
-          logger.warn?.('[webhook/payment] crm sync webhook returned non-2xx:', {
-            url: crmSyncWebhookUrl,
-            status: response.status,
-            body: responseBody,
-          })
-          await tx.leadEvent.create({
-            data: {
-              leadId: payment.order.leadId,
-              type: 'crm_sync_webhook_failed',
-              value: JSON.stringify({
-                asaasPaymentId: payment.asaasId,
-                orderId: payment.orderId,
-                event,
-                url: crmSyncWebhookUrl,
-                status: response.status,
-                body: responseBody,
-                failedAt: now().toISOString(),
-              }),
-            },
-          })
-        } else {
-          await tx.leadEvent.create({
-            data: {
-              leadId: payment.order.leadId,
-              type: 'crm_sync_webhook_dispatched',
-              value: JSON.stringify({
-                asaasPaymentId: payment.asaasId,
-                orderId: payment.orderId,
-                event,
-                url: crmSyncWebhookUrl,
-                dispatchedAt: now().toISOString(),
-              }),
-            },
-          })
-        }
-      } catch (error) {
-        logger.error?.('[webhook/payment] crm sync webhook error:', error)
-        await tx.leadEvent.create({
-          data: {
-            leadId: payment.order.leadId,
-            type: 'crm_sync_webhook_failed',
-            value: JSON.stringify({
-              asaasPaymentId: payment.asaasId,
-              orderId: payment.orderId,
-              event,
-              url: crmSyncWebhookUrl,
-              error: String(error),
-              failedAt: now().toISOString(),
-            }),
-          },
-        })
-      }
-    }
-
-    return Response.json({ received: true })
   })
+
+  if (claimResult.status === 'ignored') {
+    return Response.json({ received: true, ignored: true, reason: claimResult.reason })
+  }
+
+  if (claimResult.status === 'deduplicated') {
+    return Response.json({ received: true, deduplicated: true })
+  }
+
+  if (claimResult.status === 'error') {
+    return Response.json(
+      { received: true, error: claimResult.reason },
+      { status: 500 },
+    )
+  }
+
+  const paymentConfirmedPayload = buildPaymentConfirmedPayload(
+    claimResult.payment,
+    claimResult.acquisition,
+    confirmedAt,
+  )
+
+  if (n8nWebhookUrl && !claimResult.existingOnboardingDispatch) {
+    await dispatchWebhook(prisma, fetchImpl, logger, {
+      url: n8nWebhookUrl,
+      payload: paymentConfirmedPayload,
+      successType: 'onboarding_webhook_dispatched',
+      failureType: 'onboarding_webhook_failed',
+      leadId: claimResult.payment.order.leadId,
+      orderId: claimResult.payment.orderId,
+      asaasPaymentId: claimResult.payment.asaasId,
+      event,
+      now,
+      label: 'n8n',
+    })
+  }
+
+  if (crmSyncWebhookUrl && !claimResult.existingCrmSyncDispatch) {
+    await dispatchWebhook(prisma, fetchImpl, logger, {
+      url: crmSyncWebhookUrl,
+      payload: paymentConfirmedPayload,
+      successType: 'crm_sync_webhook_dispatched',
+      failureType: 'crm_sync_webhook_failed',
+      leadId: claimResult.payment.order.leadId,
+      orderId: claimResult.payment.orderId,
+      asaasPaymentId: claimResult.payment.asaasId,
+      event,
+      now,
+      label: 'crm sync',
+    })
+  }
+
+  return Response.json({ received: true })
 }

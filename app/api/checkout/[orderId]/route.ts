@@ -31,6 +31,20 @@ export async function GET(
 
     const { payment, product } = order
 
+    if (payment.webhookProcessedAt) {
+      return Response.json({
+        success: true,
+        data: {
+          orderId: order.id,
+          status: 'confirmed',
+          method: payment.method,
+          amount: payment.amount,
+          productName: product.name,
+          phone: order.lead.phone,
+        },
+      })
+    }
+
     // Se já confirmado, retorna sem buscar no Asaas
     if (payment.status === 'confirmed') {
       return Response.json({
