@@ -4,6 +4,14 @@ import { checkoutSchema } from '@/lib/validations/checkout'
 import { findOrCreateCustomer, createPayment, getPixQrCode } from '@/lib/asaas'
 import { totalWithInstallmentFee } from '@/lib/installment-fees'
 
+function getClientIp(req: NextRequest): string {
+  return (
+    req.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
+    req.headers.get('x-real-ip') ||
+    '127.0.0.1'
+  )
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
@@ -24,10 +32,16 @@ export async function POST(req: NextRequest) {
       document,
       documentType,
       razaoSocial,
+      birthDate,
+      addressStreet,
+      addressNeighborhood,
+      addressCity,
+      addressState,
+      addressZip,
+      addressComplement,
       productSlug,
       paymentMethod,
       installments,
-      remoteIp,
       creditCard,
       cardHolderDiffers,
       cardHolderInfo,
@@ -41,6 +55,8 @@ export async function POST(req: NextRequest) {
     if (!product || !product.active) {
       return Response.json({ success: false, error: 'Produto não encontrado.' }, { status: 404 })
     }
+
+    const remoteIp = getClientIp(req)
 
     // 3. Upsert lead
     const leadType = documentType === 'CNPJ' ? 'cnpj' : 'cpf'
@@ -57,6 +73,14 @@ export async function POST(req: NextRequest) {
         companyName: razaoSocial,
         leadType,
         checkoutStep: paymentMethod === 'PIX' ? 2 : 3,
+        birthDate: birthDate ? new Date(birthDate) : undefined,
+        addressStreet,
+        addressNumber,
+        addressComplement,
+        addressNeighborhood,
+        addressCity,
+        addressState,
+        addressZip,
       },
       update: {
         name,
@@ -67,8 +91,70 @@ export async function POST(req: NextRequest) {
         companyName: razaoSocial,
         leadType,
         checkoutStep: paymentMethod === 'PIX' ? 2 : 3,
+        birthDate: birthDate ? new Date(birthDate) : undefined,
+        addressStreet,
+        addressNumber,
+        addressComplement,
+        addressNeighborhood,
+        addressCity,
+        addressState,
+        addressZip,
       },
     })
+
+    const cutoff = new Date(Date.now() - 10 * 60 * 1000)
+    const existingOrder = await prisma.order.findFirst({
+      where: {
+        leadId: lead.id,
+        productId: product.id,
+        status: { in: ['pendente', 'pago'] },
+        createdAt: { gte: cutoff },
+      },
+      include: {
+        payment: true,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
+
+    if (existingOrder) {
+      const existingPayment = existingOrder.payment
+      const hasActiveCharge =
+        existingPayment && ['pending', 'confirmed'].includes(existingPayment.status)
+
+      let pixQrCode: string | null = null
+      let pixPayload: string | null = existingPayment?.pixKey ?? null
+      let pixExpiresAt: Date | null = existingPayment?.pixExpiresAt ?? null
+
+      if (
+        hasActiveCharge &&
+        existingPayment.method === 'PIX' &&
+        existingPayment.asaasId &&
+        (!pixPayload || !pixExpiresAt)
+      ) {
+        try {
+          const qr = await getPixQrCode(existingPayment.asaasId)
+          pixQrCode = qr.encodedImage
+          pixPayload = qr.payload
+          pixExpiresAt = new Date(qr.expirationDate)
+        } catch {
+          // Mantem retorno sem QR caso o Asaas falhe nesta leitura.
+        }
+      }
+
+      return Response.json({
+        success: true,
+        data: {
+          orderId: existingOrder.id,
+          method: (existingPayment?.method ?? paymentMethod) as 'PIX' | 'CREDIT_CARD',
+          pixQrCode,
+          pixPayload,
+          pixExpiresAt,
+          invoiceUrl: null,
+        },
+      })
+    }
 
     // 4. Criar order
     const order = await prisma.order.create({
@@ -107,7 +193,7 @@ export async function POST(req: NextRequest) {
       billingType: paymentMethod,
       value: valueInReais,
       description: product.name,
-      externalReference: order.id,
+      externalReference: `maisscore:${order.id}`,
       installmentCount: installments,
       remoteIp,
       ...(paymentMethod === 'CREDIT_CARD' && creditCard
@@ -118,13 +204,13 @@ export async function POST(req: NextRequest) {
               email,
               cpfCnpj: holderCpfCnpj,
               phone: holderPhone,
-              postalCode: postalCode ?? '',
+              postalCode: postalCode ?? addressZip ?? '',
               addressNumber: addressNumber ?? '',
-              complement,
+              complement: complement ?? addressComplement,
             },
           }
         : {}),
-    })
+      })
 
     // 6. Para PIX, buscar QR code
     let pixQrCode: string | null = null

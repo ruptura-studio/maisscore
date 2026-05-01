@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/db'
 import { getPayment, getPixQrCode } from '@/lib/asaas'
+import { handlePaymentConfirmedWebhook } from '@/lib/webhooks/payment-confirmed'
 
 async function fireClientWebhook(payload: Record<string, unknown>) {
   const url = process.env.WEBHOOK_CLIENT_URL
@@ -53,29 +54,21 @@ export async function GET(
         asaasPayment.status === 'CONFIRMED' || asaasPayment.status === 'RECEIVED'
 
       if (asaasConfirmed && payment.status !== 'confirmed') {
-        await prisma.payment.update({
-          where: { id: payment.id },
-          data: { status: 'confirmed', confirmedAt: new Date() },
-        })
-        const updatedOrder = await prisma.order.update({
-          where: { id: order.id },
-          data: { status: 'pago' },
-          include: { lead: true, product: true },
-        })
-        await prisma.process.create({
-          data: { orderId: order.id, status: 'aguardando_inicio' },
-        })
-        await prisma.lead.update({
-          where: { id: updatedOrder.leadId },
-          data: { status: 'cliente' },
-        })
+        await handlePaymentConfirmedWebhook(
+          {
+            event: 'PAYMENT_CONFIRMED',
+            payment: { id: payment.asaasId },
+          },
+          process.env.ASAAS_WEBHOOK_TOKEN ?? null,
+          { prisma },
+        )
         fireClientWebhook({
           orderId: order.id,
-          leadId: updatedOrder.leadId,
-          name: updatedOrder.lead.name,
-          phone: updatedOrder.lead.phone,
-          email: updatedOrder.lead.email,
-          productSlug: updatedOrder.product.slug,
+          leadId: order.leadId,
+          name: order.lead.name,
+          phone: order.lead.phone,
+          email: order.lead.email,
+          productSlug: product.slug,
           method: payment.method,
           amount: payment.amount,
         })

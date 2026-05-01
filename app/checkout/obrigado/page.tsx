@@ -25,6 +25,12 @@ function formatCurrency(cents: number) {
   return (cents / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
+function formatPhone(value: string) {
+  const d = value.replace(/\D/g, '').slice(0, 11)
+  if (d.length <= 10) return d.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3').replace(/-$/, '')
+  return d.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3').replace(/-$/, '')
+}
+
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false)
 
@@ -148,7 +154,7 @@ function ObrigadoContent() {
               <p className="mt-2 text-sm text-foreground-alt">Nossa equipe já foi notificada.</p>
               <p className="mt-1 text-sm text-foreground-alt">
                 Você receberá todas as informações do processo pelo WhatsApp{' '}
-                {order.phone && <strong className="text-brand-navy">{order.phone}</strong>}
+                {order.phone && <strong className="text-brand-navy">{formatPhone(order.phone)}</strong>}
               </p>
             </div>
             <a href="/" className="btn-secondary w-full !rounded-md text-center">
