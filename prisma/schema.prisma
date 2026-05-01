@@ -113,6 +113,7 @@ model Payment {
   boletoExpiresAt DateTime? @map("boleto_expires_at") @db.Timestamptz
   remoteIp        String?   @map("remote_ip")
   confirmedAt     DateTime? @map("confirmed_at") @db.Timestamptz
+  webhookProcessedAt DateTime? @map("webhook_processed_at") @db.Timestamptz
   createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz
   order           Order     @relation(fields: [orderId], references: [id])

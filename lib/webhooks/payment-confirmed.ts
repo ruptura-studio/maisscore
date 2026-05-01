@@ -181,6 +181,23 @@ export async function handlePaymentConfirmedWebhook(
       return Response.json({ received: true, ignored: true, reason: 'payment_not_found' })
     }
 
+    const processedMarker = await tx.payment.updateMany({
+      where: {
+        id: payment.id,
+        webhookProcessedAt: null,
+      },
+      data: {
+        status: 'confirmed',
+        confirmedAt,
+        webhookProcessedAt: confirmedAt,
+      },
+    })
+
+    if (processedMarker.count === 0) {
+      logger.warn?.('[webhook/payment] duplicate confirmation ignored:', asaasPayment.id)
+      return Response.json({ received: true, deduplicated: true })
+    }
+
     const existingOnboardingDispatch = await tx.leadEvent.findFirst({
       where: {
         leadId: payment.order.leadId,
@@ -212,13 +229,6 @@ export async function handlePaymentConfirmedWebhook(
     const acquisition =
       payment.order.product?.slug ??
       (payment.order.documentType === 'CNPJ' ? 'limpa-nome-cnpj' : 'limpa-nome-cpf')
-
-    if (payment.status !== 'confirmed') {
-      await tx.payment.update({
-        where: { id: payment.id },
-        data: { status: 'confirmed', confirmedAt },
-      })
-    }
 
     await tx.order.update({
       where: { id: payment.orderId },
