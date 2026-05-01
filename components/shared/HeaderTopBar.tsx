@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import { FaWhatsapp, FaInstagram } from 'react-icons/fa'
-import { WHATSAPP_GERAL } from '@/lib/config'
+import { WHATSAPP_GERAL } from '@/lib/whatsapp'
 
 export function HeaderTopBar() {
   return (
