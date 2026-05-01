@@ -4,6 +4,7 @@ import { checkoutSchema } from '@/lib/validations/checkout'
 import { findOrCreateCustomer, createPayment, getPixQrCode } from '@/lib/asaas'
 import { totalWithInstallmentFee } from '@/lib/installment-fees'
 import { logIntegrationError } from '@/lib/integration-error'
+import { normalizeBrazilPhone } from '@/lib/phone'
 
 function getClientIp(req: NextRequest): string {
   return (
@@ -72,6 +73,7 @@ export async function POST(req: NextRequest) {
       addressNumber,
       complement,
     } = parsed.data
+    const normalizedPhone = normalizeBrazilPhone(phone) ?? phone.replace(/\D/g, '')
 
     // 2. Buscar produto
     const product = await prisma.product.findUnique({ where: { slug: productSlug } })
@@ -84,10 +86,10 @@ export async function POST(req: NextRequest) {
     // 3. Upsert lead
     const leadType = documentType === 'CNPJ' ? 'cnpj' : 'cpf'
     const lead = await prisma.lead.upsert({
-      where: { phone },
+      where: { phone: normalizedPhone },
       create: {
         name,
-        phone,
+        phone: normalizedPhone,
         email,
         channel: 'checkout',
         status: 'em_atendimento',
@@ -200,7 +202,7 @@ export async function POST(req: NextRequest) {
         message: 'Não foi possível criar o pedido.',
         details: error,
         leadId: lead.id,
-        phone,
+        phone: normalizedPhone,
         path: '/api/checkout',
         method: 'POST',
         httpStatus: 500,
@@ -219,7 +221,7 @@ export async function POST(req: NextRequest) {
       customer = await findOrCreateCustomer({
         name,
         email,
-        phone,
+        phone: normalizedPhone,
         cpfCnpj: document,
         companyName: razaoSocial,
       })
@@ -232,7 +234,7 @@ export async function POST(req: NextRequest) {
         details: error,
         leadId: lead.id,
         orderId: order.id,
-        phone,
+        phone: normalizedPhone,
         path: '/api/checkout',
         method: 'POST',
         httpStatus: 502,
@@ -254,7 +256,9 @@ export async function POST(req: NextRequest) {
     // Resolve titular do cartão
     const holderName = cardHolderDiffers && cardHolderInfo ? cardHolderInfo.name : name
     const holderCpfCnpj = cardHolderDiffers && cardHolderInfo ? cardHolderInfo.cpfCnpj : document
-    const holderPhone = cardHolderDiffers && cardHolderInfo ? cardHolderInfo.phone : phone
+    const holderPhone = cardHolderDiffers && cardHolderInfo
+      ? (normalizeBrazilPhone(cardHolderInfo.phone) ?? cardHolderInfo.phone.replace(/\D/g, ''))
+      : normalizedPhone
 
     let payment
     try {
@@ -290,7 +294,7 @@ export async function POST(req: NextRequest) {
         details: error,
         leadId: lead.id,
         orderId: order.id,
-        phone,
+        phone: normalizedPhone,
         path: '/api/checkout',
         method: 'POST',
         httpStatus: 502,
@@ -323,7 +327,7 @@ export async function POST(req: NextRequest) {
           details: error,
           leadId: lead.id,
           orderId: order.id,
-          phone,
+          phone: normalizedPhone,
           path: '/api/checkout',
           method: 'POST',
           httpStatus: 502,
@@ -360,7 +364,7 @@ export async function POST(req: NextRequest) {
         details: error,
         leadId: lead.id,
         orderId: order.id,
-        phone,
+        phone: normalizedPhone,
         path: '/api/checkout',
         method: 'POST',
         httpStatus: 500,
@@ -382,7 +386,7 @@ export async function POST(req: NextRequest) {
           leadId: lead.id,
           orderId: order.id,
           name,
-          phone,
+          phone: normalizedPhone,
           email,
           leadType,
           companyName: razaoSocial,

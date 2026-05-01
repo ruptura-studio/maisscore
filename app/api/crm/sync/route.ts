@@ -1,9 +1,6 @@
 import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/db'
-
-function normalizePhone(value: string | undefined) {
-  return value ? value.replace(/\D/g, '') : null
-}
+import { normalizeBrazilPhone } from '@/lib/phone'
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,7 +16,7 @@ export async function POST(req: NextRequest) {
     const crmId = (body?.crmId ?? body?.contactId ?? body?.id) as string | undefined
     const leadId = body?.leadId as string | undefined
     const orderId = body?.orderId as string | undefined
-    const phone = normalizePhone(body?.phone as string | undefined)
+    const phone = normalizeBrazilPhone(body?.phone as string | undefined)
     const email = (body?.email as string | undefined)?.trim()?.toLowerCase()
 
     if (!crmId) {
@@ -45,7 +42,7 @@ export async function POST(req: NextRequest) {
 
     if (!lead && phone) {
       lead = await prisma.lead.findFirst({
-        where: { phone: { endsWith: phone.slice(-11) } },
+        where: { phone },
         orderBy: { updatedAt: 'desc' },
         select: { id: true, crmId: true, phone: true, email: true },
       })

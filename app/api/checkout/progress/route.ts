@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/db'
 import { checkoutProgressSchema } from '@/lib/validations/checkout'
+import { normalizeBrazilPhone } from '@/lib/phone'
 
 export async function POST(req: NextRequest) {
   try {
@@ -43,13 +44,14 @@ export async function POST(req: NextRequest) {
       return Response.json({ success: false, error: 'Telefone obrigatório.' }, { status: 400 })
     }
 
+    const normalizedPhone = normalizeBrazilPhone(phone) ?? phone.replace(/\D/g, '')
     const leadType = documentType === 'CNPJ' ? 'cnpj' : 'cpf'
 
     const lead = await prisma.lead.upsert({
-      where: { phone },
+      where: { phone: normalizedPhone },
       create: {
         name: name ?? '',
-        phone,
+        phone: normalizedPhone,
         email,
         channel: 'checkout',
         status: 'checkout_iniciado',

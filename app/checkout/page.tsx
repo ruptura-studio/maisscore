@@ -11,6 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { ButtonGroup } from '@/components/ui/button-group'
 import { Button } from '@/components/ui/button'
 import { Shield, Info, User, Building2 } from 'lucide-react'
+import { normalizeBrazilPhone } from '@/lib/phone'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -115,7 +116,7 @@ function formatCpfCnpj(value: string) {
 }
 
 function formatPhone(value: string) {
-  const d = value.replace(/\D/g, '').slice(0, 11)
+  const d = normalizeBrazilPhone(value)?.slice(0, 11) ?? ''
   if (d.length <= 10) return d.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3').replace(/-$/, '')
   return d.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3').replace(/-$/, '')
 }
@@ -386,7 +387,7 @@ function CheckoutContent() {
             JSON.stringify({
               name: name || null,
               email: email || null,
-              phone: phone.replace(/\D/g, '') || null,
+              phone: normalizeBrazilPhone(phone) ?? null,
               document: document.replace(/\D/g, '') || null,
               documentType: product?.documentType,
               product: product?.slug,
@@ -426,7 +427,7 @@ function CheckoutContent() {
     const e: Record<string, string> = {}
     if (form.name.trim().length < 2) e.name = 'Nome deve ter pelo menos 2 caracteres'
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'E-mail inválido'
-    if (form.phone.replace(/\D/g, '').length < 10) e.phone = 'Telefone inválido'
+    if ((normalizeBrazilPhone(form.phone) ?? '').length < 10) e.phone = 'Telefone inválido'
     const docDigits = form.document.replace(/\D/g, '')
     const expectedLen = selectedProduct === 'cpf' ? 11 : 14
     if (docDigits.length !== expectedLen) e.document = `${product?.documentLabel} inválido`
@@ -448,7 +449,7 @@ function CheckoutContent() {
       if (cardHolder.name.trim().length < 2) e.holderName = 'Nome do titular obrigatório'
       const holderDoc = cardHolder.cpfCnpj.replace(/\D/g, '')
       if (holderDoc.length !== 11 && holderDoc.length !== 14) e.holderCpfCnpj = 'CPF ou CNPJ inválido'
-      if (cardHolder.phone.replace(/\D/g, '').length < 10) e.holderPhone = 'Telefone inválido'
+      if ((normalizeBrazilPhone(cardHolder.phone) ?? '').length < 10) e.holderPhone = 'Telefone inválido'
     }
     return e
   }
@@ -470,7 +471,7 @@ function CheckoutContent() {
           step: 1,
           name: form.name.trim(),
           email: form.email.trim(),
-          phone: form.phone.replace(/\D/g, ''),
+          phone: normalizeBrazilPhone(form.phone) ?? '',
           document: form.document.replace(/\D/g, ''),
           documentType: product?.documentType,
           razaoSocial: form.companyName.trim() || undefined,
@@ -489,7 +490,7 @@ function CheckoutContent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           step: 2,
-          phone: form.phone.replace(/\D/g, ''),
+          phone: normalizeBrazilPhone(form.phone) ?? '',
           paymentMethod: 'CREDIT_CARD',
           productSlug: product?.slug,
           addressStreet: addressInfo?.logradouro || undefined,
@@ -527,7 +528,7 @@ function CheckoutContent() {
         body: JSON.stringify({
           name: form.name.trim(),
           email: form.email.trim(),
-          phone: form.phone.replace(/\D/g, ''),
+          phone: normalizeBrazilPhone(form.phone) ?? '',
           document: form.document.replace(/\D/g, ''),
           documentType: product?.documentType,
           razaoSocial: form.companyName.trim() || undefined,
@@ -560,7 +561,7 @@ function CheckoutContent() {
                       cardHolderInfo: {
                         name: cardHolder.name.trim(),
                         cpfCnpj: cardHolder.cpfCnpj.replace(/\D/g, ''),
-                        phone: cardHolder.phone.replace(/\D/g, ''),
+                        phone: normalizeBrazilPhone(cardHolder.phone) ?? '',
                       },
                     }
                   : {}),
@@ -599,7 +600,7 @@ function CheckoutContent() {
     !!selectedProduct &&
     form.name.trim().length >= 2 &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) &&
-    form.phone.replace(/\D/g, '').length >= 10 &&
+    (normalizeBrazilPhone(form.phone) ?? '').length >= 10 &&
     form.document.replace(/\D/g, '').length === (selectedProduct === 'cpf' ? 11 : 14) &&
     (selectedProduct !== 'cnpj' || form.companyName.trim().length > 0)
 
@@ -614,7 +615,7 @@ function CheckoutContent() {
     (!showCardHolderFields || (
       cardHolder.name.trim().length >= 2 &&
       (cardHolder.cpfCnpj.replace(/\D/g, '').length === 11 || cardHolder.cpfCnpj.replace(/\D/g, '').length === 14) &&
-      cardHolder.phone.replace(/\D/g, '').length >= 10
+      (normalizeBrazilPhone(cardHolder.phone) ?? '').length >= 10
     ))
 
   return (
