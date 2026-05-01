@@ -4,6 +4,14 @@ import { checkoutSchema } from '@/lib/validations/checkout'
 import { findOrCreateCustomer, createPayment, getPixQrCode } from '@/lib/asaas'
 import { totalWithInstallmentFee } from '@/lib/installment-fees'
 
+function getClientIp(req: NextRequest): string {
+  return (
+    req.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
+    req.headers.get('x-real-ip') ||
+    '127.0.0.1'
+  )
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
@@ -34,7 +42,6 @@ export async function POST(req: NextRequest) {
       productSlug,
       paymentMethod,
       installments,
-      remoteIp,
       creditCard,
       cardHolderDiffers,
       cardHolderInfo,
@@ -48,6 +55,8 @@ export async function POST(req: NextRequest) {
     if (!product || !product.active) {
       return Response.json({ success: false, error: 'Produto não encontrado.' }, { status: 404 })
     }
+
+    const remoteIp = getClientIp(req)
 
     // 3. Upsert lead
     const leadType = documentType === 'CNPJ' ? 'cnpj' : 'cpf'

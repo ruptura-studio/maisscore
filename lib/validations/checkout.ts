@@ -48,7 +48,6 @@ export const checkoutSchema = z
     productSlug: z.enum(['limpa-nome-cpf', 'limpa-nome-cnpj']),
     paymentMethod: z.enum(['PIX', 'CREDIT_CARD']),
     installments: z.number().int().min(1).max(3).optional().default(1),
-    remoteIp: z.string().optional(),
     // Endereço — apenas CEP + número para CREDIT_CARD (Asaas não exige logradouro/bairro/cidade)
     postalCode: z.string().optional(),
     complement: z.string().optional(),
