@@ -59,6 +59,8 @@ model Lead {
   isClient           Boolean   @default(false) @map("is_client") // se tem compra confirmada
   acquisition        String?                                // produto adquirido (ex: limpa_cpf, limpa_cnpj)
   acquisitionValue   Int?      @map("acquisition_value")   // valor pago em centavos
+  onboardingToken         String?   @unique @map("onboarding_token")
+  onboardingCompletedAt   DateTime? @map("onboarding_completed_at") @db.Timestamptz
   crmId              String?   @map("crm_id")
   stage              String?   @default("lead") @map("stage")
   pendingAction      String?   @map("pending_action")

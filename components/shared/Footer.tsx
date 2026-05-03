@@ -22,8 +22,10 @@ export function Footer() {
   const pathname = usePathname()
   const isDS = pathname.startsWith('/designsystem')
   const isCheckout = pathname.startsWith('/checkout')
+  const isOnboarding = pathname.startsWith('/onboarding')
+  const isMeuProcesso = pathname.startsWith('/meuprocesso')
 
-  if (isDS || isCheckout) return null
+  if (isDS || isCheckout || isOnboarding || isMeuProcesso) return null
 
   return (
     <footer>

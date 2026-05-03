@@ -46,6 +46,12 @@ export async function POST(req: NextRequest) {
 
     const normalizedPhone = normalizeBrazilPhone(phone) ?? phone.replace(/\D/g, '')
     const leadType = documentType === 'CNPJ' ? 'cnpj' : 'cpf'
+    const fallbackAcquisition = documentType === 'CNPJ' ? 'CNPJ' : 'CPF'
+    const existingLead = await prisma.lead.findUnique({
+      where: { phone: normalizedPhone },
+      select: { acquisition: true },
+    })
+    const acquisition = existingLead?.acquisition?.trim() || fallbackAcquisition
 
     const lead = await prisma.lead.upsert({
       where: { phone: normalizedPhone },
@@ -53,6 +59,7 @@ export async function POST(req: NextRequest) {
         name: name ?? '',
         phone: normalizedPhone,
         email,
+        acquisition,
         channel: 'checkout',
         status: 'checkout_iniciado',
         companyName: razaoSocial,
@@ -62,6 +69,7 @@ export async function POST(req: NextRequest) {
       update: {
         ...(name ? { name } : {}),
         ...(email ? { email } : {}),
+        acquisition,
         ...(razaoSocial !== undefined ? { companyName: razaoSocial } : {}),
         ...(documentType ? { leadType } : {}),
         ...(birthDate ? { birthDate: new Date(birthDate) } : {}),

@@ -11,9 +11,11 @@ export function WhatsappFloat() {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const pathname = usePathname()
   const isCheckout = pathname.startsWith('/checkout')
+  const isMeuProcesso = pathname.startsWith('/meuprocesso')
+  const isOnboarding = pathname.startsWith('/onboarding')
 
   useEffect(() => {
-    if (isCheckout) return
+    if (isCheckout || isMeuProcesso || isOnboarding) return
 
     function onScroll() {
       if (!faded) setFaded(true)
@@ -34,7 +36,7 @@ export function WhatsappFloat() {
     }
   }, [faded, isCheckout])
 
-  if (isCheckout) return null
+  if (isCheckout || isMeuProcesso || isOnboarding) return null
 
   return (
     <>

@@ -16,7 +16,7 @@ function createMockPrisma() {
     id: 'payment-1',
     asaasId: 'pay_123',
     method: 'CREDIT_CARD',
-    amount: 500,
+    amount: 69700,
     confirmedAt: null as Date | null,
     webhookProcessedAt: null as Date | null,
     orderId: 'order-1',
@@ -26,7 +26,7 @@ function createMockPrisma() {
       productId: 'product-1',
       document: '00.000.000/0001-00',
       documentType: 'CNPJ',
-      pricePaid: 500,
+      pricePaid: 69700,
       lead: {
         id: 'lead-1',
         name: 'Empresa Teste Ltda',
@@ -49,11 +49,11 @@ function createMockPrisma() {
         stage: 'pagamento',
       },
       product: {
-        id: 'product-1',
-        slug: 'limpa-nome-cnpj',
-        name: 'Limpar CNPJ',
-        price: 500,
-      },
+      id: 'product-1',
+      slug: 'limpa-nome-cnpj',
+      name: 'Limpa Nome CNPJ',
+      price: 69700,
+    },
       process: null,
       onboardingDocuments: [],
     },
@@ -89,13 +89,18 @@ function createMockPrisma() {
       },
     },
     order: {
-      update: async () => ({})
+      update: async () => ({}),
     },
     process: {
-      upsert: async () => ({})
+      upsert: async () => ({}),
     },
     lead: {
-      update: async () => ({})
+      findUnique: async ({ select }: any) => {
+        const lead = payment.order.lead
+        if (!select) return clone(lead)
+        return Object.fromEntries(Object.keys(select).map((key) => [key, (lead as any)[key]]))
+      },
+      update: async () => ({}),
     },
     $transaction: async (fn: any) => fn({
       $executeRaw: async () => {},

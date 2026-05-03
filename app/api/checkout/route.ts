@@ -85,12 +85,19 @@ export async function POST(req: NextRequest) {
 
     // 3. Upsert lead
     const leadType = documentType === 'CNPJ' ? 'cnpj' : 'cpf'
+    const fallbackAcquisition = documentType === 'CNPJ' ? 'CNPJ' : 'CPF'
+    const existingLead = await prisma.lead.findUnique({
+      where: { phone: normalizedPhone },
+      select: { acquisition: true },
+    })
+    const acquisition = existingLead?.acquisition?.trim() || fallbackAcquisition
     const lead = await prisma.lead.upsert({
       where: { phone: normalizedPhone },
       create: {
         name,
         phone: normalizedPhone,
         email,
+        acquisition,
         channel: 'checkout',
         status: 'em_atendimento',
         stage: 'quente',
@@ -110,6 +117,7 @@ export async function POST(req: NextRequest) {
       update: {
         name,
         email,
+        acquisition,
         status: 'em_atendimento',
         stage: 'quente',
         lastInteractionAt: new Date(),

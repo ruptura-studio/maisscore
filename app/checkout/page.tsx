@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { totalWithInstallmentFee, installmentValueCents } from '@/lib/installment-fees'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
@@ -298,6 +298,92 @@ function TermsBlock({
         sections={PRIVACIDADE_SECTIONS}
       />
     </div>
+  )
+}
+
+function AdvanceButton({
+  disabled,
+  loading,
+  onClick,
+  wrapperClassName,
+  className,
+  children,
+}: {
+  disabled: boolean
+  loading?: boolean
+  onClick: () => void
+  wrapperClassName?: string
+  className: string
+  children: React.ReactNode
+}) {
+  const [tooltipOpen, setTooltipOpen] = useState(false)
+  const tooltipTimerRef = useRef<number | null>(null)
+  const showTooltip = disabled && !loading
+
+  useEffect(() => {
+    return () => {
+      if (tooltipTimerRef.current !== null) {
+        window.clearTimeout(tooltipTimerRef.current)
+      }
+    }
+  }, [])
+
+  function openTooltip() {
+    if (!showTooltip) return
+    if (tooltipTimerRef.current !== null) {
+      window.clearTimeout(tooltipTimerRef.current)
+      tooltipTimerRef.current = null
+    }
+    setTooltipOpen(true)
+  }
+
+  function closeTooltip() {
+    if (!showTooltip) return
+    if (tooltipTimerRef.current !== null) {
+      window.clearTimeout(tooltipTimerRef.current)
+      tooltipTimerRef.current = null
+    }
+    setTooltipOpen(false)
+  }
+
+  function flashTooltip() {
+    if (!showTooltip) return
+    if (tooltipTimerRef.current !== null) {
+      window.clearTimeout(tooltipTimerRef.current)
+    }
+    setTooltipOpen(true)
+    tooltipTimerRef.current = window.setTimeout(() => {
+      setTooltipOpen(false)
+      tooltipTimerRef.current = null
+    }, 1800)
+  }
+
+  if (showTooltip) {
+    return (
+      <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
+        <TooltipTrigger asChild>
+          <span
+            className={`block cursor-not-allowed ${wrapperClassName ?? ''}`}
+            onMouseEnter={openTooltip}
+            onMouseLeave={closeTooltip}
+            onClick={flashTooltip}
+          >
+            <button type="button" disabled className={`${className} pointer-events-none`}>
+              {children}
+            </button>
+          </span>
+        </TooltipTrigger>
+        <TooltipContent side="top" align="center" className="max-w-xs text-center">
+          Todos os campos devem ser preenchidos antes de continuar.
+        </TooltipContent>
+      </Tooltip>
+    )
+  }
+
+  return (
+    <button type="button" onClick={onClick} disabled={disabled || loading} className={className}>
+      {children}
+    </button>
   )
 }
 
@@ -736,13 +822,14 @@ function CheckoutContent() {
                 </div>
               </div>}
 
-              <button
-                type="button"
+              <AdvanceButton
+                disabled={!canAdvanceStep1}
                 onClick={goNext}
-                className="btn-secondary w-full !rounded-md h-11"
+                wrapperClassName="w-full"
+                className="btn-secondary w-full !rounded-md h-11 disabled:opacity-50"
               >
                 Avançar
-              </button>
+              </AdvanceButton>
             </div>
           )}
 
@@ -785,13 +872,11 @@ function CheckoutContent() {
                 </p>
               )}
 
-              <button
-                type="button"
-                onClick={() => {
-                  if (!allPixTerms) { setShowValidationAlert(true); return }
-                  handleSubmit()
-                }}
-                disabled={loading}
+              <AdvanceButton
+                disabled={!allPixTerms}
+                loading={loading}
+                onClick={handleSubmit}
+                wrapperClassName="w-full"
                 className="btn-secondary w-full !rounded-md h-11 disabled:opacity-50"
               >
                 {loading ? (
@@ -802,7 +887,7 @@ function CheckoutContent() {
                 ) : (
                   'Avançar'
                 )}
-              </button>
+              </AdvanceButton>
             </div>
           )}
 
@@ -1024,9 +1109,15 @@ function CheckoutContent() {
                 >
                   Voltar
                 </Button>
-                <button type="button" onClick={goNext} className="btn-secondary flex-1 !rounded-md h-11">
+                <AdvanceButton
+                  disabled={!canAdvanceStep2Card || !allCardTerms}
+                  loading={loading}
+                  onClick={goNext}
+                  wrapperClassName="flex-1"
+                  className="btn-secondary flex-1 !rounded-md h-11 disabled:opacity-50"
+                >
                   Avançar
-                </button>
+                </AdvanceButton>
               </div>
             </div>
           )}
@@ -1145,7 +1236,7 @@ function CheckoutContent() {
           <AlertDialogHeader>
             <AlertDialogTitle>Campos incompletos</AlertDialogTitle>
             <AlertDialogDescription>
-              Antes de prosseguir, preencha corretamente todos os campos.
+              Todos os campos devem ser preenchidos antes de continuar.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -1,3 +1,5 @@
+import { randomBytes } from 'crypto'
+
 const CONFIRMED_EVENTS = ['PAYMENT_CONFIRMED', 'PAYMENT_RECEIVED']
 
 type PaymentWebhookEnv = {
@@ -18,10 +20,12 @@ type ClaimResult =
   | { status: 'ignored'; reason: string }
   | { status: 'deduplicated' }
   | { status: 'error'; reason: string }
-  | {
+    | {
       status: 'claimed'
       payment: any
       acquisition: string
+      paymentConfirmedAt: Date
+      onboardingToken: string
       existingOnboardingDispatch: boolean
       existingCrmSyncDispatch: boolean
     }
@@ -126,9 +130,12 @@ async function dispatchWebhook(
   }
 }
 
-function buildPaymentConfirmedPayload(payment: any, acquisition: string, confirmedAt: Date) {
+function buildPaymentConfirmedPayload(payment: any, acquisition: string, confirmedAt: Date, onboardingToken: string) {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'https://maisscore.com.br'
+  const onboardingUrl = `${appUrl}/onboarding/${onboardingToken}`
   return {
     event: 'payment_confirmed',
+    onboardingUrl,
     supabaseLeadId: payment.order.leadId,
     orderId: payment.orderId,
     leadId: payment.order.leadId,
@@ -231,6 +238,18 @@ function buildPaymentConfirmedPayload(payment: any, acquisition: string, confirm
   }
 }
 
+function parseAsaasConfirmedAt(payment: any, fallback: Date) {
+  const rawConfirmedDate = payment?.confirmedDate ?? payment?.paymentDate ?? payment?.clientPaymentDate ?? null
+  if (typeof rawConfirmedDate === 'string' && rawConfirmedDate.trim()) {
+    const parsed = new Date(rawConfirmedDate)
+    if (!Number.isNaN(parsed.getTime())) {
+      return parsed
+    }
+  }
+
+  return fallback
+}
+
 export async function handlePaymentConfirmedWebhook(
   body: any,
   token: string | null,
@@ -262,7 +281,7 @@ export async function handlePaymentConfirmedWebhook(
     return Response.json({ received: true, ignored: true, reason: 'externalReference_not_maisscore' })
   }
 
-  const confirmedAt = now()
+  const processedAt = now()
   const lockKey = `payment-confirmed:${asaasPayment.id}`
   const n8nWebhookUrl =
     env.N8N_WEBHOOK_PAYMENT_CONFIRMED?.trim() ||
@@ -298,6 +317,8 @@ export async function handlePaymentConfirmedWebhook(
       return { status: 'deduplicated' }
     }
 
+    const paymentConfirmedAt = parseAsaasConfirmedAt(asaasPayment, processedAt)
+
     const processedMarker = await tx.payment.updateMany({
       where: {
         id: payment.id,
@@ -305,8 +326,8 @@ export async function handlePaymentConfirmedWebhook(
       },
       data: {
         status: 'confirmed',
-        confirmedAt,
-        webhookProcessedAt: confirmedAt,
+        confirmedAt: paymentConfirmedAt,
+        webhookProcessedAt: processedAt,
       },
     })
 
@@ -353,9 +374,16 @@ export async function handlePaymentConfirmedWebhook(
       },
     })
 
-    const acquisition =
-      payment.order.product?.slug ??
-      (payment.order.documentType === 'CNPJ' ? 'limpa-nome-cnpj' : 'limpa-nome-cpf')
+    const existingPaymentAuditEvent = await tx.leadEvent.findFirst({
+      where: {
+        leadId: payment.order.leadId,
+        type: 'pagamento_audit_linked',
+        value: { contains: payment.asaasId },
+      },
+    })
+
+    const acquisitionFallback = payment.order.documentType === 'CNPJ' ? 'CNPJ' : 'CPF'
+    const acquisition = payment.order.lead.acquisition?.trim() || acquisitionFallback
 
     await tx.order.update({
       where: { id: payment.orderId },
@@ -373,6 +401,12 @@ export async function handlePaymentConfirmedWebhook(
       },
     })
 
+    const existingLead = await tx.lead.findUnique({
+      where: { id: payment.order.leadId },
+      select: { onboardingToken: true, acquisition: true },
+    })
+    const onboardingToken = existingLead?.onboardingToken ?? randomBytes(32).toString('hex')
+
     await tx.lead.update({
       where: { id: payment.order.leadId },
       data: {
@@ -381,8 +415,9 @@ export async function handlePaymentConfirmedWebhook(
         stage: 'pagamento',
         acquisition,
         acquisitionValue: payment.amount,
-        convertedAt: confirmedAt,
-        lastInteractionAt: confirmedAt,
+        convertedAt: paymentConfirmedAt,
+        lastInteractionAt: processedAt,
+        onboardingToken,
       },
     })
 
@@ -396,7 +431,33 @@ export async function handlePaymentConfirmedWebhook(
             orderId: payment.orderId,
             amount: payment.amount,
             method: payment.method,
-            confirmedAt: confirmedAt.toISOString(),
+            confirmedAt: paymentConfirmedAt.toISOString(),
+          }),
+        },
+      })
+    }
+
+    if (!existingPaymentAuditEvent) {
+      await tx.leadEvent.create({
+        data: {
+          leadId: payment.order.leadId,
+          type: 'pagamento_audit_linked',
+          value: JSON.stringify({
+            asaasWebhookEventId: body?.id ?? null,
+            asaasEvent: body?.event ?? null,
+            asaasPaymentId: payment.asaasId,
+            orderId: payment.orderId,
+            leadId: payment.order.leadId,
+            externalReference: asaasPayment.externalReference ?? null,
+            amount: payment.amount,
+            method: payment.method,
+            paymentStatus: asaasPayment.status ?? null,
+            confirmedDate: paymentConfirmedAt.toISOString(),
+            paymentDate: asaasPayment.paymentDate ?? null,
+            clientPaymentDate: asaasPayment.clientPaymentDate ?? null,
+            invoiceUrl: asaasPayment.invoiceUrl ?? null,
+            transactionReceiptUrl: asaasPayment.transactionReceiptUrl ?? null,
+            processedAt: processedAt.toISOString(),
           }),
         },
       })
@@ -406,6 +467,8 @@ export async function handlePaymentConfirmedWebhook(
       status: 'claimed',
       payment,
       acquisition,
+      paymentConfirmedAt,
+      onboardingToken,
       existingOnboardingDispatch: Boolean(existingOnboardingDispatch),
       existingCrmSyncDispatch: Boolean(existingCrmSyncDispatch),
     }
@@ -429,7 +492,8 @@ export async function handlePaymentConfirmedWebhook(
   const paymentConfirmedPayload = buildPaymentConfirmedPayload(
     claimResult.payment,
     claimResult.acquisition,
-    confirmedAt,
+    claimResult.paymentConfirmedAt,
+    claimResult.onboardingToken,
   )
 
   if (n8nWebhookUrl && !claimResult.existingOnboardingDispatch) {

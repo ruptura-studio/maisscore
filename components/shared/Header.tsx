@@ -9,6 +9,7 @@ import { WHATSAPP_GERAL } from '@/lib/whatsapp'
 import Image from 'next/image'
 import { HeaderTopBar } from '@/components/shared/HeaderTopBar'
 import { HeaderSimple } from '@/components/shared/HeaderSimple'
+import { HeaderCheckout } from '@/components/shared/HeaderCheckout'
 
 const navLinks = [
   { label: 'Como Funciona', href: '#como-funciona' },
@@ -23,29 +24,17 @@ export function Header() {
   const isDS = pathname.startsWith('/designsystem')
   const isLegal = pathname === '/privacidade' || pathname === '/termos' || pathname === '/reembolso'
   const isCheckout = pathname.startsWith('/checkout')
+  const isOnboarding = pathname.startsWith('/onboarding')
+  const isMeuProcesso = pathname.startsWith('/meuprocesso')
   const isBlog = pathname.startsWith('/blog')
-  const hideNav = isDS || isLegal || isCheckout
+  const hideNav = isDS || isLegal || isCheckout || isMeuProcesso
 
   if (isBlog) {
     return <HeaderSimple />
   }
 
-  if (isCheckout) {
-    return (
-      <header className={cn('w-full bg-white border-b border-brand-border', isDS && 'm-0')}>
-        <div className={cn('container-ms flex items-center justify-center py-4 lg:py-5', isDS && 'px-4')}>
-          <a href="/" className="flex items-center justify-center">
-            <Image
-              src="/img/logo-mais-score-black.svg"
-              alt="Mais Score"
-              width={144}
-              height={38}
-              priority
-            />
-          </a>
-        </div>
-      </header>
-    )
+  if (isCheckout || isOnboarding || isMeuProcesso) {
+    return <HeaderCheckout />
   }
 
   return (
