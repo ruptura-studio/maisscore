@@ -11,7 +11,6 @@ const dmSans = DM_Sans({
 })
 import { Header } from '@/components/shared/Header'
 import { Footer } from '@/components/shared/Footer'
-import { WhatsappFloat } from '@/components/shared/WhatsappFloat'
 import { GridOverlay } from '@/components/dev/GridOverlay'
 
 export const viewport = {
@@ -67,7 +66,6 @@ export default function RootLayout({
         <Header />
         <main>{children}</main>
         <Footer />
-        <WhatsappFloat />
         {process.env.NODE_ENV === 'development' && <GridOverlay />}
       </body>
     </html>

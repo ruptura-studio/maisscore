@@ -17,6 +17,8 @@ interface OrderData {
   pixQrCode?: string | null
   pixPayload?: string | null
   pixExpiresAt?: string | null
+  onboardingToken?: string | null
+  processSlug?: string | null
 }
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -157,9 +159,29 @@ function ObrigadoContent() {
                 {order.phone && <strong className="text-brand-navy">{formatPhone(order.phone)}</strong>}
               </p>
             </div>
-            <a href="/" className="btn-secondary w-full !rounded-md text-center">
-              Voltar ao site
-            </a>
+            <div className="flex w-full flex-col gap-3">
+              {order.onboardingToken && (
+                <a
+                  href={`/onboarding/${order.onboardingToken}`}
+                  className="btn-primary w-full !rounded-md text-center"
+                >
+                  Enviar documentos
+                </a>
+              )}
+              {order.processSlug && (
+                <a
+                  href={`/api/processo/${order.processSlug}`}
+                  className="btn-secondary w-full !rounded-md text-center"
+                >
+                  Acessar meu processo
+                </a>
+              )}
+              {!order.onboardingToken && !order.processSlug && (
+                <a href="/" className="btn-secondary w-full !rounded-md text-center">
+                  Voltar ao site
+                </a>
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -41,6 +41,8 @@ export async function GET(
           amount: payment.amount,
           productName: product.name,
           phone: order.lead.phone,
+          onboardingToken: order.lead.onboardingToken ?? null,
+          processSlug: order.lead.processSlug ?? null,
         },
       })
     }
@@ -56,6 +58,8 @@ export async function GET(
           amount: payment.amount,
           productName: product.name,
           phone: order.lead.phone,
+          onboardingToken: order.lead.onboardingToken ?? null,
+          processSlug: order.lead.processSlug ?? null,
         },
       })
     }
@@ -104,6 +108,13 @@ export async function GET(
       }
     }
 
+    const confirmedLinks = currentStatus === 'confirmed'
+      ? {
+          onboardingToken: order.lead.onboardingToken ?? null,
+          processSlug: order.lead.processSlug ?? null,
+        }
+      : {}
+
     return Response.json({
       success: true,
       data: {
@@ -116,6 +127,7 @@ export async function GET(
         pixQrCode,
         pixPayload,
         pixExpiresAt: payment.pixExpiresAt?.toISOString() ?? null,
+        ...confirmedLinks,
       },
     })
   } catch (error) {

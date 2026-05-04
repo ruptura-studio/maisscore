@@ -26,6 +26,7 @@ type ClaimResult =
       acquisition: string
       paymentConfirmedAt: Date
       onboardingToken: string
+      processSlug: string
       existingOnboardingDispatch: boolean
       existingCrmSyncDispatch: boolean
     }
@@ -130,12 +131,14 @@ async function dispatchWebhook(
   }
 }
 
-function buildPaymentConfirmedPayload(payment: any, acquisition: string, confirmedAt: Date, onboardingToken: string) {
+function buildPaymentConfirmedPayload(payment: any, acquisition: string, confirmedAt: Date, onboardingToken: string, processSlug: string) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'https://maisscore.com.br'
   const onboardingUrl = `${appUrl}/onboarding/${onboardingToken}`
+  const processoUrl = `${appUrl}/api/processo/${processSlug}`
   return {
     event: 'payment_confirmed',
     onboardingUrl,
+    processoUrl,
     supabaseLeadId: payment.order.leadId,
     orderId: payment.orderId,
     leadId: payment.order.leadId,
@@ -403,9 +406,10 @@ export async function handlePaymentConfirmedWebhook(
 
     const existingLead = await tx.lead.findUnique({
       where: { id: payment.order.leadId },
-      select: { onboardingToken: true, acquisition: true },
+      select: { onboardingToken: true, processSlug: true, acquisition: true },
     })
     const onboardingToken = existingLead?.onboardingToken ?? randomBytes(32).toString('hex')
+    const processSlug = existingLead?.processSlug ?? `ms-${randomBytes(3).toString('hex')}`
 
     await tx.lead.update({
       where: { id: payment.order.leadId },
@@ -418,6 +422,7 @@ export async function handlePaymentConfirmedWebhook(
         convertedAt: paymentConfirmedAt,
         lastInteractionAt: processedAt,
         onboardingToken,
+        processSlug,
       },
     })
 
@@ -469,6 +474,7 @@ export async function handlePaymentConfirmedWebhook(
       acquisition,
       paymentConfirmedAt,
       onboardingToken,
+      processSlug,
       existingOnboardingDispatch: Boolean(existingOnboardingDispatch),
       existingCrmSyncDispatch: Boolean(existingCrmSyncDispatch),
     }
@@ -494,6 +500,7 @@ export async function handlePaymentConfirmedWebhook(
     claimResult.acquisition,
     claimResult.paymentConfirmedAt,
     claimResult.onboardingToken,
+    claimResult.processSlug,
   )
 
   if (n8nWebhookUrl && !claimResult.existingOnboardingDispatch) {
