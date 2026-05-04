@@ -3,7 +3,7 @@ import Link from 'next/link'
 type ProcessListItem = {
   id: string
   status: string
-  startedAt: Date | null
+  createdAt: Date
   order: {
     document: string | null
     product: {
@@ -14,9 +14,11 @@ type ProcessListItem = {
       name: string | null
       phone: string
       cpf: string | null
+      onboardingCompletedAt: Date | null
     }
   }
   steps: Array<{
+    step: number
     status: string
   }>
 }
@@ -25,11 +27,33 @@ type ProcessListProps = {
   processes: ProcessListItem[]
 }
 
-const PROCESS_STATUS_CLASS: Record<string, string> = {
-  aguardando_inicio: 'bg-neutral-100 text-neutral-600',
-  em_andamento: 'bg-blue-100 text-blue-700',
-  concluido: 'bg-green-100 text-green-700',
-  cancelado: 'bg-red-100 text-red-700',
+type ProcessPhase = 'Onboarding' | 'Análise' | 'Execução' | 'Finalização' | 'Concluído'
+
+function getProcessPhase(
+  steps: Array<{ step: number; status: string }>,
+  onboardingCompletedAt: Date | null,
+): ProcessPhase {
+  const finalizacao = steps.find((step) => step.step === 4)
+  if (finalizacao?.status === 'concluido') return 'Concluído'
+  if (finalizacao?.status === 'em_andamento') return 'Finalização'
+
+  const execucao = steps.find((step) => step.step === 3)
+  if (execucao?.status === 'em_andamento' || execucao?.status === 'concluido') return 'Execução'
+
+  const analise = steps.find((step) => step.step === 2)
+  if (analise?.status === 'em_andamento' || analise?.status === 'concluido') return 'Análise'
+
+  if (onboardingCompletedAt) return 'Análise'
+
+  return 'Onboarding'
+}
+
+const PHASE_CLASS: Record<ProcessPhase, string> = {
+  Onboarding: 'bg-neutral-100 text-neutral-600',
+  Análise: 'bg-blue-100 text-blue-700',
+  Execução: 'bg-brand-orange/10 text-brand-orange',
+  Finalização: 'bg-purple-100 text-purple-700',
+  Concluído: 'bg-green-100 text-green-700',
 }
 
 function formatDate(date: Date | null): string {
@@ -54,10 +78,13 @@ export function ProcessList({ processes }: ProcessListProps) {
         </thead>
         <tbody>
           {processes.map((process) => {
-            const completedSteps = process.steps.filter((step) => step.status === 'concluido').length
+            const onboardingDone = process.order.lead.onboardingCompletedAt ? 1 : 0
+            const stepsDone = process.steps.filter((step) => step.status === 'concluido').length
+            const completedSteps = onboardingDone + stepsDone
             const clientName = process.order.lead.name || process.order.lead.phone
             const document = process.order.lead.cpf || process.order.document || '-'
-            const statusClass = PROCESS_STATUS_CLASS[process.status] ?? 'bg-neutral-100 text-neutral-600'
+            const phase = getProcessPhase(process.steps, process.order.lead.onboardingCompletedAt)
+            const phaseClass = PHASE_CLASS[phase]
 
             return (
               <tr key={process.id} className="border-t border-brand-border">
@@ -65,12 +92,12 @@ export function ProcessList({ processes }: ProcessListProps) {
                 <td className="px-4 py-3 text-sm text-foreground-alt">{document}</td>
                 <td className="px-4 py-3 text-sm text-foreground-alt">{process.order.product.name}</td>
                 <td className="px-4 py-3">
-                  <span className={`rounded-full px-2 py-1 text-xs font-medium ${statusClass}`}>
-                    {process.status}
+                  <span className={`rounded-full px-2 py-1 text-xs font-medium ${phaseClass}`}>
+                    {phase}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-sm text-foreground-alt">{completedSteps}/7</td>
-                <td className="px-4 py-3 text-sm text-foreground-alt">{formatDate(process.startedAt)}</td>
+                <td className="px-4 py-3 text-sm text-foreground-alt">{completedSteps}/4</td>
+                <td className="px-4 py-3 text-sm text-foreground-alt">{formatDate(process.createdAt)}</td>
                 <td className="px-4 py-3">
                   <Link href={`/admin/processos/${process.id}`} className="btn-primary text-xs">
                     Ver

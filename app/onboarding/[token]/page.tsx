@@ -26,7 +26,6 @@ import { normalizeBrazilPhone } from "@/lib/phone";
 import {
   CheckCircle,
   AlertCircle,
-  CheckCircle2,
   Circle,
   Check,
   TriangleAlert,
@@ -205,10 +204,18 @@ function Field({
   );
 }
 
+function CheckIcon() {
+  return (
+    <span className="absolute left-3 z-10 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-success pointer-events-none">
+      <Check className="h-2.5 w-2.5 text-white" strokeWidth={3} />
+    </span>
+  );
+}
+
 function PrefilledWrapper({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative flex items-center">
-      <CheckCircle2 className="absolute left-3 h-4 w-4 shrink-0 text-success pointer-events-none z-10" />
+      <CheckIcon />
       {children}
     </div>
   );
@@ -226,7 +233,7 @@ function PendingWrapper({ children }: { children: React.ReactNode }) {
 function AnsweredWrapper({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative flex items-center">
-      <CheckCircle2 className="absolute left-3 h-4 w-4 shrink-0 text-success pointer-events-none z-10" />
+      <CheckIcon />
       {children}
     </div>
   );
@@ -246,9 +253,9 @@ function Input({
 }) {
   const base = `h-11 w-full rounded-md border text-sm outline-none transition-colors`;
   const stateClass = prefilled
-    ? "pl-9 pr-3 border-success/40 bg-neutral-50 text-brand-navy/60 cursor-default"
+    ? "pl-9 pr-3 border-success bg-neutral-50 text-brand-navy/60 cursor-default"
     : answered
-      ? "pl-9 pr-3 border-success/40 bg-white text-brand-navy focus:border-success"
+      ? "pl-9 pr-3 border-success bg-white text-brand-navy focus:border-success"
       : pending
         ? "pl-9 pr-3 border-dashed border-brand-orange/50 text-brand-navy placeholder:text-neutral-400 focus:border-brand-orange bg-white"
         : error
@@ -282,9 +289,9 @@ function SelectTriggerState({
   children: React.ReactNode;
 }) {
   const stateClass = prefilled
-    ? "border-success/40 bg-neutral-50 text-brand-navy/60 pl-9 cursor-default"
+    ? "border-success bg-neutral-50 text-brand-navy/60 pl-9 cursor-default"
     : answered
-      ? "border-success/40 bg-white text-brand-navy pl-9 focus:border-success"
+      ? "border-success bg-white text-brand-navy pl-9 focus:border-success"
       : error
         ? "border-destructive pl-9"
         : "border-dashed border-brand-orange/50 pl-9";
@@ -310,9 +317,9 @@ function TextareaState({
   error?: boolean;
 }) {
   const stateClass = prefilled
-    ? "border-success/40 bg-neutral-50 text-brand-navy/60 cursor-default"
+    ? "border-success bg-neutral-50 text-brand-navy/60 cursor-default"
     : answered
-      ? "border-success/40 bg-white text-brand-navy focus:border-success"
+      ? "border-success bg-white text-brand-navy focus:border-success"
       : error
         ? "border-destructive focus:border-brand-navy"
         : "border-dashed border-brand-orange/50 focus:border-brand-orange";
@@ -469,9 +476,15 @@ export default function OnboardingPage({
           responsibleName: d.responsibleName ?? "",
           responsibleCpf: d.responsibleCpf ? formatCpf(d.responsibleCpf) : "",
         }));
-        setAnsweredFields(new Set());
+        setAnsweredFields(new Set(filled));
         setTypingField(null);
         setPageState("form");
+        // registra que o cliente abriu a página
+        fetch('/api/onboarding/ping', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token }),
+        }).catch(() => {})
       })
       .catch(() => setPageState("invalid"));
   }, [token]);
@@ -1218,7 +1231,7 @@ export default function OnboardingPage({
                     <PrefilledWrapper>
                       <Select value={form.civilStatus} disabled>
                         <SelectTrigger
-                          className="h-11 border-success/40 bg-neutral-50 text-brand-navy/60 pl-9 cursor-default"
+                          className="h-11 border-success bg-neutral-50 text-brand-navy/60 pl-9 cursor-default"
                           data-radix-select-trigger
                         >
                           <SelectValue />
@@ -2077,7 +2090,7 @@ export default function OnboardingPage({
                     <PrefilledWrapper>
                       <Select value={form.valorDivida} disabled>
                         <SelectTrigger
-                          className="h-11 border-success/40 bg-neutral-50 text-brand-navy/60 pl-9 cursor-default"
+                          className="h-11 border-success bg-neutral-50 text-brand-navy/60 pl-9 cursor-default"
                           data-radix-select-trigger
                         >
                           <SelectValue />
@@ -2168,7 +2181,7 @@ export default function OnboardingPage({
                     <PrefilledWrapper>
                       <Select value={form.objetivo} disabled>
                         <SelectTrigger
-                          className="h-11 border-success/40 bg-neutral-50 text-brand-navy/60 pl-9 cursor-default"
+                          className="h-11 border-success bg-neutral-50 text-brand-navy/60 pl-9 cursor-default"
                           data-radix-select-trigger
                         >
                           <SelectValue placeholder="Selecione" />

@@ -43,9 +43,7 @@ export async function POST(req: NextRequest) {
   if (fields.responsibleName) updateData.responsibleName = fields.responsibleName
   if (fields.responsibleCpf) updateData.responsibleCpf = fields.responsibleCpf
 
-  if (Object.keys(updateData).length === 0) {
-    return Response.json({ success: true })
-  }
+  updateData.onboardingLastSeenAt = new Date()
 
   await prisma.lead.update({
     where: { onboardingToken: token },

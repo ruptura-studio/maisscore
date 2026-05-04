@@ -13,9 +13,13 @@ export function WhatsappFloat() {
   const isCheckout = pathname.startsWith('/checkout')
   const isMeuProcesso = pathname.startsWith('/meuprocesso')
   const isOnboarding = pathname.startsWith('/onboarding')
+  const isAdmin = pathname.startsWith('/admin')
+  const isBlog = pathname.startsWith('/blog')
+
+  const hidden = isCheckout || isMeuProcesso || isOnboarding || isAdmin || isBlog
 
   useEffect(() => {
-    if (isCheckout || isMeuProcesso || isOnboarding) return
+    if (hidden) return
 
     function onScroll() {
       if (!faded) setFaded(true)
@@ -34,9 +38,9 @@ export function WhatsappFloat() {
       window.removeEventListener('scroll', onScroll)
       if (timerRef.current) clearTimeout(timerRef.current)
     }
-  }, [faded, isCheckout])
+  }, [faded, hidden])
 
-  if (isCheckout || isMeuProcesso || isOnboarding) return null
+  if (hidden) return null
 
   return (
     <>

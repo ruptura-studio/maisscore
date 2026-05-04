@@ -177,9 +177,9 @@ function ObrigadoContent() {
                 </a>
               )}
               {!order.onboardingToken && !order.processSlug && (
-                <a href="/" className="btn-secondary w-full !rounded-md text-center">
-                  Voltar ao site
-                </a>
+                <p className="text-xs text-foreground-alt">
+                  Em breve você receberá as instruções pelo WhatsApp.
+                </p>
               )}
             </div>
           </div>

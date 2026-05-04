@@ -93,5 +93,57 @@ export async function POST(req: NextRequest) {
     },
   })
 
+  const process = await prisma.process.findFirst({
+    where: {
+      order: {
+        lead: {
+          onboardingToken: token,
+        },
+      },
+    },
+    include: {
+      order: {
+        include: {
+          lead: { select: { phone: true } },
+        },
+      },
+    },
+    orderBy: { createdAt: 'desc' },
+  })
+
+  if (process) {
+    const step2 = await prisma.processStep.findUnique({
+      where: {
+        processId_step: {
+          processId: process.id,
+          step: 2,
+        },
+      },
+      select: { id: true, status: true },
+    })
+
+    if (!step2) {
+      await prisma.processStep.create({
+        data: {
+          processId: process.id,
+          step: 2,
+          status: 'em_andamento',
+        },
+      })
+    } else if (step2.status === 'pendente') {
+      await prisma.processStep.update({
+        where: { id: step2.id },
+        data: { status: 'em_andamento', completedAt: null },
+      })
+    }
+
+    if (process.status !== 'concluido') {
+      await prisma.process.update({
+        where: { id: process.id },
+        data: { status: 'em_andamento' },
+      })
+    }
+  }
+
   return Response.json({ success: true })
 }

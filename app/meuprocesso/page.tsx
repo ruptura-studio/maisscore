@@ -1,15 +1,12 @@
 import type { Metadata } from 'next'
 import type { ComponentType } from 'react'
 import {
-  ArrowUpRight,
   Check,
   CircleDashed,
   CircleDotDashed,
   FileText,
-  Gavel,
   ShieldCheck,
   FileSearch,
-  Scale,
   CalendarDays,
   FileDown,
 } from 'lucide-react'
@@ -22,8 +19,6 @@ export const metadata: Metadata = {
   description: 'Acompanhe o andamento do seu processo em uma timeline visual.',
 }
 
-// ── Definição estática dos steps (conteúdo do produto) ────────────────────────
-
 type StepMeta = {
   step: number
   title: string
@@ -35,76 +30,79 @@ type StepMeta = {
 const STEPS_META: StepMeta[] = [
   {
     step: 1,
-    title: 'Coleta de documentos',
-    description: 'Recebemos os documentos iniciais e validamos se o material está completo para iniciar a análise com segurança.',
+    title: 'Onboarding',
+    description: 'Recebemos seus dados e documentos iniciais. Essa etapa é necessária para iniciar a análise do seu caso com segurança.',
     icon: FileText,
-    defaultDocumentLabel: 'Documentos coletados — ficha do cliente.pdf',
   },
   {
     step: 2,
-    title: 'Análise de caso',
-    description: 'Nossa equipe avaliou o contexto do cliente, os dados disponíveis e a estratégia mais adequada para seguir com o processo.',
+    title: 'Análise',
+    description: 'Nossa equipe está analisando o seu caso, avaliando os dados disponíveis e a melhor estratégia para o seu processo.',
     icon: FileSearch,
   },
   {
     step: 3,
-    title: 'Início do processo',
-    description: 'A ação foi protocolada e os próximos movimentos começaram a ser conduzidos junto aos responsáveis e ao andamento jurídico.',
+    title: 'Execução',
+    description: 'O processo está em andamento. Nossa equipe está conduzindo as etapas necessárias junto aos responsáveis.',
     icon: CircleDotDashed,
   },
   {
     step: 4,
-    title: 'Restrição removida',
-    description: 'Etapa de confirmação da baixa da restrição e atualização da situação do caso após a consolidação da medida.',
+    title: 'Finalização',
+    description: 'O processo foi concluído. O comprovante de regularização do seu nome está disponível abaixo.',
     icon: ShieldCheck,
-    defaultDocumentLabel: 'Comprovante de restrição removida.pdf',
-  },
-  {
-    step: 5,
-    title: 'Defesa (contestação)',
-    description: 'Se houver necessidade, a defesa formal será apresentada com base nos documentos e nas informações levantadas até aqui.',
-    icon: Gavel,
-  },
-  {
-    step: 6,
-    title: 'Fase recursal',
-    description: 'Caso o cenário exija, a estratégia recursal será aplicada para manter o caso ativo e ampliar a chance de êxito.',
-    icon: ArrowUpRight,
-  },
-  {
-    step: 7,
-    title: 'Cumprimento da sentença',
-    description: 'Última etapa do fluxo, com monitoramento do cumprimento e verificação final do encerramento do processo.',
-    icon: Scale,
+    defaultDocumentLabel: 'Comprovante de nome limpo.pdf',
   },
 ]
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function formatDate(iso: string | null) {
   if (!iso) return null
   return new Date(iso).toLocaleDateString('pt-BR')
 }
 
-// ── Page ──────────────────────────────────────────────────────────────────────
-
 export default async function MeuProcessoPage() {
   const session = await getSessionFromCookie()
 
-  // Busca processo com steps do banco
   const processData = session
     ? await prisma.process.findUnique({
         where: { id: session.processId },
-        include: { steps: { orderBy: { step: 'asc' } } },
+        include: {
+          steps: { orderBy: { step: 'asc' } },
+          order: {
+            include: {
+              lead: { select: { onboardingCompletedAt: true } },
+            },
+          },
+        },
       })
     : null
 
-  // Mescla meta estático com dados dinâmicos do banco
+  const onboardingCompletedAt = processData?.order?.lead?.onboardingCompletedAt ?? null
+
   const steps = STEPS_META.map((meta) => {
+    if (meta.step === 1) {
+      const status: 'concluido' | 'em_andamento' | 'pendente' = onboardingCompletedAt
+        ? 'concluido'
+        : 'em_andamento'
+
+      return {
+        ...meta,
+        status,
+        completedAt: onboardingCompletedAt ? formatDate(onboardingCompletedAt.toISOString()) : null,
+        documentUrl: null,
+      }
+    }
+
     const dbStep = processData?.steps.find((s) => s.step === meta.step)
     const status: 'concluido' | 'em_andamento' | 'pendente' = (dbStep?.status as any) ?? 'pendente'
+    const description =
+      meta.step === 3 && dbStep?.notes?.trim()
+        ? dbStep.notes
+        : meta.description
+
     return {
       ...meta,
+      description,
       status,
       completedAt: dbStep?.completedAt ? formatDate(dbStep.completedAt.toISOString()) : null,
       documentUrl: dbStep?.documentUrl ?? null,
@@ -122,8 +120,6 @@ export default async function MeuProcessoPage() {
   return (
     <div className="min-h-screen bg-neutral-100 py-8 md:py-12">
       <div className="mx-auto w-full max-w-[560px] px-4">
-
-        {/* Cabeçalho */}
         <div className="mb-6">
           <h1 className="font-dm text-h2 text-brand-navy">
             {clientName ? `Olá, ${clientName.split(' ')[0]}` : 'Meu Processo'}
@@ -133,7 +129,6 @@ export default async function MeuProcessoPage() {
           </p>
         </div>
 
-        {/* Card de resumo */}
         <div className="mb-6 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
           <h2 className="text-xs font-semibold uppercase tracking-wide text-brand-navy/60">
             Situação do processo
@@ -153,7 +148,6 @@ export default async function MeuProcessoPage() {
             </div>
           </div>
 
-          {/* Barra de progresso */}
           <div className="mt-4">
             <div className="mb-1.5 flex justify-between text-xs text-foreground-alt">
               <span>Progresso</span>
@@ -167,7 +161,6 @@ export default async function MeuProcessoPage() {
             </div>
           </div>
 
-          {/* Links rápidos */}
           <div className="mt-4 flex flex-col gap-2">
             {onboardingToken && (
               <a
@@ -191,7 +184,6 @@ export default async function MeuProcessoPage() {
           </div>
         </div>
 
-        {/* Timeline */}
         <div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
           <h2 className="mb-6 text-xs font-semibold uppercase tracking-wide text-brand-navy/60">
             Etapas do processo
@@ -221,7 +213,6 @@ export default async function MeuProcessoPage() {
 
               return (
                 <div key={s.step} className="flex gap-3">
-                  {/* Indicador + linha */}
                   <div className="flex flex-col items-center">
                     {completed ? (
                       <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#4B9857]">
@@ -247,7 +238,6 @@ export default async function MeuProcessoPage() {
                     )}
                   </div>
 
-                  {/* Título + card */}
                   <div className="flex flex-1 flex-col gap-1.5">
                     <span
                       className={`font-dm text-sm leading-none pt-1 ${
@@ -273,7 +263,7 @@ export default async function MeuProcessoPage() {
                       </p>
 
                       {documentLabel && (
-                        completed && documentUrl ? (
+                        documentUrl ? (
                           <a
                             href={documentUrl}
                             target="_blank"
@@ -302,7 +292,6 @@ export default async function MeuProcessoPage() {
         <p className="mt-6 pb-4 text-center text-xs text-foreground-alt">
           Atualizações são enviadas pelo WhatsApp conforme o processo avança.
         </p>
-
       </div>
     </div>
   )

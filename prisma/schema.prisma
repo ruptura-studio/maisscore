@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model Product {
@@ -62,6 +61,7 @@ model Lead {
   acquisitionValue   Int?      @map("acquisition_value")   // valor pago em centavos
   onboardingToken         String?   @unique @map("onboarding_token")
   onboardingCompletedAt   DateTime? @map("onboarding_completed_at") @db.Timestamptz
+  onboardingLastSeenAt    DateTime? @map("onboarding_last_seen_at") @db.Timestamptz
   processSlug             String?   @unique @map("process_slug")
   crmId              String?   @map("crm_id")
   stage              String?   @default("lead") @map("stage")
@@ -148,6 +148,7 @@ model ProcessStep {
   step        Int
   status      String    @default("pendente") // pendente | em_andamento | concluido
   documentUrl String?   @map("document_url")
+  notes       String?   // descricao configuravel pelo admin (usada no step 3 - Execucao)
   completedAt DateTime? @map("completed_at") @db.Timestamptz
   createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz

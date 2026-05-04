@@ -6,11 +6,19 @@ export default async function AdminProcessosPage() {
     include: {
       order: {
         include: {
-          lead: { select: { id: true, name: true, phone: true, cpf: true } },
+          lead: {
+            select: {
+              id: true,
+              name: true,
+              phone: true,
+              cpf: true,
+              onboardingCompletedAt: true,
+            },
+          },
           product: { select: { name: true } },
         },
       },
-      steps: true,
+      steps: { select: { step: true, status: true } },
     },
     orderBy: { createdAt: 'desc' },
   })
