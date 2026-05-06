@@ -33,6 +33,8 @@ export async function GET(
       objetivo: true,
       responsibleName: true,
       responsibleCpf: true,
+      processSlug: true,
+      onboardingCompletedAt: true,
     },
   })
 
@@ -43,14 +45,21 @@ export async function GET(
   const order = await prisma.order.findFirst({
     where: { leadId: lead.id },
     orderBy: { createdAt: 'desc' },
-    include: { payment: true },
+    include: {
+      payment: true,
+      process: { include: { steps: true } },
+    },
   })
+
+  const execucaoStep = order?.process?.steps?.find((s: { step: number }) => s.step === 3)
+  const isLocked = execucaoStep?.status === 'em_andamento' || execucaoStep?.status === 'concluido'
 
   return Response.json({
     success: true,
     data: {
       ...lead,
       paymentConfirmedAt: order?.payment?.confirmedAt?.toISOString?.() ?? null,
+      isLocked: isLocked ?? false,
     },
   })
 }

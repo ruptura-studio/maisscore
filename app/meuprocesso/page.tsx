@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import type { ComponentType } from 'react'
+import { ProcessPoller } from './process-poller'
 import {
   Check,
   CircleDashed,
@@ -60,6 +61,17 @@ function formatDate(iso: string | null) {
   return new Date(iso).toLocaleDateString('pt-BR')
 }
 
+function addBusinessDays(start: Date, days: number): Date {
+  const result = new Date(start)
+  let added = 0
+  while (added < days) {
+    result.setDate(result.getDate() + 1)
+    const day = result.getDay()
+    if (day !== 0 && day !== 6) added++
+  }
+  return result
+}
+
 export default async function MeuProcessoPage() {
   const session = await getSessionFromCookie()
 
@@ -89,6 +101,7 @@ export default async function MeuProcessoPage() {
         ...meta,
         status,
         completedAt: onboardingCompletedAt ? formatDate(onboardingCompletedAt.toISOString()) : null,
+        estimatedDate: null,
         documentUrl: null,
       }
     }
@@ -100,11 +113,17 @@ export default async function MeuProcessoPage() {
         ? dbStep.notes
         : meta.description
 
+    const estimatedDate =
+      meta.step === 3 && dbStep?.createdAt
+        ? formatDate(addBusinessDays(dbStep.createdAt, 30).toISOString())
+        : null
+
     return {
       ...meta,
       description,
       status,
       completedAt: dbStep?.completedAt ? formatDate(dbStep.completedAt.toISOString()) : null,
+      estimatedDate,
       documentUrl: dbStep?.documentUrl ?? null,
     }
   })
@@ -115,14 +134,15 @@ export default async function MeuProcessoPage() {
   const currentMeta = steps[currentIndex] ?? steps[currentStep - 1] ?? steps[0]
   const nextMeta = steps[currentIndex + 1] ?? null
   const clientName = session?.name ?? null
-  const onboardingToken = session?.onboardingToken ?? null
+  const shortCode = session?.shortCode ?? null
 
   return (
     <div className="min-h-screen bg-neutral-100 py-8 md:py-12">
+      <ProcessPoller initialStep={currentIndex} />
       <div className="mx-auto w-full max-w-[560px] px-4">
         <div className="mb-6">
           <h1 className="font-dm text-h2 text-brand-navy">
-            {clientName ? `Olá, ${clientName.split(' ')[0]}` : 'Meu Processo'}
+            {clientName ? `Olá, ${clientName}` : 'Meu Processo'}
           </h1>
           <p className="mt-2 text-sm text-foreground-alt">
             Acompanhe abaixo todas as etapas do seu processo jurídico e a situação atual de cada fase.
@@ -162,13 +182,13 @@ export default async function MeuProcessoPage() {
           </div>
 
           <div className="mt-4 flex flex-col gap-2">
-            {onboardingToken && (
+            {shortCode && (
               <a
-                href={`/onboarding/${onboardingToken}`}
+                href={`/${shortCode}/onboarding`}
                 className="flex items-center gap-2 rounded-md border border-brand-navy/20 bg-brand-navy/5 px-3 py-2 text-xs text-brand-navy transition-colors hover:bg-brand-navy/10"
               >
                 <FileText className="h-3.5 w-3.5 shrink-0 text-brand-navy" />
-                <span className="flex-1 font-medium">Enviar documentos</span>
+                <span className="flex-1 font-medium">Ver documentos enviados</span>
               </a>
             )}
             <a
@@ -205,7 +225,9 @@ export default async function MeuProcessoPage() {
                 : 'bg-neutral-100 text-neutral-400 border-neutral-200'
 
               const dateLabel = completed
-                ? `Data de conclusão: ${s.completedAt ?? '—'}`
+                ? `Concluído em: ${s.completedAt ?? '—'}`
+                : 'estimatedDate' in s && s.estimatedDate
+                ? `Data prevista: ${s.estimatedDate}`
                 : `Data prevista: —`
 
               const documentUrl = s.documentUrl
@@ -241,7 +263,7 @@ export default async function MeuProcessoPage() {
                   <div className="flex flex-1 flex-col gap-1.5">
                     <span
                       className={`font-dm text-sm leading-none pt-1 ${
-                        completed ? 'text-emerald-700' : isCurrent ? 'text-brand-orange' : 'text-brand-navy/50'
+                        completed ? 'text-emerald-700' : isCurrent ? 'text-brand-orange' : 'text-[#5F5F5F]'
                       }`}
                     >
                       {s.title}
@@ -249,15 +271,15 @@ export default async function MeuProcessoPage() {
 
                     <div className={`rounded-md border p-4 ${isCurrent ? 'border-neutral-400' : 'border-neutral-200'}`}>
                       <div className="flex items-center justify-between gap-2">
-                        <Badge className={statusVariant}>{statusLabel}</Badge>
-                        <span className={`flex items-center gap-1 text-xs ${completed || !isCurrent ? 'text-brand-navy/30' : 'text-foreground-alt'}`}>
+                        <Badge variant="outline" className={statusVariant}>{statusLabel}</Badge>
+                        <span className={`flex items-center gap-1 text-xs ${completed ? 'text-emerald-700' : isCurrent ? 'text-brand-orange' : 'text-[#5F5F5F]'}`}>
                           <CalendarDays className="h-3 w-3 shrink-0" />
                           {dateLabel}
                         </span>
                       </div>
 
                       <p className={`mt-2 text-sm ${
-                        completed ? 'text-brand-navy/30' : isCurrent ? 'text-foreground-alt' : 'text-brand-navy/35'
+                        completed ? 'text-[#5F5F5F]' : isCurrent ? 'text-foreground-alt' : 'text-[#5F5F5F]'
                       }`}>
                         {s.description}
                       </p>
