@@ -1,6 +1,9 @@
 import { randomBytes } from 'crypto'
 
 const CONFIRMED_EVENTS = ['PAYMENT_CONFIRMED', 'PAYMENT_RECEIVED']
+const PRODUCTION_APP_URL = 'https://maisscore.com.br'
+const BLOCKED_PRODUCTION_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
+const BLOCKED_PRODUCTION_HOST_PARTS = ['ngrok', 'trycloudflare', 'loca.lt', 'localtunnel']
 
 type PaymentWebhookEnv = {
   ASAAS_WEBHOOK_TOKEN?: string
@@ -27,6 +30,7 @@ type ClaimResult =
       paymentConfirmedAt: Date
       onboardingToken: string
       processSlug: string
+      shortCode: string
       existingOnboardingDispatch: boolean
       existingCrmSyncDispatch: boolean
     }
@@ -131,9 +135,27 @@ async function dispatchWebhook(
   }
 }
 
-function buildPaymentConfirmedPayload(payment: any, acquisition: string, confirmedAt: Date, onboardingToken: string, processSlug: string) {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'https://maisscore.com.br'
-  const onboardingUrl = `${appUrl}/onboarding/${onboardingToken}`
+function getPublicAppUrl() {
+  const candidate = process.env.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? PRODUCTION_APP_URL
+
+  if (process.env.NODE_ENV !== 'production') return candidate
+
+  try {
+    const url = new URL(candidate)
+    const hostname = url.hostname.toLowerCase()
+    const isLocalOrTunnel =
+      BLOCKED_PRODUCTION_HOSTS.includes(hostname) ||
+      BLOCKED_PRODUCTION_HOST_PARTS.some((part) => hostname.includes(part))
+
+    return isLocalOrTunnel ? PRODUCTION_APP_URL : candidate
+  } catch {
+    return PRODUCTION_APP_URL
+  }
+}
+
+function buildPaymentConfirmedPayload(payment: any, acquisition: string, confirmedAt: Date, onboardingToken: string, processSlug: string, shortCode: string) {
+  const appUrl = getPublicAppUrl()
+  const onboardingUrl = `${appUrl}/${shortCode}/onboarding`
   const processoUrl = `${appUrl}/api/processo/${processSlug}`
   return {
     event: 'payment_confirmed',
@@ -406,10 +428,11 @@ export async function handlePaymentConfirmedWebhook(
 
     const existingLead = await tx.lead.findUnique({
       where: { id: payment.order.leadId },
-      select: { onboardingToken: true, processSlug: true, acquisition: true },
+      select: { onboardingToken: true, processSlug: true, shortCode: true, acquisition: true },
     })
-    const onboardingToken = existingLead?.onboardingToken ?? randomBytes(32).toString('hex')
+    const onboardingToken = existingLead?.onboardingToken ?? randomBytes(16).toString('hex')
     const processSlug = existingLead?.processSlug ?? `ms-${randomBytes(3).toString('hex')}`
+    const shortCode = existingLead?.shortCode ?? randomBytes(4).toString('base64url').slice(0, 6)
 
     await tx.lead.update({
       where: { id: payment.order.leadId },
@@ -423,6 +446,7 @@ export async function handlePaymentConfirmedWebhook(
         lastInteractionAt: processedAt,
         onboardingToken,
         processSlug,
+        shortCode,
       },
     })
 
@@ -475,6 +499,7 @@ export async function handlePaymentConfirmedWebhook(
       paymentConfirmedAt,
       onboardingToken,
       processSlug,
+      shortCode,
       existingOnboardingDispatch: Boolean(existingOnboardingDispatch),
       existingCrmSyncDispatch: Boolean(existingCrmSyncDispatch),
     }
@@ -501,6 +526,7 @@ export async function handlePaymentConfirmedWebhook(
     claimResult.paymentConfirmedAt,
     claimResult.onboardingToken,
     claimResult.processSlug,
+    claimResult.shortCode,
   )
 
   if (n8nWebhookUrl && !claimResult.existingOnboardingDispatch) {

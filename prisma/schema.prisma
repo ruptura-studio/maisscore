@@ -63,6 +63,7 @@ model Lead {
   onboardingCompletedAt   DateTime? @map("onboarding_completed_at") @db.Timestamptz
   onboardingLastSeenAt    DateTime? @map("onboarding_last_seen_at") @db.Timestamptz
   processSlug             String?   @unique @map("process_slug")
+  shortCode               String?   @unique @map("short_code")
   crmId              String?   @map("crm_id")
   stage              String?   @default("lead") @map("stage")
   pendingAction      String?   @map("pending_action")
@@ -126,18 +127,19 @@ model Payment {
 }
 
 model Process {
-  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  orderId   String    @unique @map("order_id") @db.Uuid
-  status    String    @default("aguardando_inicio")
-  stage     String?
-  startedAt DateTime? @map("started_at") @db.Timestamptz
-  cleanedAt DateTime? @map("cleaned_at") @db.Timestamptz
-  proofUrl  String?   @map("proof_url")
-  notes     String?
-  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz
-  order     Order     @relation(fields: [orderId], references: [id])
-  steps     ProcessStep[]
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId        String    @unique @map("order_id") @db.Uuid
+  status         String    @default("aguardando_inicio")
+  stage          String?
+  startedAt      DateTime? @map("started_at") @db.Timestamptz
+  cleanedAt      DateTime? @map("cleaned_at") @db.Timestamptz
+  proofUrl       String?   @map("proof_url")
+  notes          String?
+  judicialNumber String?   @map("judicial_number") // número CNJ do processo, captado via planilha
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  order          Order     @relation(fields: [orderId], references: [id])
+  steps          ProcessStep[]
 
   @@map("processes")
 }

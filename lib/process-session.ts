@@ -13,6 +13,7 @@ export type ProcessSessionData = {
   name: string | null
   phone: string | null
   onboardingToken: string | null
+  shortCode: string | null
 }
 
 export async function resolveSlug(slug: string): Promise<ProcessSessionData | null> {
@@ -23,6 +24,7 @@ export async function resolveSlug(slug: string): Promise<ProcessSessionData | nu
       name: true,
       phone: true,
       onboardingToken: true,
+      shortCode: true,
       processSlug: true,
       orders: {
         where: { status: 'pago' },
@@ -45,6 +47,7 @@ export async function resolveSlug(slug: string): Promise<ProcessSessionData | nu
     name: lead.name,
     phone: lead.phone,
     onboardingToken: lead.onboardingToken,
+    shortCode: lead.shortCode,
   }
 }
 

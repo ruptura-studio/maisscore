@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
 
   const lead = await prisma.lead.findUnique({
     where: { onboardingToken: token },
-    select: { phone: true, leadType: true, email: true, cpf: true },
+    select: { phone: true, leadType: true, email: true, cpf: true, processSlug: true },
   })
 
   if (!lead) {
@@ -145,5 +145,5 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  return Response.json({ success: true })
+  return Response.json({ success: true, processSlug: lead.processSlug ?? null })
 }

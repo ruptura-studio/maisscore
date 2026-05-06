@@ -41,7 +41,7 @@ export async function GET(
           amount: payment.amount,
           productName: product.name,
           phone: order.lead.phone,
-          onboardingToken: order.lead.onboardingToken ?? null,
+          shortCode: (order.lead as any).shortCode ?? null,
           processSlug: order.lead.processSlug ?? null,
         },
       })
@@ -58,7 +58,7 @@ export async function GET(
           amount: payment.amount,
           productName: product.name,
           phone: order.lead.phone,
-          onboardingToken: order.lead.onboardingToken ?? null,
+          shortCode: (order.lead as any).shortCode ?? null,
           processSlug: order.lead.processSlug ?? null,
         },
       })
@@ -91,6 +91,16 @@ export async function GET(
           amount: payment.amount,
         })
         currentStatus = 'confirmed'
+        // Recarrega o lead para pegar onboardingToken e processSlug gravados pela transação
+        const freshLead = await prisma.lead.findUnique({
+          where: { id: order.leadId },
+          select: { onboardingToken: true, processSlug: true, shortCode: true },
+        })
+        if (freshLead) {
+          order.lead.onboardingToken = freshLead.onboardingToken
+          order.lead.processSlug = freshLead.processSlug
+          ;(order.lead as any).shortCode = freshLead.shortCode
+        }
       }
     }
 
@@ -110,7 +120,7 @@ export async function GET(
 
     const confirmedLinks = currentStatus === 'confirmed'
       ? {
-          onboardingToken: order.lead.onboardingToken ?? null,
+          shortCode: (order.lead as any).shortCode ?? null,
           processSlug: order.lead.processSlug ?? null,
         }
       : {}

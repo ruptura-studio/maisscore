@@ -16,6 +16,7 @@ function createMockPrisma() {
     id: 'payment-1',
     asaasId: 'pay_123',
     method: 'CREDIT_CARD',
+    status: 'pending',
     amount: 69700,
     confirmedAt: null as Date | null,
     webhookProcessedAt: null as Date | null,

@@ -3,7 +3,7 @@ import { loginAdmin } from './actions'
 type SearchParams = Record<string, string | string[] | undefined>
 
 type AdminLoginPageProps = {
-  searchParams?: SearchParams | Promise<SearchParams>
+  searchParams?: Promise<SearchParams>
 }
 
 export default async function AdminLoginPage({ searchParams }: AdminLoginPageProps) {

@@ -17,7 +17,7 @@ interface OrderData {
   pixQrCode?: string | null
   pixPayload?: string | null
   pixExpiresAt?: string | null
-  onboardingToken?: string | null
+  shortCode?: string | null
   processSlug?: string | null
 }
 
@@ -66,6 +66,7 @@ function ObrigadoContent() {
   const [order, setOrder] = useState<OrderData | null>(null)
   const [loadError, setLoadError] = useState(false)
   const [polling, setPolling] = useState(false)
+  const [tokenTimeout, setTokenTimeout] = useState(false)
 
   const fetchOrder = useCallback(async () => {
     if (!orderId) return
@@ -106,6 +107,25 @@ function ObrigadoContent() {
 
     return () => clearInterval(interval)
   }, [order?.method, order?.status, fetchOrder]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Polling para shortCode após confirmação (a cada 3s, max 2 min)
+  useEffect(() => {
+    if (!order || order.status !== 'confirmed' || order.shortCode) return
+    setTokenTimeout(false)
+    let attempts = 0
+    const MAX = 40 // 40 × 3s = 2 min
+
+    const interval = setInterval(async () => {
+      attempts++
+      await fetchOrder()
+      if (attempts >= MAX) {
+        clearInterval(interval)
+        setTokenTimeout(true)
+      }
+    }, 3000)
+
+    return () => clearInterval(interval)
+  }, [order?.status, order?.shortCode, fetchOrder]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Loading state ──────────────────────────────────────────────────────────
   if (!orderId || loadError) {
@@ -159,27 +179,36 @@ function ObrigadoContent() {
                 {order.phone && <strong className="text-brand-navy">{formatPhone(order.phone)}</strong>}
               </p>
             </div>
+            <p className="text-sm text-foreground-alt">
+              Agora clique no botão abaixo e envie as informações necessárias para darmos andamento no processo.
+            </p>
             <div className="flex w-full flex-col gap-3">
-              {order.onboardingToken && (
+              {order.shortCode ? (
                 <a
-                  href={`/onboarding/${order.onboardingToken}`}
+                  href={`/${order.shortCode}/onboarding`}
                   className="btn-primary w-full !rounded-md text-center"
                 >
                   Enviar documentos
                 </a>
-              )}
-              {order.processSlug && (
-                <a
-                  href={`/api/processo/${order.processSlug}`}
-                  className="btn-secondary w-full !rounded-md text-center"
-                >
-                  Acessar meu processo
-                </a>
-              )}
-              {!order.onboardingToken && !order.processSlug && (
-                <p className="text-xs text-foreground-alt">
-                  Em breve você receberá as instruções pelo WhatsApp.
-                </p>
+              ) : tokenTimeout ? (
+                <div className="rounded-md border border-brand-border bg-neutral-50 px-4 py-3 text-center">
+                  <p className="text-sm text-foreground-alt">
+                    Parece que houve um problema na conexão com o banco.{' '}
+                    <button
+                      type="button"
+                      onClick={() => window.location.reload()}
+                      className="font-medium text-brand-orange underline underline-offset-2"
+                    >
+                      Recarregue a página
+                    </button>{' '}
+                    ou aguarde o WhatsApp com as instruções.
+                  </p>
+                </div>
+              ) : (
+                <div className="flex items-center justify-center gap-2 rounded-md border border-brand-border bg-neutral-50 px-4 py-3">
+                  <div className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-brand-border border-t-brand-orange" />
+                  <span className="text-sm text-foreground-alt">Preparando seu acesso...</span>
+                </div>
               )}
             </div>
           </div>
