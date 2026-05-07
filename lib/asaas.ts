@@ -1,3 +1,5 @@
+import { normalizeBrazilPhone } from '@/lib/phone'
+
 const BASE_URL = process.env.ASAAS_BASE_URL!
 // ASAAS_API_KEY começa com "$" — @next/env no Node.js v24 expande "$" para string vazia.
 // Workaround: usar ASAAS_API_KEY_VALUE (sem "$") no .env.local; em prod a Vercel usa ASAAS_API_KEY diretamente.
@@ -59,6 +61,7 @@ export async function findOrCreateCustomer(params: {
   companyName?: string
 }): Promise<AsaasCustomer> {
   const normalizedCpfCnpj = normalizeCpfCnpj(params.cpfCnpj)
+  const normalizedPhone = normalizeBrazilPhone(params.phone) ?? params.phone.replace(/\D/g, '')
 
   // Busca cliente existente pelo CPF/CNPJ
   const search = await asaasFetch<{ data: AsaasCustomer[] }>(
@@ -75,7 +78,7 @@ export async function findOrCreateCustomer(params: {
     body: JSON.stringify({
       name: params.name,
       email: params.email,
-      mobilePhone: params.phone,
+      mobilePhone: normalizedPhone,
       cpfCnpj: normalizedCpfCnpj,
       personType,
       ...(params.companyName ? { company: params.companyName } : {}),
@@ -130,7 +133,16 @@ export async function createPayment(params: {
         ? { installmentCount, installmentValue: parseFloat((params.value / installmentCount).toFixed(2)) }
         : {}),
       ...(params.creditCard ? { creditCard: params.creditCard } : {}),
-      ...(params.creditCardHolderInfo ? { creditCardHolderInfo: params.creditCardHolderInfo } : {}),
+      ...(params.creditCardHolderInfo
+        ? {
+            creditCardHolderInfo: {
+              ...params.creditCardHolderInfo,
+              phone:
+                normalizeBrazilPhone(params.creditCardHolderInfo.phone) ??
+                params.creditCardHolderInfo.phone.replace(/\D/g, ''),
+            },
+          }
+        : {}),
       ...(params.remoteIp ? { remoteIp: params.remoteIp } : {}),
     }),
   })

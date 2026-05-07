@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/db'
-import { getOnboardingWebhookToken } from '@/lib/config'
+import { getOnboardingWebhookToken } from '@/lib/onboarding-auth'
 
 function toIso(value: Date | null | undefined) {
   return value?.toISOString?.() ?? null
@@ -42,6 +42,7 @@ function normalizePayload(record: any) {
           acquisition: lead.acquisition ?? null,
           acquisitionValue: lead.acquisitionValue ?? null,
           convertedAt: toIso(lead.convertedAt),
+          paymentConfirmedAt: toIso(payment?.confirmedAt),
           crmId: lead.crmId ?? null,
         }
       : null,

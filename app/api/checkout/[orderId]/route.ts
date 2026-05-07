@@ -31,6 +31,22 @@ export async function GET(
 
     const { payment, product } = order
 
+    if (payment.webhookProcessedAt) {
+      return Response.json({
+        success: true,
+        data: {
+          orderId: order.id,
+          status: 'confirmed',
+          method: payment.method,
+          amount: payment.amount,
+          productName: product.name,
+          phone: order.lead.phone,
+          shortCode: (order.lead as any).shortCode ?? null,
+          processSlug: order.lead.processSlug ?? null,
+        },
+      })
+    }
+
     // Se já confirmado, retorna sem buscar no Asaas
     if (payment.status === 'confirmed') {
       return Response.json({
@@ -42,6 +58,8 @@ export async function GET(
           amount: payment.amount,
           productName: product.name,
           phone: order.lead.phone,
+          shortCode: (order.lead as any).shortCode ?? null,
+          processSlug: order.lead.processSlug ?? null,
         },
       })
     }
@@ -73,6 +91,16 @@ export async function GET(
           amount: payment.amount,
         })
         currentStatus = 'confirmed'
+        // Recarrega o lead para pegar onboardingToken e processSlug gravados pela transação
+        const freshLead = await prisma.lead.findUnique({
+          where: { id: order.leadId },
+          select: { onboardingToken: true, processSlug: true, shortCode: true },
+        })
+        if (freshLead) {
+          order.lead.onboardingToken = freshLead.onboardingToken
+          order.lead.processSlug = freshLead.processSlug
+          ;(order.lead as any).shortCode = freshLead.shortCode
+        }
       }
     }
 
@@ -90,6 +118,13 @@ export async function GET(
       }
     }
 
+    const confirmedLinks = currentStatus === 'confirmed'
+      ? {
+          shortCode: (order.lead as any).shortCode ?? null,
+          processSlug: order.lead.processSlug ?? null,
+        }
+      : {}
+
     return Response.json({
       success: true,
       data: {
@@ -102,6 +137,7 @@ export async function GET(
         pixQrCode,
         pixPayload,
         pixExpiresAt: payment.pixExpiresAt?.toISOString() ?? null,
+        ...confirmedLinks,
       },
     })
   } catch (error) {

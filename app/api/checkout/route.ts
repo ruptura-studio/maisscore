@@ -3,12 +3,36 @@ import { prisma } from '@/lib/db'
 import { checkoutSchema } from '@/lib/validations/checkout'
 import { findOrCreateCustomer, createPayment, getPixQrCode } from '@/lib/asaas'
 import { totalWithInstallmentFee } from '@/lib/installment-fees'
+import { logIntegrationError } from '@/lib/integration-error'
+import { normalizeBrazilPhone } from '@/lib/phone'
 
-function getClientIp(req: NextRequest): string {
+function getClientIp(req: NextRequest): string | undefined {
   return (
     req.headers.get('x-forwarded-for')?.split(',')[0].trim() ||
     req.headers.get('x-real-ip') ||
-    '127.0.0.1'
+    undefined
+  )
+}
+
+function formatError(error: unknown) {
+  if (error instanceof Error) return error.message
+  if (typeof error === 'string') return error
+  try {
+    return JSON.stringify(error)
+  } catch {
+    return String(error)
+  }
+}
+
+function fail(message: string, code: string, status = 500, details?: string) {
+  return Response.json(
+    {
+      success: false,
+      error: message,
+      code,
+      details,
+    },
+    { status },
   )
 }
 
@@ -49,6 +73,7 @@ export async function POST(req: NextRequest) {
       addressNumber,
       complement,
     } = parsed.data
+    const normalizedPhone = normalizeBrazilPhone(phone) ?? phone.replace(/\D/g, '')
 
     // 2. Buscar produto
     const product = await prisma.product.findUnique({ where: { slug: productSlug } })
@@ -60,12 +85,19 @@ export async function POST(req: NextRequest) {
 
     // 3. Upsert lead
     const leadType = documentType === 'CNPJ' ? 'cnpj' : 'cpf'
+    const fallbackAcquisition = documentType === 'CNPJ' ? 'CNPJ' : 'CPF'
+    const existingLead = await prisma.lead.findUnique({
+      where: { phone: normalizedPhone },
+      select: { acquisition: true },
+    })
+    const acquisition = existingLead?.acquisition?.trim() || fallbackAcquisition
     const lead = await prisma.lead.upsert({
-      where: { phone },
+      where: { phone: normalizedPhone },
       create: {
         name,
-        phone,
+        phone: normalizedPhone,
         email,
+        acquisition,
         channel: 'checkout',
         status: 'em_atendimento',
         stage: 'quente',
@@ -85,6 +117,7 @@ export async function POST(req: NextRequest) {
       update: {
         name,
         email,
+        acquisition,
         status: 'em_atendimento',
         stage: 'quente',
         lastInteractionAt: new Date(),
@@ -157,25 +190,70 @@ export async function POST(req: NextRequest) {
     }
 
     // 4. Criar order
-    const order = await prisma.order.create({
-      data: {
+    let order
+    try {
+      order = await prisma.order.create({
+        data: {
+          leadId: lead.id,
+          productId: product.id,
+          document,
+          documentType,
+          status: 'pendente',
+          pricePaid: product.price,
+        },
+      })
+    } catch (error) {
+      console.error('[POST /api/checkout] order_create_failed', error)
+      await logIntegrationError(prisma, {
+        source: 'checkout',
+        code: 'checkout_order_create_failed',
+        message: 'Não foi possível criar o pedido.',
+        details: error,
         leadId: lead.id,
-        productId: product.id,
-        document,
-        documentType,
-        status: 'pendente',
-        pricePaid: product.price,
-      },
-    })
+        phone: normalizedPhone,
+        path: '/api/checkout',
+        method: 'POST',
+        httpStatus: 500,
+      })
+      return fail(
+        'Não foi possível criar o pedido.',
+        'checkout_order_create_failed',
+        500,
+        formatError(error),
+      )
+    }
 
     // 5. Criar cliente + cobrança no Asaas
-    const customer = await findOrCreateCustomer({
-      name,
-      email,
-      phone,
-      cpfCnpj: document,
-      companyName: razaoSocial,
-    })
+    let customer
+    try {
+      customer = await findOrCreateCustomer({
+        name,
+        email,
+        phone: normalizedPhone,
+        cpfCnpj: document,
+        companyName: razaoSocial,
+      })
+    } catch (error) {
+      console.error('[POST /api/checkout] asaas_customer_failed', error)
+      await logIntegrationError(prisma, {
+        source: 'checkout',
+        code: 'asaas_customer_failed',
+        message: 'Falha ao criar ou localizar o cliente no Asaas.',
+        details: error,
+        leadId: lead.id,
+        orderId: order.id,
+        phone: normalizedPhone,
+        path: '/api/checkout',
+        method: 'POST',
+        httpStatus: 502,
+      })
+      return fail(
+        'Falha ao criar ou localizar o cliente no Asaas.',
+        'asaas_customer_failed',
+        502,
+        formatError(error),
+      )
+    }
 
     const effectivePriceCents =
       paymentMethod === 'CREDIT_CARD' && installments > 1
@@ -186,31 +264,56 @@ export async function POST(req: NextRequest) {
     // Resolve titular do cartão
     const holderName = cardHolderDiffers && cardHolderInfo ? cardHolderInfo.name : name
     const holderCpfCnpj = cardHolderDiffers && cardHolderInfo ? cardHolderInfo.cpfCnpj : document
-    const holderPhone = cardHolderDiffers && cardHolderInfo ? cardHolderInfo.phone : phone
+    const holderPhone = cardHolderDiffers && cardHolderInfo
+      ? (normalizeBrazilPhone(cardHolderInfo.phone) ?? cardHolderInfo.phone.replace(/\D/g, ''))
+      : normalizedPhone
 
-    const payment = await createPayment({
-      customerId: customer.id,
-      billingType: paymentMethod,
-      value: valueInReais,
-      description: product.name,
-      externalReference: `maisscore:${order.id}`,
-      installmentCount: installments,
-      remoteIp,
-      ...(paymentMethod === 'CREDIT_CARD' && creditCard
-        ? {
-            creditCard,
-            creditCardHolderInfo: {
-              name: holderName,
-              email,
-              cpfCnpj: holderCpfCnpj,
-              phone: holderPhone,
-              postalCode: postalCode ?? addressZip ?? '',
-              addressNumber: addressNumber ?? '',
-              complement: complement ?? addressComplement,
-            },
-          }
-        : {}),
+    let payment
+    try {
+      payment = await createPayment({
+        customerId: customer.id,
+        billingType: paymentMethod,
+        value: valueInReais,
+        description: product.name,
+        externalReference: `maisscore:${order.id}`,
+        installmentCount: installments,
+        remoteIp,
+        ...(paymentMethod === 'CREDIT_CARD' && creditCard
+          ? {
+              creditCard,
+              creditCardHolderInfo: {
+                name: holderName,
+                email,
+                cpfCnpj: holderCpfCnpj,
+                phone: holderPhone,
+                postalCode: postalCode ?? addressZip ?? '',
+                addressNumber: addressNumber ?? '',
+                complement: complement ?? addressComplement,
+              },
+            }
+          : {}),
+        })
+    } catch (error) {
+      console.error('[POST /api/checkout] asaas_payment_failed', error)
+      await logIntegrationError(prisma, {
+        source: 'checkout',
+        code: 'asaas_payment_failed',
+        message: 'Falha ao criar a cobrança no Asaas.',
+        details: error,
+        leadId: lead.id,
+        orderId: order.id,
+        phone: normalizedPhone,
+        path: '/api/checkout',
+        method: 'POST',
+        httpStatus: 502,
       })
+      return fail(
+        'Falha ao criar a cobrança no Asaas.',
+        'asaas_payment_failed',
+        502,
+        formatError(error),
+      )
+    }
 
     // 6. Para PIX, buscar QR code
     let pixQrCode: string | null = null
@@ -218,25 +321,69 @@ export async function POST(req: NextRequest) {
     let pixExpiresAt: Date | null = null
 
     if (paymentMethod === 'PIX') {
-      const qr = await getPixQrCode(payment.id)
-      pixQrCode = qr.encodedImage
-      pixPayload = qr.payload
-      pixExpiresAt = new Date(qr.expirationDate)
+      try {
+        const qr = await getPixQrCode(payment.id)
+        pixQrCode = qr.encodedImage
+        pixPayload = qr.payload
+        pixExpiresAt = new Date(qr.expirationDate)
+      } catch (error) {
+        console.error('[POST /api/checkout] asaas_pix_qr_failed', error)
+        await logIntegrationError(prisma, {
+          source: 'checkout',
+          code: 'asaas_pix_qr_failed',
+          message: 'Cobrança criada, mas não foi possível gerar o QR Code PIX.',
+          details: error,
+          leadId: lead.id,
+          orderId: order.id,
+          phone: normalizedPhone,
+          path: '/api/checkout',
+          method: 'POST',
+          httpStatus: 502,
+        })
+        return fail(
+          'Cobrança criada, mas não foi possível gerar o QR Code PIX.',
+          'asaas_pix_qr_failed',
+          502,
+          formatError(error),
+        )
+      }
     }
 
     // 7. Criar registro de payment no banco
-    await prisma.payment.create({
-      data: {
+    try {
+      await prisma.payment.create({
+        data: {
+          orderId: order.id,
+          asaasId: payment.id,
+          method: paymentMethod,
+          status: 'pending',
+          amount: effectivePriceCents,
+          pixKey: pixPayload,
+          pixExpiresAt,
+          remoteIp,
+        },
+      })
+    } catch (error) {
+      console.error('[POST /api/checkout] payment_save_failed', error)
+      await logIntegrationError(prisma, {
+        source: 'checkout',
+        code: 'checkout_payment_save_failed',
+        message: 'Cobrança criada, mas não foi possível salvar o pagamento no banco.',
+        details: error,
+        leadId: lead.id,
         orderId: order.id,
-        asaasId: payment.id,
-        method: paymentMethod,
-        status: 'pending',
-        amount: effectivePriceCents,
-        pixKey: pixPayload,
-        pixExpiresAt,
-        remoteIp,
-      },
-    })
+        phone: normalizedPhone,
+        path: '/api/checkout',
+        method: 'POST',
+        httpStatus: 500,
+      })
+      return fail(
+        'Cobrança criada, mas não foi possível salvar o pagamento no banco.',
+        'checkout_payment_save_failed',
+        500,
+        formatError(error),
+      )
+    }
 
     // 8. Dispara webhook hot-lead após PIX (fire-and-forget)
     if (paymentMethod === 'PIX' && process.env.WEBHOOK_HOT_LEAD_URL) {
@@ -247,7 +394,7 @@ export async function POST(req: NextRequest) {
           leadId: lead.id,
           orderId: order.id,
           name,
-          phone,
+          phone: normalizedPhone,
           email,
           leadType,
           companyName: razaoSocial,
@@ -271,9 +418,20 @@ export async function POST(req: NextRequest) {
     })
   } catch (error) {
     console.error('[POST /api/checkout]', String(error))
-    return Response.json(
-      { success: false, error: 'Erro ao processar pagamento. Tente novamente.' },
-      { status: 500 }
+    await logIntegrationError(prisma, {
+      source: 'checkout',
+      code: 'checkout_unknown_error',
+      message: 'Erro ao processar pagamento. Tente novamente.',
+      details: error,
+      path: '/api/checkout',
+      method: 'POST',
+      httpStatus: 500,
+    })
+    return fail(
+      'Erro ao processar pagamento. Tente novamente.',
+      'checkout_unknown_error',
+      500,
+      formatError(error),
     )
   }
 }

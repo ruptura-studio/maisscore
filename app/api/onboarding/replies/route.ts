@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/db'
-import { getOnboardingWebhookToken } from '@/lib/config'
+import { getOnboardingWebhookToken } from '@/lib/onboarding-auth'
 
 type AttachmentInput = {
   itemKey?: string
@@ -126,6 +126,7 @@ export async function POST(req: NextRequest) {
       if (data.responsibleCpf !== undefined) leadUpdate.responsibleCpf = data.responsibleCpf || null
       if (data.cpf !== undefined) leadUpdate.cpf = data.cpf || null
       if (data.cnpj !== undefined) leadUpdate.cnpj = data.cnpj || null
+      if (data.acquisition !== undefined) leadUpdate.acquisition = data.acquisition || null
 
       if (data.document !== undefined) orderUpdate.document = data.document || null
       if (data.documentType !== undefined) orderUpdate.documentType = data.documentType || null

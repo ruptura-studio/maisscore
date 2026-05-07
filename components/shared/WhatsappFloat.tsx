@@ -1,15 +1,26 @@
 'use client'
 
 import { useEffect, useState, useRef } from 'react'
+import { usePathname } from 'next/navigation'
 import { FaWhatsapp } from 'react-icons/fa'
-import { WHATSAPP_GERAL } from '@/lib/config'
+import { WHATSAPP_GERAL } from '@/lib/whatsapp'
 
 export function WhatsappFloat() {
   const [faded, setFaded] = useState(false)
   const [shaking, setShaking] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const pathname = usePathname()
+  const isCheckout = pathname.startsWith('/checkout')
+  const isMeuProcesso = pathname.startsWith('/meuprocesso')
+  const isOnboarding = pathname.startsWith('/onboarding')
+  const isAdmin = pathname.startsWith('/admin')
+  const isBlog = pathname.startsWith('/blog')
+
+  const hidden = isCheckout || isMeuProcesso || isOnboarding || isAdmin || isBlog
 
   useEffect(() => {
+    if (hidden) return
+
     function onScroll() {
       if (!faded) setFaded(true)
 
@@ -27,7 +38,9 @@ export function WhatsappFloat() {
       window.removeEventListener('scroll', onScroll)
       if (timerRef.current) clearTimeout(timerRef.current)
     }
-  }, [faded])
+  }, [faded, hidden])
+
+  if (hidden) return null
 
   return (
     <>

@@ -5,10 +5,11 @@ import { usePathname } from 'next/navigation'
 import { Menu, X } from 'lucide-react'
 import { FaWhatsapp } from 'react-icons/fa'
 import { cn } from '@/lib/utils'
-import { WHATSAPP_GERAL } from '@/lib/config'
+import { WHATSAPP_GERAL } from '@/lib/whatsapp'
 import Image from 'next/image'
 import { HeaderTopBar } from '@/components/shared/HeaderTopBar'
 import { HeaderSimple } from '@/components/shared/HeaderSimple'
+import { HeaderCheckout } from '@/components/shared/HeaderCheckout'
 
 const navLinks = [
   { label: 'Como Funciona', href: '#como-funciona' },
@@ -23,11 +24,17 @@ export function Header() {
   const isDS = pathname.startsWith('/designsystem')
   const isLegal = pathname === '/privacidade' || pathname === '/termos' || pathname === '/reembolso'
   const isCheckout = pathname.startsWith('/checkout')
+  const isOnboarding = pathname.startsWith('/onboarding')
+  const isMeuProcesso = pathname.startsWith('/meuprocesso')
   const isBlog = pathname.startsWith('/blog')
-  const hideNav = isDS || isLegal || isCheckout
+  const hideNav = isDS || isLegal || isCheckout || isMeuProcesso
 
   if (isBlog) {
     return <HeaderSimple />
+  }
+
+  if (isCheckout || isOnboarding || isMeuProcesso) {
+    return <HeaderCheckout />
   }
 
   return (

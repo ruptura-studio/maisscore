@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { WHATSAPP_GERAL } from '@/lib/config'
+import { WHATSAPP_GERAL } from '@/lib/whatsapp'
 
 export function CtaWhatsapp() {
   return (
