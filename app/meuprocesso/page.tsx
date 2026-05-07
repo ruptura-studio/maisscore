@@ -107,7 +107,10 @@ export default async function MeuProcessoPage() {
     }
 
     const dbStep = processData?.steps.find((s) => s.step === meta.step)
-    const status: 'concluido' | 'em_andamento' | 'pendente' = (dbStep?.status as any) ?? 'pendente'
+    // Se o onboarding foi concluído e o step 2 ainda não existe no banco,
+    // o process pode ter sido criado depois — tratar como em_andamento.
+    const fallbackStatus = meta.step === 2 && onboardingCompletedAt ? 'em_andamento' : 'pendente'
+    const status: 'concluido' | 'em_andamento' | 'pendente' = (dbStep?.status as any) ?? fallbackStatus
     const description =
       meta.step === 3 && dbStep?.notes?.trim()
         ? dbStep.notes
