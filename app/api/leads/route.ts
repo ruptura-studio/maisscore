@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server'
 import { prisma } from '@/lib/db'
 import { createLeadSchema } from '@/lib/validations/lead'
+import { normalizeBrazilPhone } from '@/lib/phone'
 
 function classifyTraffic(utm: {
   source?: string | null
@@ -27,6 +28,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { name, phone, email, channel, utmSource, utmMedium, utmCampaign, utmContent, utmTerm } = parsed.data
+    const normalizedPhone = normalizeBrazilPhone(phone) ?? phone.replace(/\D/g, '')
 
     const trafficTemperature = classifyTraffic({
       source: utmSource,
@@ -36,10 +38,10 @@ export async function POST(req: NextRequest) {
 
     // 2. Salvar no Supabase via Prisma (upsert por telefone)
     const lead = await prisma.lead.upsert({
-      where: { phone },
+      where: { phone: normalizedPhone },
       create: {
         name,
-        phone,
+        phone: normalizedPhone,
         email: email || null,
         channel: channel ?? 'site',
         utmSource:          utmSource    ?? null,
@@ -76,7 +78,7 @@ export async function POST(req: NextRequest) {
           supabaseLeadId: lead.id,
           leadId: lead.id,
           name,
-          phone,
+          phone: normalizedPhone,
           email,
           channel,
           trafficTemperature,

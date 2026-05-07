@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { totalWithInstallmentFee, installmentValueCents } from '@/lib/installment-fees'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
@@ -11,6 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { ButtonGroup } from '@/components/ui/button-group'
 import { Button } from '@/components/ui/button'
 import { Shield, Info, User, Building2 } from 'lucide-react'
+import { normalizeBrazilPhone } from '@/lib/phone'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -115,7 +116,7 @@ function formatCpfCnpj(value: string) {
 }
 
 function formatPhone(value: string) {
-  const d = value.replace(/\D/g, '').slice(0, 11)
+  const d = normalizeBrazilPhone(value)?.slice(0, 11) ?? ''
   if (d.length <= 10) return d.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3').replace(/-$/, '')
   return d.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3').replace(/-$/, '')
 }
@@ -300,6 +301,92 @@ function TermsBlock({
   )
 }
 
+function AdvanceButton({
+  disabled,
+  loading,
+  onClick,
+  wrapperClassName,
+  className,
+  children,
+}: {
+  disabled: boolean
+  loading?: boolean
+  onClick: () => void
+  wrapperClassName?: string
+  className: string
+  children: React.ReactNode
+}) {
+  const [tooltipOpen, setTooltipOpen] = useState(false)
+  const tooltipTimerRef = useRef<number | null>(null)
+  const showTooltip = disabled && !loading
+
+  useEffect(() => {
+    return () => {
+      if (tooltipTimerRef.current !== null) {
+        window.clearTimeout(tooltipTimerRef.current)
+      }
+    }
+  }, [])
+
+  function openTooltip() {
+    if (!showTooltip) return
+    if (tooltipTimerRef.current !== null) {
+      window.clearTimeout(tooltipTimerRef.current)
+      tooltipTimerRef.current = null
+    }
+    setTooltipOpen(true)
+  }
+
+  function closeTooltip() {
+    if (!showTooltip) return
+    if (tooltipTimerRef.current !== null) {
+      window.clearTimeout(tooltipTimerRef.current)
+      tooltipTimerRef.current = null
+    }
+    setTooltipOpen(false)
+  }
+
+  function flashTooltip() {
+    if (!showTooltip) return
+    if (tooltipTimerRef.current !== null) {
+      window.clearTimeout(tooltipTimerRef.current)
+    }
+    setTooltipOpen(true)
+    tooltipTimerRef.current = window.setTimeout(() => {
+      setTooltipOpen(false)
+      tooltipTimerRef.current = null
+    }, 1800)
+  }
+
+  if (showTooltip) {
+    return (
+      <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
+        <TooltipTrigger asChild>
+          <span
+            className={`block cursor-not-allowed ${wrapperClassName ?? ''}`}
+            onMouseEnter={openTooltip}
+            onMouseLeave={closeTooltip}
+            onClick={flashTooltip}
+          >
+            <button type="button" disabled className={`${className} pointer-events-none`}>
+              {children}
+            </button>
+          </span>
+        </TooltipTrigger>
+        <TooltipContent side="top" align="center" className="max-w-xs text-center">
+          Todos os campos devem ser preenchidos antes de continuar.
+        </TooltipContent>
+      </Tooltip>
+    )
+  }
+
+  return (
+    <button type="button" onClick={onClick} disabled={disabled || loading} className={className}>
+      {children}
+    </button>
+  )
+}
+
 // ── CheckoutContent ──────────────────────────────────────────────────────────
 
 function CheckoutContent() {
@@ -386,7 +473,7 @@ function CheckoutContent() {
             JSON.stringify({
               name: name || null,
               email: email || null,
-              phone: phone.replace(/\D/g, '') || null,
+              phone: normalizeBrazilPhone(phone) ?? null,
               document: document.replace(/\D/g, '') || null,
               documentType: product?.documentType,
               product: product?.slug,
@@ -426,7 +513,7 @@ function CheckoutContent() {
     const e: Record<string, string> = {}
     if (form.name.trim().length < 2) e.name = 'Nome deve ter pelo menos 2 caracteres'
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'E-mail inválido'
-    if (form.phone.replace(/\D/g, '').length < 10) e.phone = 'Telefone inválido'
+    if ((normalizeBrazilPhone(form.phone) ?? '').length < 10) e.phone = 'Telefone inválido'
     const docDigits = form.document.replace(/\D/g, '')
     const expectedLen = selectedProduct === 'cpf' ? 11 : 14
     if (docDigits.length !== expectedLen) e.document = `${product?.documentLabel} inválido`
@@ -448,7 +535,7 @@ function CheckoutContent() {
       if (cardHolder.name.trim().length < 2) e.holderName = 'Nome do titular obrigatório'
       const holderDoc = cardHolder.cpfCnpj.replace(/\D/g, '')
       if (holderDoc.length !== 11 && holderDoc.length !== 14) e.holderCpfCnpj = 'CPF ou CNPJ inválido'
-      if (cardHolder.phone.replace(/\D/g, '').length < 10) e.holderPhone = 'Telefone inválido'
+      if ((normalizeBrazilPhone(cardHolder.phone) ?? '').length < 10) e.holderPhone = 'Telefone inválido'
     }
     return e
   }
@@ -470,7 +557,7 @@ function CheckoutContent() {
           step: 1,
           name: form.name.trim(),
           email: form.email.trim(),
-          phone: form.phone.replace(/\D/g, ''),
+          phone: normalizeBrazilPhone(form.phone) ?? '',
           document: form.document.replace(/\D/g, ''),
           documentType: product?.documentType,
           razaoSocial: form.companyName.trim() || undefined,
@@ -489,7 +576,7 @@ function CheckoutContent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           step: 2,
-          phone: form.phone.replace(/\D/g, ''),
+          phone: normalizeBrazilPhone(form.phone) ?? '',
           paymentMethod: 'CREDIT_CARD',
           productSlug: product?.slug,
           addressStreet: addressInfo?.logradouro || undefined,
@@ -527,7 +614,7 @@ function CheckoutContent() {
         body: JSON.stringify({
           name: form.name.trim(),
           email: form.email.trim(),
-          phone: form.phone.replace(/\D/g, ''),
+          phone: normalizeBrazilPhone(form.phone) ?? '',
           document: form.document.replace(/\D/g, ''),
           documentType: product?.documentType,
           razaoSocial: form.companyName.trim() || undefined,
@@ -560,7 +647,7 @@ function CheckoutContent() {
                       cardHolderInfo: {
                         name: cardHolder.name.trim(),
                         cpfCnpj: cardHolder.cpfCnpj.replace(/\D/g, ''),
-                        phone: cardHolder.phone.replace(/\D/g, ''),
+                        phone: normalizeBrazilPhone(cardHolder.phone) ?? '',
                       },
                     }
                   : {}),
@@ -570,7 +657,11 @@ function CheckoutContent() {
       })
       const data = await res.json()
       if (!data.success) {
-        setServerError(data.error || 'Erro ao processar. Tente novamente.')
+        setServerError(
+          data.details
+            ? `${data.error || 'Erro ao processar.'} (${data.code || 'sem código'}: ${data.details})`
+            : data.error || 'Erro ao processar. Tente novamente.'
+        )
         return
       }
       setSubmitted(true)
@@ -595,7 +686,7 @@ function CheckoutContent() {
     !!selectedProduct &&
     form.name.trim().length >= 2 &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) &&
-    form.phone.replace(/\D/g, '').length >= 10 &&
+    (normalizeBrazilPhone(form.phone) ?? '').length >= 10 &&
     form.document.replace(/\D/g, '').length === (selectedProduct === 'cpf' ? 11 : 14) &&
     (selectedProduct !== 'cnpj' || form.companyName.trim().length > 0)
 
@@ -610,7 +701,7 @@ function CheckoutContent() {
     (!showCardHolderFields || (
       cardHolder.name.trim().length >= 2 &&
       (cardHolder.cpfCnpj.replace(/\D/g, '').length === 11 || cardHolder.cpfCnpj.replace(/\D/g, '').length === 14) &&
-      cardHolder.phone.replace(/\D/g, '').length >= 10
+      (normalizeBrazilPhone(cardHolder.phone) ?? '').length >= 10
     ))
 
   return (
@@ -731,13 +822,14 @@ function CheckoutContent() {
                 </div>
               </div>}
 
-              <button
-                type="button"
+              <AdvanceButton
+                disabled={!canAdvanceStep1}
                 onClick={goNext}
-                className="btn-secondary w-full !rounded-md h-11"
+                wrapperClassName="w-full"
+                className="btn-secondary w-full !rounded-md h-11 disabled:opacity-50"
               >
                 Avançar
-              </button>
+              </AdvanceButton>
             </div>
           )}
 
@@ -780,13 +872,11 @@ function CheckoutContent() {
                 </p>
               )}
 
-              <button
-                type="button"
-                onClick={() => {
-                  if (!allPixTerms) { setShowValidationAlert(true); return }
-                  handleSubmit()
-                }}
-                disabled={loading}
+              <AdvanceButton
+                disabled={!allPixTerms}
+                loading={loading}
+                onClick={handleSubmit}
+                wrapperClassName="w-full"
                 className="btn-secondary w-full !rounded-md h-11 disabled:opacity-50"
               >
                 {loading ? (
@@ -797,7 +887,7 @@ function CheckoutContent() {
                 ) : (
                   'Avançar'
                 )}
-              </button>
+              </AdvanceButton>
             </div>
           )}
 
@@ -1019,9 +1109,15 @@ function CheckoutContent() {
                 >
                   Voltar
                 </Button>
-                <button type="button" onClick={goNext} className="btn-secondary flex-1 !rounded-md h-11">
+                <AdvanceButton
+                  disabled={!canAdvanceStep2Card || !allCardTerms}
+                  loading={loading}
+                  onClick={goNext}
+                  wrapperClassName="flex-1"
+                  className="btn-secondary flex-1 !rounded-md h-11 disabled:opacity-50"
+                >
                   Avançar
-                </button>
+                </AdvanceButton>
               </div>
             </div>
           )}
@@ -1140,7 +1236,7 @@ function CheckoutContent() {
           <AlertDialogHeader>
             <AlertDialogTitle>Campos incompletos</AlertDialogTitle>
             <AlertDialogDescription>
-              Antes de prosseguir, preencha corretamente todos os campos.
+              Todos os campos devem ser preenchidos antes de continuar.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

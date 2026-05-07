@@ -59,6 +59,11 @@ model Lead {
   isClient           Boolean   @default(false) @map("is_client") // se tem compra confirmada
   acquisition        String?                                // produto adquirido (ex: limpa_cpf, limpa_cnpj)
   acquisitionValue   Int?      @map("acquisition_value")   // valor pago em centavos
+  onboardingToken         String?   @unique @map("onboarding_token")
+  onboardingCompletedAt   DateTime? @map("onboarding_completed_at") @db.Timestamptz
+  onboardingLastSeenAt    DateTime? @map("onboarding_last_seen_at") @db.Timestamptz
+  processSlug             String?   @unique @map("process_slug")
+  shortCode               String?   @unique @map("short_code")
   crmId              String?   @map("crm_id")
   stage              String?   @default("lead") @map("stage")
   pendingAction      String?   @map("pending_action")
@@ -113,6 +118,7 @@ model Payment {
   boletoExpiresAt DateTime? @map("boleto_expires_at") @db.Timestamptz
   remoteIp        String?   @map("remote_ip")
   confirmedAt     DateTime? @map("confirmed_at") @db.Timestamptz
+  webhookProcessedAt DateTime? @map("webhook_processed_at") @db.Timestamptz
   createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz
   updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz
   order           Order     @relation(fields: [orderId], references: [id])
@@ -121,19 +127,37 @@ model Payment {
 }
 
 model Process {
-  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  orderId   String    @unique @map("order_id") @db.Uuid
-  status    String    @default("aguardando_inicio")
-  stage     String?
-  startedAt DateTime? @map("started_at") @db.Timestamptz
-  cleanedAt DateTime? @map("cleaned_at") @db.Timestamptz
-  proofUrl  String?   @map("proof_url")
-  notes     String?
-  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz
-  order     Order     @relation(fields: [orderId], references: [id])
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId        String    @unique @map("order_id") @db.Uuid
+  status         String    @default("aguardando_inicio")
+  stage          String?
+  startedAt      DateTime? @map("started_at") @db.Timestamptz
+  cleanedAt      DateTime? @map("cleaned_at") @db.Timestamptz
+  proofUrl       String?   @map("proof_url")
+  notes          String?
+  judicialNumber String?   @map("judicial_number") // número CNJ do processo, captado via planilha
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  order          Order     @relation(fields: [orderId], references: [id])
+  steps          ProcessStep[]
 
   @@map("processes")
+}
+
+model ProcessStep {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  processId   String    @map("process_id") @db.Uuid
+  step        Int
+  status      String    @default("pendente") // pendente | em_andamento | concluido
+  documentUrl String?   @map("document_url")
+  notes       String?   // descricao configuravel pelo admin (usada no step 3 - Execucao)
+  completedAt DateTime? @map("completed_at") @db.Timestamptz
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz
+  process     Process   @relation(fields: [processId], references: [id])
+
+  @@unique([processId, step])
+  @@map("process_steps")
 }
 
 model OnboardingDocument {
@@ -222,6 +246,26 @@ model CheckoutEvent {
   lead      Lead     @relation(fields: [leadId], references: [id])
 
   @@map("checkout_events")
+}
+
+model IntegrationError {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  source      String
+  code        String
+  message     String
+  details     Json?
+  leadId      String?  @map("lead_id") @db.Uuid
+  orderId     String?  @map("order_id") @db.Uuid
+  phone       String?
+  path        String?
+  method      String?
+  httpStatus  Int?     @map("http_status")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([source, code, createdAt])
+  @@index([leadId, createdAt])
+  @@index([orderId, createdAt])
+  @@map("integration_errors")
 }
 
 model MessageTemplate {

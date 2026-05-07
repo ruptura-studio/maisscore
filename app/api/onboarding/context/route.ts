@@ -42,6 +42,7 @@ function normalizePayload(record: any) {
           acquisition: lead.acquisition ?? null,
           acquisitionValue: lead.acquisitionValue ?? null,
           convertedAt: toIso(lead.convertedAt),
+          paymentConfirmedAt: toIso(payment?.confirmedAt),
           crmId: lead.crmId ?? null,
         }
       : null,

@@ -1,3 +1,4 @@
+import { WhatsappFloat } from '@/components/shared/WhatsappFloat'
 import { Hero } from '@/components/sections/Hero'
 import { CtaResolverAgora } from '@/components/sections/CtaResolverAgora'
 import { Pesquisa } from '@/components/sections/Pesquisa'
@@ -25,6 +26,7 @@ export default function HomePage() {
       <UltimasDoBlog />
       <CtaWhatsapp />
       <BeneficiosBar />
+      <WhatsappFloat />
     </>
   )
 }

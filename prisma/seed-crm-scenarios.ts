@@ -1,6 +1,7 @@
 import { Prisma, PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { config } from 'dotenv'
+import { normalizeBrazilPhone } from '../lib/phone'
 
 config({ path: '.env.local' })
 
@@ -56,9 +57,10 @@ async function upsertLead(
     notes?: string | null
   }
 ) {
+  const normalizedPhone = normalizeBrazilPhone(input.phone) ?? input.phone.replace(/\D/g, '')
   const payload = {
     name: input.name,
-    phone: input.phone,
+    phone: normalizedPhone,
     email: input.email ?? null,
     channel: input.channel ?? null,
     status: input.status,
@@ -85,7 +87,7 @@ async function upsertLead(
   }
 
   return tx.lead.upsert({
-    where: { phone: input.phone },
+    where: { phone: normalizedPhone },
     create: compact(payload),
     update: compact(payload),
   })
